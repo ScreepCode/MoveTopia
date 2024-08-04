@@ -1,0 +1,49 @@
+import 'package:hackathon/data/model/activity.dart';
+import 'package:health/health.dart';
+
+class LastActivityState {
+  String date;
+  int duration;
+  String comment;
+  HealthWorkoutActivityType activityType;
+  int calories;
+
+  LastActivityState(
+      {required this.date,
+      required this.duration,
+      required this.comment,
+      required this.activityType,
+      required this.calories});
+
+  factory LastActivityState.initial() {
+    return LastActivityState(
+        date: "2024-08-03",
+        duration: 120,
+        comment: "Nothing to read here",
+        activityType: HealthWorkoutActivityType.WALKING,
+        calories: 250);
+  }
+
+  LastActivityState copyWith(
+      {String? date,
+      int? duration,
+      String? comment,
+      HealthWorkoutActivityType? activityType,
+      int? calories}) {
+    return LastActivityState(
+        date: date ?? this.date,
+        duration: duration ?? this.duration,
+        comment: comment ?? this.comment,
+        activityType: activityType ?? this.activityType,
+        calories: calories ?? this.calories);
+  }
+
+  // Add a getter to return the ActivityPreview
+  ActivityPreview get activityPreview => ActivityPreview(
+        activityType: activityType,
+        caloriesBurnt: calories,
+        distance: 0.0, // You might need to add distance to LastActivityState
+        start: DateTime.now().subtract(Duration(minutes: duration)),
+        end: DateTime.now(),
+      );
+}

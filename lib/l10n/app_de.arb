@@ -1,0 +1,11 @@
+{
+    "@@locale": "de",
+    "helloWorld": "Hallo Welt!",
+    "sleep": "Schlaf",
+    "hours": "Stunden",
+    "steps": "Schritte",
+    "last_activity": "Letzte Aktivität",
+    "your_stats": "Deine Statistik",
+    "distance": "Distanz",
+    "duration": "Dauer"
+}

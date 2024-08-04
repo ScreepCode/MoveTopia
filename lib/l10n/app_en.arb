@@ -1,0 +1,14 @@
+{
+  "@@locale": "en",
+  "helloWorld": "Hello World!",
+  "@helloWorld": {
+    "description": "The conventional newborn programmer greeting"
+  },
+  "sleep": "Sleep",
+  "hours": "Hours",
+  "steps": "Steps",
+  "last_activity": "Last Activity",
+  "your_stats": "Your Stats",
+  "distance": "Distance",
+  "duration": "Duration"
+}
