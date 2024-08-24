@@ -83,7 +83,7 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
     try {
       var calories = await getHealthDataInInterval(
           start, end, [HealthDataType.TOTAL_CALORIES_BURNED]);
-      if (calories!.isEmpty) return 0;
+      if (calories == null || calories.isEmpty) return 0;
       int totalCalories = 0;
       for (var i = 0; i < calories.length; i++) {
         totalCalories +=
@@ -129,6 +129,7 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
     try {
       List<HealthDataPoint>? data = await getHealthDataInInterval(
           preview.start, preview.end, [HealthDataType.WORKOUT]);
+
       List<HealthDataPoint>? heartFrequency = await getHealthDataInInterval(
           preview.start, preview.end, [HealthDataType.HEART_RATE]);
       if (data!.isEmpty || heartFrequency!.isEmpty) return null;
@@ -160,17 +161,21 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
           DateTime.now().subtract(const Duration(days: 3)), DateTime.now(), [
         HealthDataType.WORKOUT,
       ]);
-      if (workouts!.isEmpty) return null;
-      var lastWorkout = workouts.last;
-      WorkoutHealthValue healthValue = lastWorkout.value as WorkoutHealthValue;
-      int calories = await getCaloriesBurnedInInterval(
-          lastWorkout.dateFrom, lastWorkout.dateTo);
-      return ActivityPreview(
-          activityType: healthValue.workoutActivityType,
-          caloriesBurnt: calories,
-          start: lastWorkout.dateFrom,
-          end: lastWorkout.dateTo,
-          distance: (healthValue.totalDistance!).toDouble());
+      if (workouts == null || workouts.isEmpty) {
+        return null;
+      } else {
+        var lastWorkout = workouts.last;
+        WorkoutHealthValue healthValue =
+            lastWorkout.value as WorkoutHealthValue;
+        int calories = await getCaloriesBurnedInInterval(
+            lastWorkout.dateFrom, lastWorkout.dateTo);
+        return ActivityPreview(
+            activityType: healthValue.workoutActivityType,
+            caloriesBurnt: calories,
+            start: lastWorkout.dateFrom,
+            end: lastWorkout.dateTo,
+            distance: (healthValue.totalDistance ?? 0).toDouble());
+      }
     } catch (e) {
       log.info(e);
     }

@@ -57,7 +57,7 @@ class TodayScreen extends HookConsumerWidget {
                       distance: statsViewModel.distance.toStringAsFixed(2),
                       stepGoal: ref.watch(profileProvider).stepGoal,
                     ),
-                    LastActivityCard(
+                    if(lastActivityState != null) LastActivityCard(
                       lastActivity: lastActivityState.activityPreview,
                     ),
                   ],
