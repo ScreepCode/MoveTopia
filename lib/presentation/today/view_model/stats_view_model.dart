@@ -10,26 +10,21 @@ final statsViewModelProvider =
 
 class StatsViewModel extends StateNotifier<StatsState> {
   late final Ref ref;
-  StatsViewModel(this.ref) : super(StatsState.initial()) {
-    // HealthAuthViewModelState state = ref.watch(healthViewModelProvider);
-    // if (state == HealthAuthViewModelState.authorized) {
-    //   fetchStats();
-    // }
-  }
+  StatsViewModel(this.ref) : super(StatsState.initial());
 
   Future<void> fetchStats() async {
-    // This should fetch the last training. Currently thats only mock data
     DateTime now = DateTime.now();
-    DateTime start = now.subtract(const Duration(hours: 48));
+    var lastMidnight = DateTime(now.year, now.month, now.day);
     int steps = await ref
         .read(localHealthRepositoryProvider)
-        .getStepsInInterval(start, now);
+        .getStepsInInterval(lastMidnight, now);
     double distance = await ref
         .read(localHealthRepositoryProvider)
-        .getDistanceInInterval(start, now, [HealthDataType.DISTANCE_DELTA]);
+        .getDistanceInInterval(
+            lastMidnight, now, [HealthDataType.DISTANCE_DELTA]);
     int sleep = await ref
         .read(localHealthRepositoryProvider)
-        .getSleepFromDate(now.subtract(const Duration(days: 3)));
+        .getSleepFromDate(now.subtract(const Duration(days: 1)));
     state = state.copyWith(steps: steps, distance: distance, sleep: sleep);
   }
 }
