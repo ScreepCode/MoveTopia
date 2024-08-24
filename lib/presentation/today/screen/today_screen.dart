@@ -7,6 +7,8 @@ import 'package:hackathon/presentation/today/widgets/last_activity_card.dart';
 import 'package:hackathon/presentation/today/widgets/today_overview.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../me/view_model/profile_view_model.dart';
+
 class TodayScreen extends HookConsumerWidget {
   const TodayScreen({super.key});
 
@@ -50,9 +52,11 @@ class TodayScreen extends HookConsumerWidget {
                 child: ListView(
                   children: [
                     TodayOverview(
-                        steps: statsViewModel.steps,
-                        sleep: statsViewModel.sleep,
-                        distance: statsViewModel.distance.toStringAsFixed(2)),
+                      steps: statsViewModel.steps,
+                      sleep: statsViewModel.sleep,
+                      distance: statsViewModel.distance.toStringAsFixed(2),
+                      stepGoal: ref.watch(profileProvider).stepGoal,
+                    ),
                     if(lastActivityState != null) LastActivityCard(
                       lastActivity: lastActivityState.activityPreview,
                     ),

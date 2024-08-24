@@ -75,7 +75,7 @@ class HackathonApp extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final provider = ref.read(myAppProvider);
-    var isDarkMode = ref.watch(profileProvider)['isDarkMode'];
+    var isDarkMode = ref.watch(profileProvider).isDarkMode;
     var theme = isDarkMode
         ? const MaterialTheme(Typography.whiteHelsinki).dark()
         : const MaterialTheme(Typography.whiteHelsinki).light();

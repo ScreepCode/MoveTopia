@@ -4,16 +4,16 @@ import 'package:hackathon/presentation/today/widgets/generic_card.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class StepsCard extends StatelessWidget {
-  const StepsCard({super.key, required this.steps});
+  const StepsCard({super.key, required this.steps, required this.stepGoal});
 
   final int steps;
+  final int stepGoal;
 
   @override
   Widget build(BuildContext context) {
     const color = Color.fromARGB(255, 153, 39, 173);
     const colorBackground = Color.fromARGB(50, 153, 39, 173);
-    const necessarySteps = 8000;
-    var percentage = steps / necessarySteps;
+    var percentage = steps / stepGoal;
 
     return GenericCard(
         title: AppLocalizations.of(context)!.steps,
