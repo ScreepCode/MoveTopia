@@ -1,67 +1,62 @@
-import 'dart:convert';
+import 'package:hackathon/presentation/me/view_model/profile_state.dart';
 import 'package:logging/logging.dart';
 import 'package:riverpod/riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../../../data/repositories/profile_repository_impl.dart';
+import '../../../domain/repositories/profile_repository.dart';
 
-final logger =
-    Logger('ProfileViewModel'); // Erstelle einen Logger für diese Klasse
+final logger = Logger('ProfileViewModel');
 
-final profileProvider =
-    StateNotifierProvider<ProfileViewModel, Map<String, dynamic>>((ref) {
-  return ProfileViewModel();
+final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
+  return ProfileRepositoryImpl();
 });
 
-class ProfileViewModel extends StateNotifier<Map<String, dynamic>> {
-  ProfileViewModel()
-      : super({
-          'stepGoal': 0, // Default step goal
-          'count': 0, // Default counter value
-          'isDarkMode': false, // Default to light mode
-        }) {
+final profileProvider = StateNotifierProvider<ProfileViewModel, ProfileState>((ref) {
+  final repository = ref.watch(profileRepositoryProvider);
+  return ProfileViewModel(repository);
+});
+
+class ProfileViewModel extends StateNotifier<ProfileState> {
+  final ProfileRepository _repository;
+
+  ProfileViewModel(this._repository) : super(ProfileState()) {
     loadSettings();
   }
 
-  final _prefs = SharedPreferences.getInstance();
-
   Future<void> loadSettings() async {
     try {
-      final prefs = await _prefs;
-      state = prefs.getString('Profile')?.isNotEmpty == true
-          ? Map<String, dynamic>.from(jsonDecode(prefs.getString('Profile')!))
-          : {};
+      final stepGoal = await _repository.loadSetting('stepGoal');
+      final count = await _repository.loadSetting('count');
+      final isDarkMode = await _repository.loadSetting('isDarkMode');
+
+      state = state.copyWith(
+        stepGoal: stepGoal ?? state.stepGoal,
+        count: count ?? state.count,
+        isDarkMode: isDarkMode ?? state.isDarkMode,
+      );
+
       logger.info('Profile settings loaded');
     } catch (e, s) {
       logger.severe('Error loading profile settings', e, s);
     }
   }
 
-  Future<void> saveSettings(Map<String, dynamic> newSettings) async {
-    final prefs = await _prefs;
-    final jsonString = jsonEncode(newSettings);
-    await prefs.setString('Profile', jsonString);
-    state = newSettings;
-    await loadSettings();
+  int get stepGoal => state.stepGoal;
+  int get count => state.count;
+  bool get isDarkMode => state.isDarkMode;
+
+  void setStepGoal(int stepGoal) async {
+    await _repository.saveSetting('stepGoal', stepGoal);
+    state = state.copyWith(stepGoal: stepGoal);
   }
 
-  int get stepGoal => state['stepGoal'];
-  int get count => state['count'];
-  bool get isDarkMode => state['isDarkMode'];
-
-  void setStepGoal(int stepGoal) {
-    state['stepGoal'] = stepGoal;
-    saveSettings(state);
+  void incrementCount() async {
+    final newCount = state.count + 1;
+    await _repository.saveSetting('count', newCount);
+    state = state.copyWith(count: newCount);
   }
 
-  void incrementCount() {
-    logger.info('count: ${state['count']}');
-    state['count'] = (state['count'] ?? 0) + 1;
-    logger.info('Incremented count: ${state['count']}');
-    saveSettings(state);
-    logger.info('Get count: ${count}');
-  }
-
-  void setIsDarkMode(bool isDarkMode) {
-    state['isDarkMode'] = isDarkMode;
-    saveSettings(state);
+  void setIsDarkMode(bool isDarkMode) async {
+    await _repository.saveSetting('isDarkMode', isDarkMode);
+    state = state.copyWith(isDarkMode: isDarkMode);
   }
 }

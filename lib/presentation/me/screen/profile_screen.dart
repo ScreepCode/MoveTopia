@@ -12,8 +12,8 @@ class ProfileScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final stepsGoal = ref.watch(profileProvider)['stepGoal'];
-    final count = ref.watch(profileProvider)['count'];
-    final isDarkMode = ref.watch(profileProvider)['isDarkMode'];
+    final count = ref.watch(profileProvider).count;
+    final isDarkMode = ref.watch(profileProvider).isDarkMode;
 
     return Scaffold(
       body: Center(
