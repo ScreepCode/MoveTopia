@@ -17,11 +17,11 @@ class LastActivityState {
 
   factory LastActivityState.initial() {
     return LastActivityState(
-        date: "2024-08-03",
-        duration: 120,
-        comment: "Nothing to read here",
-        activityType: HealthWorkoutActivityType.WALKING,
-        calories: 250);
+        date: "1970-01-01",
+        duration: 0,
+        comment: "",
+        activityType: HealthWorkoutActivityType.OTHER,
+        calories: 0);
   }
 
   LastActivityState copyWith(
