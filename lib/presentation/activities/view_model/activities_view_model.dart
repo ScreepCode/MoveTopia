@@ -1,7 +1,7 @@
-import 'package:hackathon/data/model/activity.dart';
-import 'package:hackathon/data/repositories/local_health_impl.dart';
-import 'package:hackathon/presentation/activities/view_model/activities_state.dart';
 import 'package:logging/logging.dart';
+import 'package:movetopia/data/model/activity.dart';
+import 'package:movetopia/data/repositories/local_health_impl.dart';
+import 'package:movetopia/presentation/activities/view_model/activities_state.dart';
 import 'package:riverpod/riverpod.dart';
 
 final activitiesViewModelProvider =

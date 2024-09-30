@@ -1,7 +1,7 @@
-import 'package:hackathon/data/model/activity.dart';
-import 'package:hackathon/domain/repositories/local_health.dart';
 import 'package:health/health.dart';
 import 'package:logging/logging.dart';
+import 'package:movetopia/data/model/activity.dart';
+import 'package:movetopia/domain/repositories/local_health.dart';
 import 'package:riverpod/riverpod.dart';
 
 final localHealthRepositoryProvider =

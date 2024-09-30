@@ -1,5 +1,5 @@
-import 'package:hackathon/data/model/activity.dart';
 import 'package:health/health.dart';
+import 'package:movetopia/data/model/activity.dart';
 
 abstract class LocalHealthRepository {
   Future<int> getStepsInInterval(DateTime start, DateTime end);

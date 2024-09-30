@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:hackathon/data/model/activity.dart';
-import 'package:hackathon/presentation/activity_details/widget/detail_stats_card.dart';
-import 'package:hackathon/presentation/activity_details/widget/graph_visualization.dart';
-import 'package:hackathon/presentation/activity_details/widget/header_details.dart';
-import 'package:hackathon/utils/health_utils.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
+import 'package:movetopia/data/model/activity.dart';
+import 'package:movetopia/presentation/activity_details/widget/detail_stats_card.dart';
+import 'package:movetopia/presentation/activity_details/widget/graph_visualization.dart';
+import 'package:movetopia/presentation/activity_details/widget/header_details.dart';
+import 'package:movetopia/utils/health_utils.dart';
 
 class ActivityDetailsScreen extends HookConsumerWidget {
   const ActivityDetailsScreen({super.key, required this.activityPreview});

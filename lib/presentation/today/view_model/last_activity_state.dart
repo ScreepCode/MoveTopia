@@ -1,5 +1,5 @@
-import 'package:hackathon/data/model/activity.dart';
 import 'package:health/health.dart';
+import 'package:movetopia/data/model/activity.dart';
 
 class LastActivityState {
   String date;

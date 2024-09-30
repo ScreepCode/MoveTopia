@@ -1,4 +1,4 @@
-package com.example.hackathon
+package de.movetopia
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

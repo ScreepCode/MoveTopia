@@ -1,6 +1,7 @@
-import 'package:hackathon/presentation/me/view_model/profile_state.dart';
 import 'package:logging/logging.dart';
+import 'package:movetopia/presentation/me/view_model/profile_state.dart';
 import 'package:riverpod/riverpod.dart';
+
 import '../../../data/repositories/profile_repository_impl.dart';
 import '../../../domain/repositories/profile_repository.dart';
 
@@ -10,7 +11,8 @@ final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
   return ProfileRepositoryImpl();
 });
 
-final profileProvider = StateNotifierProvider<ProfileViewModel, ProfileState>((ref) {
+final profileProvider =
+    StateNotifierProvider<ProfileViewModel, ProfileState>((ref) {
   final repository = ref.watch(profileRepositoryProvider);
   return ProfileViewModel(repository);
 });
