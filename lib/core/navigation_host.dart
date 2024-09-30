@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hackathon/data/model/activity.dart';
-import 'package:hackathon/presentation/activity_details/screen/activity_details.dart';
-import 'package:hackathon/presentation/me/screen/profile_screen.dart';
-import 'package:hackathon/presentation/common/navigator.dart';
-import 'package:hackathon/presentation/today/screen/today_screen.dart';
-import 'package:hackathon/presentation/activities/screen/activities_screen.dart';
+import 'package:movetopia/data/model/activity.dart';
+import 'package:movetopia/presentation/activities/screen/activities_screen.dart';
+import 'package:movetopia/presentation/activity_details/screen/activity_details.dart';
+import 'package:movetopia/presentation/common/navigator.dart';
+import 'package:movetopia/presentation/me/screen/profile_screen.dart';
+import 'package:movetopia/presentation/today/screen/today_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _todayTabNavigatorKey = GlobalKey<NavigatorState>();
@@ -19,7 +19,7 @@ final navigationRoutes = GoRouter(
     StatefulShellRoute.indexedStack(
         builder: (BuildContext context, GoRouterState state,
             StatefulNavigationShell navigationShell) {
-          return HackathonNavigator(navigationShell: navigationShell);
+          return MoveTopiaNavigator(navigationShell: navigationShell);
         },
         branches: <StatefulShellBranch>[
           StatefulShellBranch(

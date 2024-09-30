@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hackathon/core/health_authorized_view_model.dart';
-import 'package:hackathon/presentation/today/view_model/last_activity_view_model.dart';
-import 'package:hackathon/presentation/today/view_model/stats_view_model.dart';
-import 'package:hackathon/presentation/today/widgets/last_activity_card.dart';
-import 'package:hackathon/presentation/today/widgets/today_overview.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:movetopia/core/health_authorized_view_model.dart';
+import 'package:movetopia/presentation/today/view_model/last_activity_view_model.dart';
+import 'package:movetopia/presentation/today/view_model/stats_view_model.dart';
+import 'package:movetopia/presentation/today/widgets/last_activity_card.dart';
+import 'package:movetopia/presentation/today/widgets/today_overview.dart';
 
 import '../../me/view_model/profile_view_model.dart';
 
@@ -57,9 +57,10 @@ class TodayScreen extends HookConsumerWidget {
                       distance: statsViewModel.distance.toStringAsFixed(2),
                       stepGoal: ref.watch(profileProvider).stepGoal,
                     ),
-                    if(lastActivityState != null) LastActivityCard(
-                      lastActivity: lastActivityState.activityPreview,
-                    ),
+                    if (lastActivityState != null)
+                      LastActivityCard(
+                        lastActivity: lastActivityState.activityPreview,
+                      ),
                   ],
                 )));
     }

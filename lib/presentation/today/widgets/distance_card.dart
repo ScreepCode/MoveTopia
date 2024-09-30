@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hackathon/presentation/today/widgets/generic_card.dart';
+import 'package:movetopia/presentation/today/widgets/generic_card.dart';
 
 class DistanceCard extends StatelessWidget {
   const DistanceCard(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hackathon/presentation/me/view_model/profile_view_model.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
+import 'package:movetopia/presentation/me/view_model/profile_view_model.dart';
 
 final logger = Logger('ProfileScreen');
 

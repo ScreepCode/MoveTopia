@@ -1,4 +1,4 @@
-import 'package:hackathon/data/model/activity.dart';
+import 'package:movetopia/data/model/activity.dart';
 
 class ActivitiesState {
   List<ActivityPreview> activities;

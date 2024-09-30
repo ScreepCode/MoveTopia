@@ -1,6 +1,6 @@
-import 'package:hackathon/data/repositories/local_health_impl.dart';
-import 'package:hackathon/presentation/today/view_model/stats_state.dart';
 import 'package:health/health.dart';
+import 'package:movetopia/data/repositories/local_health_impl.dart';
+import 'package:movetopia/presentation/today/view_model/stats_state.dart';
 import 'package:riverpod/riverpod.dart';
 
 final statsViewModelProvider =

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class HackathonNavigator extends HookConsumerWidget {
+class MoveTopiaNavigator extends HookConsumerWidget {
   final StatefulNavigationShell navigationShell;
 
-  const HackathonNavigator({super.key, required this.navigationShell});
+  const MoveTopiaNavigator({super.key, required this.navigationShell});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
