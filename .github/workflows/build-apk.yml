@@ -21,7 +21,8 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version-file: pubspec.yaml # path to pubspec.yaml
+          flutter-version: 3.24.1 # path to pubspec.yaml
+
       - name: "Install flutter dependencies"
         run: flutter pub get
       - name: Upload Artifacts
