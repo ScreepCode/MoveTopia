@@ -30,4 +30,14 @@ jobs:
           name: Release
           path: |
             - build/app/outputs/flutter-apk/app-release.apk
+      - name: Get current date
+        run: |
+          echo "{date}={$(date +'%Y-%m-%d')}" >> $GITHUB_STATE
       - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ env.date }}
+          release_name: Release ${{ env.date }}
