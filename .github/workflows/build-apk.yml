@@ -1,0 +1,32 @@
+name: "Build APK"
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+jobs:
+  build:
+    name: "Build"
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Clone the repository"
+        uses: actions/checkout@v4
+      - name: "Set up Java environment"
+        uses: actions/setup-java@v4
+        with:
+          distribution: "oracle"
+          java-version: 22
+      - name: "Set Up Flutter"
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version-file: pubspec.yaml # path to pubspec.yaml
+      - name: "Install flutter dependencies"
+        run: flutter pub get
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+           name: Releases
+           path: |
+              - build/app/outputs/flutter-apk/app-release.apk
