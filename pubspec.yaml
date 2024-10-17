@@ -15,7 +15,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   riverpod: ^2.5.1
   hooks_riverpod: ^2.5.1
-  health: ^10.2.0
+  health: ^11.1.0
   intl: any
   flutter_localizations:
     sdk: flutter
