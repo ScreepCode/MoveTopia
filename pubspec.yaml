@@ -33,6 +33,7 @@ dev_dependencies:
   go_router_builder: any
   build_runner: any
   build_verify: any
+  flutter_launcher_icons: 0.14.1
 
 flutter:
   uses-material-design: true
