@@ -22,7 +22,7 @@ class HealthAuthViewModel extends StateNotifier<HealthAuthViewModelState> {
 
   HealthAuthViewModel(this.ref)
       : super(HealthAuthViewModelState.notAuthorized) {
-    _health.configure(useHealthConnectIfAvailable: true);
+    _health.configure();
     _init();
   }
 
@@ -47,6 +47,8 @@ class HealthAuthViewModel extends StateNotifier<HealthAuthViewModelState> {
         debugPrint("Exception in authorize: $error");
         state = HealthAuthViewModelState.error;
       }
+    } else {
+      state = HealthAuthViewModelState.authorized;
     }
   }
 }
