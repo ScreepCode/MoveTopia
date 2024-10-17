@@ -5,20 +5,20 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
-def localProperties = new Properties()
-def localPropertiesFile = rootProject.file("local.properties")
-if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader("UTF-8") { reader ->
-        localProperties.load(reader)
+def globalProperties = new Properties()
+def globalPropertiesFile = rootProject.file("global.properties")
+if (globalPropertiesFile.exists()) {
+    globalPropertiesFile.withReader("UTF-8") { reader ->
+        globalProperties.load(reader)
     }
 }
 
-def flutterVersionCode = localProperties.getProperty("flutter.versionCode")
+def flutterVersionCode = globalProperties.getProperty("flutter.versionCode")
 if (flutterVersionCode == null) {
     flutterVersionCode = "1"
 }
 
-def flutterVersionName = localProperties.getProperty("flutter.versionName")
+def flutterVersionName = globalProperties.getProperty("flutter.versionName")
 if (flutterVersionName == null) {
     flutterVersionName = "1.0"
 }
@@ -27,7 +27,7 @@ if (flutterVersionName == null) {
 android {
     namespace = "de.movetopia"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = localProperties.getProperty('flutter.ndkVersion')
+    ndkVersion = globalProperties.getProperty('flutter.ndkVersion')
     
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -42,7 +42,7 @@ android {
         applicationId = "de.movetopia"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdk = localProperties.getProperty('flutter.minSdkVersion').toInteger()
+        minSdk = globalProperties.getProperty('flutter.minSdkVersion').toInteger()
         targetSdk = flutter.targetSdkVersion
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
