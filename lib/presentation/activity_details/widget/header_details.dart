@@ -35,7 +35,7 @@ class HeaderDetails extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                          "${DateFormat("d MMM y H:s").format(start)} - ${DateFormat("H:s").format(end)}")
+                          "${DateFormat("d MMM y HH:mm").format(start)} - ${DateFormat("HH:mm").format(end)}")
                     ],
                   )
                 ]),
