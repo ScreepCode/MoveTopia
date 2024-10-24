@@ -133,7 +133,6 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
       List<HealthDataPoint>? heartFrequency = await getHealthDataInInterval(
           preview.start, preview.end, [HealthDataType.HEART_RATE]);
       if (data!.isEmpty || heartFrequency!.isEmpty) return null;
-      log.info(heartFrequency.length);
       List<Data<int>> heartRates = List.empty(growable: true);
       for (var value in heartFrequency) {
         heartRates.add(Data(
