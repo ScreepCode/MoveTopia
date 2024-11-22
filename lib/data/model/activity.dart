@@ -18,6 +18,7 @@ interface class Activity extends ActivityPreview {
     required super.caloriesBurnt,
     required super.start,
     required super.end,
+    required super.sourceId,
     this.heartRates,
     this.speed,
   });
@@ -29,16 +30,18 @@ interface class ActivityPreview {
   final double distance;
   final DateTime start;
   final DateTime end;
+  final String sourceId;
 
   const ActivityPreview(
       {required this.activityType,
       required this.caloriesBurnt,
       required this.distance,
       required this.start,
-      required this.end});
+      required this.end,
+      required this.sourceId});
 
   int getDuration() {
-    return start.difference(end).inMinutes.abs();
+    return start.difference(end).inSeconds.abs();
   }
 
   // Factory constructor to create an instance from a JSON map
@@ -49,6 +52,7 @@ interface class ActivityPreview {
       distance: json['distance'],
       start: DateTime.parse(json['start']),
       end: DateTime.parse(json['end']),
+      sourceId: json["sourceId"],
     );
   }
 
