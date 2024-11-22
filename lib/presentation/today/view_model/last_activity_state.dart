@@ -13,7 +13,8 @@ class LastActivityState {
             caloriesBurnt: 0,
             distance: 0,
             start: DateTime.now(),
-            end: DateTime.now()));
+            end: DateTime.now(),
+            sourceId: ""));
   }
 
   LastActivityState copyWith({ActivityPreview? newActivityPreview}) {

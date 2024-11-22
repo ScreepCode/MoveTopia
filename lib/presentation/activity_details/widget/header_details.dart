@@ -6,45 +6,57 @@ class HeaderDetails extends StatelessWidget {
   final DateTime start;
   final DateTime end;
   final IconData icon;
+  final dynamic platformIcon;
 
   const HeaderDetails(
       {this.icon = Icons.directions_walk,
       super.key,
       required this.title,
       required this.start,
-      required this.end});
+      required this.end,
+      this.platformIcon});
 
   @override
   Widget build(BuildContext context) {
     return Card(
-        child: SizedBox(
-            height: 100,
+        child: Container(
+            padding: const EdgeInsets.all(16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Column(children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                  Row(
+                Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                          "${DateFormat("d MMM y HH:mm").format(start)} - ${DateFormat("HH:mm").format(end)}")
-                    ],
-                  )
-                ]),
+                        title,
+                        style: const TextStyle(
+                          fontSize: 20,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            icon,
+                            color: Colors.grey,
+                          ),
+                          Text(
+                              "${DateFormat("d MMM y HH:mm").format(start)} - ${DateFormat("HH:mm").format(end)}",
+                              style: const TextStyle(
+                                color: Colors.grey,
+                              )),
+                        ],
+                      )
+                    ]),
                 Column(
                   children: [
-                    CircleAvatar(
-                      backgroundColor: Colors.cyan,
-                      child: Icon(icon ?? Icons.directions_walk),
-                    )
+                    if (platformIcon != null && platformIcon.isNotEmpty)
+                      CircleAvatar(
+                        backgroundColor: Colors.cyan,
+                        child: Image.memory(platformIcon),
+                      )
                   ],
                 )
               ],

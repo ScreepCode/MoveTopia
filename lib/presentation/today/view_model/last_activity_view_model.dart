@@ -26,7 +26,8 @@ class LastTrainingViewModel extends StateNotifier<LastActivityState?> {
               caloriesBurnt: healthValue.caloriesBurnt,
               distance: healthValue.distance,
               start: healthValue.start,
-              end: healthValue.end));
+              end: healthValue.end,
+              sourceId: healthValue.sourceId));
     } else {
       state = null;
     }
