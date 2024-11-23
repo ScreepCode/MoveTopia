@@ -114,7 +114,8 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
             end: current.dateTo,
             distance: healthValue.totalDistance != null
                 ? (healthValue.totalDistance! / 1000).toDouble()
-                : 0.0);
+                : 0.0,
+            sourceId: current.sourceName);
         parsedWorkouts.add(preview);
       }
       return parsedWorkouts;
@@ -147,7 +148,8 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
           end: preview.end,
           start: preview.start,
           activityType: preview.activityType,
-          heartRates: heartRates);
+          heartRates: heartRates,
+          sourceId: preview.sourceId);
     } catch (e) {
       return null;
     }
@@ -173,7 +175,8 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
             caloriesBurnt: calories,
             start: lastWorkout.dateFrom,
             end: lastWorkout.dateTo,
-            distance: (healthValue.totalDistance ?? 0).toDouble());
+            distance: (healthValue.totalDistance ?? 0).toDouble(),
+            sourceId: lastWorkout.sourceName);
       }
     } catch (e) {
       log.info(e);

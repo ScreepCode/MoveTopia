@@ -33,7 +33,7 @@ class LastActivityCard extends StatelessWidget {
                         ),
                         Row(children: [
                           Text(
-                              "${AppLocalizations.of(context)!.duration}: ${lastActivity.getDuration()}min"),
+                              "${AppLocalizations.of(context)!.duration}: ${(lastActivity.getDuration() / 60).toStringAsFixed(0)}min"),
                           Text(" ${lastActivity.caloriesBurnt} kcal")
                         ]),
                       ],

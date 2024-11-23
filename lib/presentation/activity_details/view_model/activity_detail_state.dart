@@ -1,11 +1,17 @@
+import 'dart:typed_data';
+
 import 'package:health/health.dart';
+import 'package:logging/logging.dart';
 import 'package:movetopia/data/model/activity.dart';
 
 class ActivityDetailState {
   Activity activity;
+  Uint8List icon;
   bool isLoading;
+  final log = Logger('activityDetailedState');
 
-  ActivityDetailState({required this.activity, required this.isLoading});
+  ActivityDetailState(
+      {required this.activity, required this.isLoading, required this.icon});
 
   factory ActivityDetailState.initial() {
     return ActivityDetailState(
@@ -16,23 +22,29 @@ class ActivityDetailState {
             start: DateTime.now(),
             end: DateTime.now(),
             heartRates: [],
-            speed: []),
-        isLoading: true);
+            speed: [],
+            sourceId: ""),
+        isLoading: true,
+        icon: Uint8List(0));
   }
 
-  ActivityDetailState copyWith({Activity? newActivity, bool? loading}) {
+  ActivityDetailState copyWith(
+      {Activity? newActivity, bool? loading, Uint8List? newIcon}) {
+    //if (newIcon == null && icon != null) newIcon = icon;
     return ActivityDetailState(
-        activity: newActivity ?? this.activity,
-        isLoading: loading ?? this.isLoading);
+        activity: newActivity ?? activity,
+        isLoading: loading ?? isLoading,
+        icon: newIcon ?? icon);
   }
 
   int getAverageHeartBeat() {
-    if (activity.heartRates != null && activity.heartRates!.isNotEmpty) {
+    final heartRates = activity.heartRates;
+    if (heartRates != null) {
       double sum = 0;
-      activity.heartRates?.forEach((e) {
+      heartRates.forEach((e) {
         sum += e.value;
       });
-      return (sum / activity.heartRates!.length).round();
+      return (sum / heartRates.length).round();
     }
     return 0;
   }

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:logging/logging.dart';
 import 'package:movetopia/data/model/activity.dart';
 import 'package:movetopia/data/repositories/local_health_impl.dart';
@@ -29,11 +31,16 @@ class ActivityDetailedViewModel extends StateNotifier<ActivityDetailState> {
               start: activityDetailed.start,
               end: activityDetailed.end,
               heartRates: activityDetailed.heartRates,
-              speed: activityDetailed.speed));
+              speed: activityDetailed.speed,
+              sourceId: activityDetailed.sourceId));
     }
   }
 
   void setLoading(bool loading) {
-    state.isLoading = loading;
+    state = state.copyWith(loading: loading);
+  }
+
+  void setIcon(Uint8List? icon) {
+    state = state.copyWith(newIcon: icon);
   }
 }
