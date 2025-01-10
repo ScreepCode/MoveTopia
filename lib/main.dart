@@ -3,13 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
+import 'package:movetopia/core/authorizationWrapper.dart';
 import 'package:movetopia/core/navigation_host.dart';
 import 'package:movetopia/presentation/common/theme.dart';
 import 'package:movetopia/presentation/me/view_model/profile_view_model.dart';
 
 import 'core/health_authorized_view_model.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   runApp(
@@ -24,8 +25,16 @@ final myAppProvider = Provider((ref) {
 interface class MoveTopiaAppViewModel {
   final Ref ref;
   final log = Logger('MoveTopiaAppViewModel');
+  bool _isInitialized = false;
 
-  init() {
+  MoveTopiaAppViewModel(this.ref);
+
+  void init() {
+    if (_isInitialized) {
+      return;
+    }
+    _isInitialized = true;
+
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((record) {
       print('${record.level.name}: ${record.message}');
@@ -39,25 +48,27 @@ interface class MoveTopiaAppViewModel {
       systemStatusBarContrastEnforced: false,
     ));
 
-    HealthAuthViewModelState state = ref.watch(healthViewModelProvider);
-    // React to changes in the health authorization state
+    _checkAuthorization();
+  }
+
+  Future<void> _checkAuthorization() async {
+    final healthAuthViewModel = ref.read(healthViewModelProvider.notifier);
+    await healthAuthViewModel.authorize();
+    final state = ref.read(healthViewModelProvider);
     switch (state) {
       case HealthAuthViewModelState.authorized:
-        // Proceed with actions that require health data
         log.info('Health data access authorized.');
+        break;
       case HealthAuthViewModelState.authorizationNotGranted:
-        // Handle user denial of authorization
         log.info('Health data access not granted.');
+        break;
       case HealthAuthViewModelState.error:
-        // Handle authorization error
         log.severe('Health data access authorization error.');
+        break;
       default:
-        // Handle unexpected state (optional)
         log.warning("Unrecognized HealthAuthViewModelState: $state");
     }
   }
-
-  MoveTopiaAppViewModel(this.ref);
 }
 
 class MoveTopiaApp extends HookConsumerWidget {
@@ -69,7 +80,6 @@ class MoveTopiaApp extends HookConsumerWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: theme,
-      // darkTheme: const MaterialTheme(Typography.whiteHelsinki).dark(),
     );
   }
 
@@ -81,6 +91,8 @@ class MoveTopiaApp extends HookConsumerWidget {
         ? const MaterialTheme(Typography.whiteHelsinki).dark()
         : const MaterialTheme(Typography.whiteHelsinki).light();
     provider.init();
-    return buildMaterialApp(theme);
+    return AuthorizationWrapper(
+      child: buildMaterialApp(theme),
+    );
   }
 }

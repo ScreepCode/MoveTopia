@@ -21,7 +21,7 @@ class ActivityDetailsScreen extends HookConsumerWidget {
     var log = Logger("ActivityDetailsScreen");
     ActivityDetailState activityState =
         ref.watch(activityDetailedViewModelProvider);
-    HealthAuthViewModelState state = ref.watch(healthViewModelProvider);
+    HealthAuthViewModelState authState = ref.read(healthViewModelProvider);
 
     Future<void> fetchDetailedActivity() async {
       await ref
@@ -52,8 +52,7 @@ class ActivityDetailsScreen extends HookConsumerWidget {
           var activityDetailNotifier =
               ref.read(activityDetailedViewModelProvider.notifier);
           activityDetailNotifier.setLoading(true);
-          HealthAuthViewModelState state = ref.watch(healthViewModelProvider);
-          if (state == HealthAuthViewModelState.authorized) {
+          if (authState == HealthAuthViewModelState.authorized) {
             await fetchDetailedActivity();
           }
           await setIcon();
@@ -63,33 +62,46 @@ class ActivityDetailsScreen extends HookConsumerWidget {
         },
       );
       return;
-    }, [state]);
-    return activityState.isLoading
-        ? Center(
-            child: CircularProgressIndicator(
-            color: Theme.of(context).progressIndicatorTheme.circularTrackColor,
-            backgroundColor:
-                Theme.of(context).progressIndicatorTheme.circularTrackColor,
-            strokeWidth: 4,
-          ))
-        : SafeArea(
-            minimum: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-            child: ListView(
-              children: [
-                HeaderDetails(
-                  platformIcon: activityState.icon,
-                  title: getTranslatedActivityType(
-                      Localizations.localeOf(context),
-                      activityState.activity.activityType),
-                  start: activityState.activity.start,
-                  end: activityState.activity.end,
-                  icon: getActivityIcon(activityPreview.activityType),
-                ),
-                WorkoutDetails(
-                    averageHeartBeat: activityState.getAverageHeartBeat(),
-                    duration: activityPreview.getDuration(),
-                    caloriesBurnt: activityPreview.caloriesBurnt)
-              ],
-            ));
+    }, [authState]);
+
+    return Scaffold(
+      appBar: AppBar(),
+      body: activityState.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _buildContent(context, ref, activityState),
+    );
+  }
+
+  Widget _buildContent(
+      BuildContext context, WidgetRef ref, ActivityDetailState activityState) {
+    return SafeArea(
+      minimum: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      child: ListView(
+        children: [
+          _buildHeaderDetails(context, activityState),
+          _buildWorkoutDetails(activityState),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeaderDetails(
+      BuildContext context, ActivityDetailState activityState) {
+    return HeaderDetails(
+      platformIcon: activityState.icon,
+      title: getTranslatedActivityType(
+          Localizations.localeOf(context), activityState.activity.activityType),
+      start: activityState.activity.start,
+      end: activityState.activity.end,
+      icon: getActivityIcon(activityPreview.activityType),
+    );
+  }
+
+  Widget _buildWorkoutDetails(ActivityDetailState activityState) {
+    return WorkoutDetails(
+      averageHeartBeat: activityState.getAverageHeartBeat(),
+      duration: activityPreview.getDuration(),
+      caloriesBurnt: activityPreview.caloriesBurnt,
+    );
   }
 }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:movetopia/presentation/me/view_model/profile_view_model.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 final logger = Logger('ProfileScreen');
 
@@ -10,14 +13,41 @@ class ProfileScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final stepsGoal = ref.watch(profileProvider).stepGoal;
-    final count = ref.watch(profileProvider).count;
-    final isDarkMode = ref.watch(profileProvider).isDarkMode;
+    final packageInfoFuture = useMemoized(() => PackageInfo.fromPlatform());
+    final profileViewModel = ref.read(profileProvider.notifier);
 
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.profile),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _buildActivityGoals(context, ref),
+              _buildSettings(context, ref),
+              _buildAboutSection(context, packageInfoFuture),
+              _buildCounter(context, profileViewModel),
+            ],
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          profileViewModel.incrementCount();
+        },
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget _buildActivityGoals(BuildContext context, WidgetRef ref) {
+    final stepsGoal = ref.watch(profileProvider).stepGoal;
     TextEditingController stepsInputController =
         TextEditingController(text: stepsGoal.toString());
-
-    // This will update the value of stepGoal weather the user presses the enter key or taps outside the text field
     FocusNode stepsFocusNode = FocusNode();
     stepsFocusNode.addListener(() {
       if (!stepsFocusNode.hasFocus) {
@@ -30,78 +60,106 @@ class ProfileScreen extends HookConsumerWidget {
       }
     });
 
-    return Scaffold(
-      body: Center(
-        child: Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 16.0, vertical: 16.0), // Add padding here
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(AppLocalizations.of(context)!.activityGoals,
+                  style: Theme.of(context).textTheme.titleMedium),
+              const Divider()
+            ],
+          ),
+        ),
+        TextField(
+          controller: stepsInputController,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context)!.stepGoal,
+            hintText: AppLocalizations.of(context)!.enterStepGoal,
+            border: const OutlineInputBorder(),
+          ),
+          focusNode: stepsFocusNode,
+          onTapOutside: (context) {
+            stepsFocusNode.unfocus();
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSettings(BuildContext context, WidgetRef ref) {
+    final isDarkMode = ref.read(profileProvider).isDarkMode;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(AppLocalizations.of(context)!.app_settings,
+                  style: Theme.of(context).textTheme.titleMedium),
+              const Divider()
+            ],
+          ),
+        ),
+        SwitchListTile(
+          title: Text(AppLocalizations.of(context)!.darkMode),
+          contentPadding: EdgeInsets.zero,
+          value: isDarkMode,
+          onChanged: (value) {
+            ref.read(profileProvider.notifier).setIsDarkMode(value);
+            logger.info('Change in Dropdown');
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCounter(
+      BuildContext context, ProfileViewModel profileViewModel) {
+    final count = profileViewModel.count;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(
+        "${AppLocalizations.of(context)!.counter}: $count",
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
+    );
+  }
+
+  Widget _buildAboutSection(
+      BuildContext context, Future<PackageInfo> packageInfoFuture) {
+    return FutureBuilder<PackageInfo>(
+      future: packageInfoFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text(AppLocalizations.of(context)!.error_loading_version);
+        } else {
+          final packageInfo = snapshot.data!;
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Text(
-                    'Profile',
-                    style: Theme.of(context).textTheme.headlineLarge,
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text("Activiy Goals:"),
-                ),
-                const Divider(),
-                TextField(
-                  controller: stepsInputController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                      labelText: 'Step Goal',
-                      hintText: 'Enter your daily step goal',
-                      border: OutlineInputBorder()),
-                  focusNode: stepsFocusNode,
-                  onTapOutside: (context) {
-                    stepsFocusNode.unfocus();
-                  },
-                ),
-                const SizedBox(
-                  height: 32.0,
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text("Settings:"),
-                ),
-                const Divider(),
-                SwitchListTile(
-                  title: const Text('Dark Mode'),
-                  contentPadding: EdgeInsets.zero,
-                  value: isDarkMode,
-                  onChanged: (value) {
-                    ref.read(profileProvider.notifier).setIsDarkMode(value);
-                    logger.info('Change in Dropdown');
-                  },
-                ),
-                const SizedBox(
-                  height: 32.0,
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text("For Fun:"),
-                ),
+              children: [
+                Text(AppLocalizations.of(context)!.about,
+                    style: Theme.of(context).textTheme.titleMedium),
                 const Divider(),
                 Text(
-                  "Counter: $count",
-                  style: Theme.of(context).textTheme.headlineMedium,
+                  "${AppLocalizations.of(context)!.version}: ${packageInfo.version}",
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
-            )),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          ref.read(profileProvider.notifier).incrementCount();
-          logger.info('Increment button pressed');
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+            ),
+          );
+        }
+      },
     );
   }
 }

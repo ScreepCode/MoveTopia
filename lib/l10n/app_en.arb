@@ -10,5 +10,23 @@
   "last_activity": "Last Activity",
   "your_stats": "Your Stats",
   "distance": "Distance",
-  "duration": "Duration"
+  "duration": "Duration",
+  "activity_overview": "Activity Overview",
+  "no_activities_found": "No activities found",
+  "activity_details": "{distance}km in {minutes} minutes",
+  "please_allow_access": "Please allow access to health data",
+  "@please_allow_access": {
+    "description": "Message shown when health data access is not granted"
+  },
+  "dashboard": "Dashboard",
+  "profile": "Profile",
+  "activityGoals": "Activity Goals",
+  "stepGoal": "Step Goal",
+  "enterStepGoal": "Enter Step Goal",
+  "darkMode": "Dark Mode",
+  "counter": "Counter",
+  "app_settings": "App Settings",
+  "about": "About",
+  "version": "Version",
+  "error_loading_version": "Error loading version"
 }

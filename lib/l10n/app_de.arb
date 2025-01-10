@@ -7,5 +7,20 @@
     "last_activity": "Letzte Aktivität",
     "your_stats": "Deine Statistik",
     "distance": "Distanz",
-    "duration": "Dauer"
+    "duration": "Dauer",
+    "activity_overview": "Aktivitätsübersicht",
+    "no_activities_found": "Keine Aktivitäten gefunden",
+    "activity_details": "{distance}km in {minutes} Minuten",
+    "please_allow_access": "Bitte erlaube den Zugriff auf Gesundheitsdaten",
+    "dashboard": "Dashboard",
+    "profile": "Profil",
+    "activityGoals": "Aktivitätsziele",
+    "stepGoal": "Schrittziel",
+    "enterStepGoal": "Schrittziel eingeben",
+    "darkMode": "Dunkler Modus",
+    "counter": "Zähler",
+    "app_settings": "App Einstellungen",
+    "about": "Über",
+    "version": "Version",
+    "error_loading_version": "Fehler beim Laden der Version"
 }

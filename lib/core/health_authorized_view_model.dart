@@ -23,19 +23,11 @@ class HealthAuthViewModel extends StateNotifier<HealthAuthViewModelState> {
   HealthAuthViewModel(this.ref)
       : super(HealthAuthViewModelState.notAuthorized) {
     _health.configure();
-    _init();
   }
 
-  Future<void> _init() async {
-    await _authorize();
-  }
-
-  Future<void> _authorize() async {
-    // await Permission.activityRecognition.request();
-    // await Permission.location.request();
-
+  Future<void> authorize() async {
     bool? hasPermissions = await _health.hasPermissions(neededPermissions);
-    if (!hasPermissions!) {
+    if (hasPermissions == null || !hasPermissions) {
       try {
         bool authorized = await _health.requestAuthorization(neededPermissions);
         if (authorized) {
