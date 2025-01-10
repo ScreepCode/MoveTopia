@@ -10,5 +10,7 @@
     "duration": "Dauer",
     "activity_overview": "Aktivitätsübersicht",
     "no_activities_found": "Keine Aktivitäten gefunden",
-    "activity_details": "{distance}km in {minutes} Minuten"
+    "activity_details": "{distance}km in {minutes} Minuten",
+    "please_allow_access": "Bitte erlaube den Zugriff auf Gesundheitsdaten",
+    "dashboard": "Dashboard"
 }

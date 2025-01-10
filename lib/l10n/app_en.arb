@@ -13,5 +13,10 @@
   "duration": "Duration",
   "activity_overview": "Activity Overview",
   "no_activities_found": "No activities found",
-  "activity_details": "{distance}km in {minutes} minutes"
+  "activity_details": "{distance}km in {minutes} minutes",
+  "please_allow_access": "Please allow access to health data",
+  "@please_allow_access": {
+    "description": "Message shown when health data access is not granted"
+  },
+  "dashboard": "Dashboard"
 }
