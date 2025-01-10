@@ -21,7 +21,7 @@ class ActivityDetailsScreen extends HookConsumerWidget {
     var log = Logger("ActivityDetailsScreen");
     ActivityDetailState activityState =
         ref.watch(activityDetailedViewModelProvider);
-    HealthAuthViewModelState state = ref.watch(healthViewModelProvider);
+    HealthAuthViewModelState authState = ref.read(healthViewModelProvider);
 
     Future<void> fetchDetailedActivity() async {
       await ref
@@ -52,8 +52,7 @@ class ActivityDetailsScreen extends HookConsumerWidget {
           var activityDetailNotifier =
               ref.read(activityDetailedViewModelProvider.notifier);
           activityDetailNotifier.setLoading(true);
-          HealthAuthViewModelState state = ref.watch(healthViewModelProvider);
-          if (state == HealthAuthViewModelState.authorized) {
+          if (authState == HealthAuthViewModelState.authorized) {
             await fetchDetailedActivity();
           }
           await setIcon();
@@ -63,7 +62,7 @@ class ActivityDetailsScreen extends HookConsumerWidget {
         },
       );
       return;
-    }, [state]);
+    }, [authState]);
 
     return Scaffold(
       appBar: AppBar(),

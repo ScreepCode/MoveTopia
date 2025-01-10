@@ -25,5 +25,8 @@
   "enterStepGoal": "Enter Step Goal",
   "darkMode": "Dark Mode",
   "counter": "Counter",
-  "app_settings": "App Settings"
+  "app_settings": "App Settings",
+  "about": "About",
+  "version": "Version",
+  "error_loading_version": "Error loading version"
 }

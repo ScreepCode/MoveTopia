@@ -19,7 +19,7 @@ class ActivitiesScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activities = ref.watch(activitiesViewModelProvider);
-    HealthAuthViewModelState authState = ref.watch(healthViewModelProvider);
+    HealthAuthViewModelState authState = ref.read(healthViewModelProvider);
 
     Future<void> fetchHealthData() async {
       await ref.read(activitiesViewModelProvider.notifier).fetchActivities();

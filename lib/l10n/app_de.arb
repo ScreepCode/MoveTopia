@@ -19,5 +19,8 @@
     "enterStepGoal": "Schrittziel eingeben",
     "darkMode": "Dunkler Modus",
     "counter": "Zähler",
-    "app_settings": "App Einstellungen"
+    "app_settings": "App Einstellungen",
+    "about": "Über",
+    "version": "Version",
+    "error_loading_version": "Fehler beim Laden der Version"
 }
