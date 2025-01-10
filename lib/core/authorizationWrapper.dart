@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../core/health_authorized_view_model.dart';
+import 'health_authorized_view_model.dart';
 
 class AuthorizationWrapper extends HookConsumerWidget {
   final Widget child;
