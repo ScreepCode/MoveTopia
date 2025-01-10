@@ -18,5 +18,12 @@
   "@please_allow_access": {
     "description": "Message shown when health data access is not granted"
   },
-  "dashboard": "Dashboard"
+  "dashboard": "Dashboard",
+  "profile": "Profile",
+  "activityGoals": "Activity Goals",
+  "stepGoal": "Step Goal",
+  "enterStepGoal": "Enter Step Goal",
+  "darkMode": "Dark Mode",
+  "counter": "Counter",
+  "app_settings": "App Settings"
 }

@@ -12,5 +12,12 @@
     "no_activities_found": "Keine Aktivitäten gefunden",
     "activity_details": "{distance}km in {minutes} Minuten",
     "please_allow_access": "Bitte erlaube den Zugriff auf Gesundheitsdaten",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "profile": "Profil",
+    "activityGoals": "Aktivitätsziele",
+    "stepGoal": "Schrittziel",
+    "enterStepGoal": "Schrittziel eingeben",
+    "darkMode": "Dunkler Modus",
+    "counter": "Zähler",
+    "app_settings": "App Einstellungen"
 }
