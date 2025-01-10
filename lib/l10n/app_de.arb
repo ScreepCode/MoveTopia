@@ -7,5 +7,8 @@
     "last_activity": "Letzte Aktivität",
     "your_stats": "Deine Statistik",
     "distance": "Distanz",
-    "duration": "Dauer"
+    "duration": "Dauer",
+    "activity_overview": "Aktivitätsübersicht",
+    "no_activities_found": "Keine Aktivitäten gefunden",
+    "activity_details": "{distance}km in {minutes} Minuten"
 }

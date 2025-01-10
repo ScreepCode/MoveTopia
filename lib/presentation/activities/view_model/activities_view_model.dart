@@ -17,12 +17,12 @@ class ActivitiesViewModel extends StateNotifier<ActivitiesState> {
   ActivitiesViewModel(this.ref) : super(ActivitiesState.initial());
 
   Future<void> fetchActivities() async {
-    // This should fetch the last training. Currently thats only mock data
+    state = state.copyWith(isLoading: true);
     DateTime now = DateTime.now();
     List<ActivityPreview>? workouts = await ref
         .read(localHealthRepositoryProvider)
         .getActivities(now.subtract(const Duration(days: 7)), now);
 
-    state = state.copyWith(activities: workouts);
+    state = state.copyWith(activities: workouts, isLoading: false);
   }
 }

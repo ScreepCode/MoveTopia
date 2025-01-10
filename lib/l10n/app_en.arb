@@ -10,5 +10,8 @@
   "last_activity": "Last Activity",
   "your_stats": "Your Stats",
   "distance": "Distance",
-  "duration": "Duration"
+  "duration": "Duration",
+  "activity_overview": "Activity Overview",
+  "no_activities_found": "No activities found",
+  "activity_details": "{distance}km in {minutes} minutes"
 }
