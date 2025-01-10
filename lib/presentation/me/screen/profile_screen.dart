@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:movetopia/presentation/me/view_model/profile_view_model.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 final logger = Logger('ProfileScreen');
 
@@ -11,6 +13,9 @@ class ProfileScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final packageInfoFuture = useMemoized(() => PackageInfo.fromPlatform());
+    final profileViewModel = ref.read(profileProvider.notifier);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.profile),
@@ -23,15 +28,15 @@ class ProfileScreen extends HookConsumerWidget {
             children: <Widget>[
               _buildActivityGoals(context, ref),
               _buildSettings(context, ref),
-              _buildCounter(context, ref),
+              _buildAboutSection(context, packageInfoFuture),
+              _buildCounter(context, profileViewModel),
             ],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          ref.read(profileProvider.notifier).incrementCount();
-          logger.info('Increment button pressed');
+          profileViewModel.incrementCount();
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
@@ -87,7 +92,7 @@ class ProfileScreen extends HookConsumerWidget {
   }
 
   Widget _buildSettings(BuildContext context, WidgetRef ref) {
-    final isDarkMode = ref.watch(profileProvider).isDarkMode;
+    final isDarkMode = ref.read(profileProvider).isDarkMode;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -115,14 +120,46 @@ class ProfileScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _buildCounter(BuildContext context, WidgetRef ref) {
-    final count = ref.watch(profileProvider).count;
+  Widget _buildCounter(
+      BuildContext context, ProfileViewModel profileViewModel) {
+    final count = profileViewModel.count;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Text(
         "${AppLocalizations.of(context)!.counter}: $count",
         style: Theme.of(context).textTheme.titleMedium,
       ),
+    );
+  }
+
+  Widget _buildAboutSection(
+      BuildContext context, Future<PackageInfo> packageInfoFuture) {
+    return FutureBuilder<PackageInfo>(
+      future: packageInfoFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text(AppLocalizations.of(context)!.error_loading_version);
+        } else {
+          final packageInfo = snapshot.data!;
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(AppLocalizations.of(context)!.about,
+                    style: Theme.of(context).textTheme.titleMedium),
+                const Divider(),
+                Text(
+                  "${AppLocalizations.of(context)!.version}: ${packageInfo.version}",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
+          );
+        }
+      },
     );
   }
 }
