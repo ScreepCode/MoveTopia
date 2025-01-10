@@ -62,16 +62,35 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
   }
 
   /// Get the sleep data
+  /// This method returns the actual sleep time, without time spent awake
   @override
   Future<int> getSleepFromDate(DateTime date) async {
     try {
-      var sleep = await getHealthDataInInterval(date,
-          date.add(const Duration(days: 3)), [HealthDataType.SLEEP_SESSION]);
+      var sleepHealthValues = await getHealthDataInInterval(date,
+          date.add(const Duration(days: 1)), [HealthDataType.SLEEP_SESSION]);
+      if (sleepHealthValues!.isEmpty) return 0;
 
-      if (sleep!.isEmpty) return 0;
-      return NumericHealthValue.fromJson(sleep[0].value.toJson())
-          .numericValue
-          .toInt();
+      // Get the times being awake in the period of one sleep cyclus
+      var awakeTimeHealthValues = await getHealthDataInInterval(
+          sleepHealthValues[0].dateFrom,
+          sleepHealthValues[0].dateTo,
+          [HealthDataType.SLEEP_AWAKE]);
+
+      var sleepTime =
+          NumericHealthValue.fromJson(sleepHealthValues[0].value.toJson())
+              .numericValue
+              .toInt();
+      var awakeTime = 0.0;
+
+      if (awakeTimeHealthValues!.isNotEmpty) {
+        for (var value in awakeTimeHealthValues) {
+          var time = NumericHealthValue.fromJson(value.value.toJson())
+              .numericValue
+              .toDouble();
+          awakeTime += time;
+        }
+      }
+      return sleepTime - awakeTime.toInt();
     } catch (e) {
       log.info(e);
       return -1;
