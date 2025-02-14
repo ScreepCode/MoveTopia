@@ -38,6 +38,7 @@ class TodayScreen extends HookConsumerWidget {
     }, []);
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Row(
           children: [

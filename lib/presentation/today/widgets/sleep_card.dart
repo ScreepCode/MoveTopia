@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:movetopia/presentation/today/widgets/generic_card.dart';
+import 'package:movetopia/presentation/common/widgets/generic_card.dart';
 
 class SleepCard extends StatelessWidget {
   const SleepCard({super.key, required this.value});

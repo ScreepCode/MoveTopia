@@ -67,7 +67,10 @@ Widget _buildActivityList(
     itemCount: activities.length,
     itemBuilder: (context, index) {
       final activity = activities[index];
-      return _buildActivityItem(context, activity);
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: _buildActivityItem(context, activity),
+      );
     },
   );
 }
