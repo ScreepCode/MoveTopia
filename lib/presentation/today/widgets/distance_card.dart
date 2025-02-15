@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:movetopia/presentation/today/widgets/generic_card.dart';
+import 'package:movetopia/presentation/common/widgets/generic_card.dart';
 
 class DistanceCard extends StatelessWidget {
   const DistanceCard(
@@ -17,13 +17,10 @@ class DistanceCard extends StatelessWidget {
         title: AppLocalizations.of(context)!.distance,
         color: color,
         iconData: Icons.map,
-        contentHeight: 50.0,
         content:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(value,
-              style:
-                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          Spacer(),
+          Text(value, style: const TextStyle(fontSize: 20)),
+          const SizedBox(height: 8),
           LinearProgressIndicator(
             value: percentage,
             color: color,

@@ -74,7 +74,7 @@ interface class MoveTopiaAppViewModel {
 class MoveTopiaApp extends HookConsumerWidget {
   const MoveTopiaApp({super.key});
 
-  MaterialApp buildMaterialApp(theme) {
+  MaterialApp buildMaterialApp(ThemeData theme) {
     return MaterialApp.router(
       routerConfig: navigationRoutes,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -87,9 +87,7 @@ class MoveTopiaApp extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final provider = ref.read(myAppProvider);
     var isDarkMode = ref.watch(profileProvider).isDarkMode;
-    var theme = isDarkMode
-        ? const MaterialTheme(Typography.whiteHelsinki).dark()
-        : const MaterialTheme(Typography.whiteHelsinki).light();
+    var theme = isDarkMode ? darkTheme : lightTheme;
     provider.init();
     return AuthorizationWrapper(
       child: buildMaterialApp(theme),

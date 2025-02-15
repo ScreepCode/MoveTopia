@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:movetopia/presentation/common/app_assets.dart';
 import 'package:movetopia/presentation/today/view_model/last_activity_view_model.dart';
 import 'package:movetopia/presentation/today/view_model/stats_view_model.dart';
 import 'package:movetopia/presentation/today/widgets/last_activity_card.dart';
@@ -37,8 +38,18 @@ class TodayScreen extends HookConsumerWidget {
     }, []);
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.dashboard),
+        title: Row(
+          children: [
+            const Image(
+                image: AssetImage(AppAssets.appIcon), width: 40, height: 40),
+            Text(AppLocalizations.of(context)!.app_name)
+          ],
+        ),
+        actions: [
+          IconButton(onPressed: () => (), icon: const Icon(Icons.settings))
+        ],
       ),
       body: _buildBody(
           context, ref, lastActivityState, statsState, fetchHealthData),

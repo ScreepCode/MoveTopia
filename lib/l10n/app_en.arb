@@ -4,6 +4,7 @@
   "@helloWorld": {
     "description": "The conventional newborn programmer greeting"
   },
+  "app_name": "MoveTopia",
   "sleep": "Sleep",
   "hours": "Hours",
   "steps": "Steps",
