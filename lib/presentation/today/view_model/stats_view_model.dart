@@ -1,4 +1,3 @@
-import 'package:health/health.dart';
 import 'package:movetopia/data/repositories/local_health_impl.dart';
 import 'package:riverpod/riverpod.dart';
 
