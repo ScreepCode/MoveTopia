@@ -1,7 +1,8 @@
 import 'package:health/health.dart';
 import 'package:movetopia/data/repositories/local_health_impl.dart';
-import 'package:movetopia/presentation/today/view_model/stats_state.dart';
 import 'package:riverpod/riverpod.dart';
+
+import 'stats_state.dart';
 
 final statsViewModelProvider =
     StateNotifierProvider.autoDispose<StatsViewModel, StatsState>((ref) {
@@ -10,6 +11,7 @@ final statsViewModelProvider =
 
 class StatsViewModel extends StateNotifier<StatsState> {
   late final Ref ref;
+
   StatsViewModel(this.ref) : super(StatsState.initial());
 
   Future<void> fetchStats() async {

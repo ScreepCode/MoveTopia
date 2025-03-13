@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-import '../../common/widgets/generic_card.dart';
+import 'package:movetopia/presentation/common/widgets/generic_card.dart';
 
 class HeaderDetails extends StatelessWidget {
   final String title;

@@ -6,7 +6,7 @@ import 'package:logging/logging.dart';
 import 'package:movetopia/core/authorizationWrapper.dart';
 import 'package:movetopia/core/navigation_host.dart';
 import 'package:movetopia/presentation/common/theme.dart';
-import 'package:movetopia/presentation/me/view_model/profile_view_model.dart';
+import 'package:movetopia/presentation/profile/view_model/profile_view_model.dart';
 
 import 'core/health_authorized_view_model.dart';
 
