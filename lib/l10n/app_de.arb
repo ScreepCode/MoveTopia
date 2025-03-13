@@ -22,5 +22,9 @@
     "app_settings": "App Einstellungen",
     "about": "Über",
     "version": "Version",
-    "error_loading_version": "Fehler beim Laden der Version"
+    "error_loading_version": "Fehler beim Laden der Version",
+    "navigation_today": "Heute",
+    "navigation_activities": "Aktivitäten",
+    "navigation_challenges": "Herausforderungen",
+    "navigation_profile": "Profil"
 }

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:movetopia/data/model/activity.dart';
 import 'package:movetopia/presentation/activities/screen/activities_screen.dart';
 import 'package:movetopia/presentation/activity_details/screen/activity_details.dart';
+import 'package:movetopia/presentation/challanges/screen/challanges_screen.dart';
 import 'package:movetopia/presentation/common/navigator.dart';
 import 'package:movetopia/presentation/me/screen/profile_screen.dart';
 import 'package:movetopia/presentation/today/screen/today_screen.dart';
@@ -10,6 +11,7 @@ import 'package:movetopia/presentation/today/screen/today_screen.dart';
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _todayTabNavigatorKey = GlobalKey<NavigatorState>();
 final _activitiesTabNavigatorKey = GlobalKey<NavigatorState>();
+final _challengesTabNavigatorKey = GlobalKey<NavigatorState>();
 final _meTabNavigatorKey = GlobalKey<NavigatorState>();
 
 final navigationRoutes = GoRouter(
@@ -45,6 +47,14 @@ final navigationRoutes = GoRouter(
                         ),
                       )
                     ])
+              ]),
+          StatefulShellBranch(
+              navigatorKey: _challengesTabNavigatorKey,
+              routes: <RouteBase>[
+                GoRoute(
+                    path: "/challenges",
+                    builder: (BuildContext context, GoRouterState state) =>
+                    const ChallengesScreen())
               ]),
           StatefulShellBranch(
               navigatorKey: _meTabNavigatorKey,

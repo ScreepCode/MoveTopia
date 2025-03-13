@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class MoveTopiaNavigator extends HookConsumerWidget {
   final StatefulNavigationShell navigationShell;
@@ -12,11 +14,14 @@ class MoveTopiaNavigator extends HookConsumerWidget {
 
     return currentLocation == '/' ||
         currentLocation == '/activities' ||
+        currentLocation == '/challenges' ||
         currentLocation == '/me';
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: _isRootRoute(context)
@@ -24,18 +29,22 @@ class MoveTopiaNavigator extends HookConsumerWidget {
               selectedIndex: navigationShell.currentIndex,
               onDestinationSelected: (int index) =>
                   navigationShell.goBranch(index),
-              destinations: const [
+              destinations: [
                 NavigationDestination(
-                  icon: Icon(Icons.today),
-                  label: 'Today',
+                  icon: const Icon(Icons.today),
+                  label: l10n.navigation_today,
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.list),
-                  label: 'Activities',
+                  icon: const Icon(Icons.list),
+                  label: l10n.navigation_activities,
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.person),
-                  label: 'Profile',
+                  icon: const Icon(Icons.emoji_events),
+                  label: l10n.navigation_challenges,
+                ),
+                NavigationDestination(
+                  icon: const Icon(Icons.person),
+                  label: l10n.navigation_profile,
                 ),
               ],
             )
