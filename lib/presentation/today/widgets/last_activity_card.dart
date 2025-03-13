@@ -15,14 +15,16 @@ class LastActivityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GenericCard(
+    return
+      GestureDetector(
+        onTap: () => context.push("/activities/details", extra: lastActivity),
+        child: GenericCard(
       title:
-          "${AppLocalizations.of(context)!.last_activity} - ${getTranslatedActivityType(Localizations.localeOf(context), lastActivity.activityType)}",
+           getTranslatedActivityType(Localizations.localeOf(context), lastActivity.activityType),
+      subtitles: [(AppLocalizations.of(context)!.last_activity)],
       iconData: Icons.directions_walk_outlined,
       color: Colors.lightGreen,
-      content: GestureDetector(
-        onTap: () => context.push("/activities/details", extra: lastActivity),
-        child: Row(
+      content: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
