@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:movetopia/presentation/challanges/screen/challanges_screen.dart';
+import 'package:movetopia/presentation/challenges/screen/challenges_screen.dart';
 
 const challengesPath = '/challenges';
 

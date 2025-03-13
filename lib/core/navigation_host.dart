@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:movetopia/presentation/common/navigator.dart';
 
 import '../presentation/activities/routes.dart';
-import '../presentation/challanges/routes.dart';
+import '../presentation/challenges/routes.dart';
 import '../presentation/profile/routes.dart';
 import '../presentation/today/routes.dart';
 

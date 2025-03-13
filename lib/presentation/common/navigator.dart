@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:movetopia/presentation/activities/routes.dart';
-import 'package:movetopia/presentation/challanges/routes.dart';
+import 'package:movetopia/presentation/challenges/routes.dart';
 import 'package:movetopia/presentation/profile/routes.dart';
 import 'package:movetopia/presentation/today/routes.dart';
 
