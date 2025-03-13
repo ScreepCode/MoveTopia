@@ -19,7 +19,7 @@ class ProfileScreen extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.profile),
+        title: Text(AppLocalizations.of(context)!.navigation_profile),
       ),
       body: Center(
         child: Padding(
@@ -69,7 +69,7 @@ class ProfileScreen extends HookConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(AppLocalizations.of(context)!.activityGoals,
+              Text(AppLocalizations.of(context)!.goal_activities_title,
                   style: Theme.of(context).textTheme.titleMedium),
               const Divider()
             ],
@@ -79,8 +79,8 @@ class ProfileScreen extends HookConsumerWidget {
           controller: stepsInputController,
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
-            labelText: AppLocalizations.of(context)!.stepGoal,
-            hintText: AppLocalizations.of(context)!.enterStepGoal,
+            labelText: AppLocalizations.of(context)!.goal_steps_title,
+            hintText: AppLocalizations.of(context)!.goal_steps_set_goal,
             border: const OutlineInputBorder(),
           ),
           focusNode: stepsFocusNode,
@@ -102,14 +102,14 @@ class ProfileScreen extends HookConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(AppLocalizations.of(context)!.app_settings,
+              Text(AppLocalizations.of(context)!.navigation_app_settings,
                   style: Theme.of(context).textTheme.titleMedium),
               const Divider()
             ],
           ),
         ),
         SwitchListTile(
-          title: Text(AppLocalizations.of(context)!.darkMode),
+          title: Text(AppLocalizations.of(context)!.common_dark_mode),
           contentPadding: EdgeInsets.zero,
           value: isDarkMode,
           onChanged: (value) {
@@ -127,7 +127,7 @@ class ProfileScreen extends HookConsumerWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Text(
-        "${AppLocalizations.of(context)!.counter}: $count",
+        "${AppLocalizations.of(context)!.common_counter}: $count",
         style: Theme.of(context).textTheme.titleMedium,
       ),
     );
@@ -141,7 +141,7 @@ class ProfileScreen extends HookConsumerWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          return Text(AppLocalizations.of(context)!.error_loading_version);
+          return Text(AppLocalizations.of(context)!.common_error_version);
         } else {
           final packageInfo = snapshot.data!;
           return Padding(
@@ -149,11 +149,11 @@ class ProfileScreen extends HookConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(AppLocalizations.of(context)!.about,
+                Text(AppLocalizations.of(context)!.common_about,
                     style: Theme.of(context).textTheme.titleMedium),
                 const Divider(),
                 Text(
-                  "${AppLocalizations.of(context)!.version}: ${packageInfo.version}",
+                  "${AppLocalizations.of(context)!.common_version}: ${packageInfo.version}",
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],

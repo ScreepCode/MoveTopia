@@ -57,7 +57,7 @@ Widget _buildBody(BuildContext context, ActivitiesState activities,
         : activities.isLoading
             ? const Center(child: CircularProgressIndicator())
             : Center(
-                child: Text(AppLocalizations.of(context)!.no_activities_found)),
+                child: Text(AppLocalizations.of(context)!.activity_no_activities_found)),
   );
 }
 

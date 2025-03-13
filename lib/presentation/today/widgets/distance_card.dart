@@ -14,7 +14,7 @@ class DistanceCard extends StatelessWidget {
     const color = Colors.cyan;
 
     return GenericCard(
-        title: AppLocalizations.of(context)!.distance,
+        title: AppLocalizations.of(context)!.activity_distance,
         color: color,
         iconData: Icons.map,
         content:

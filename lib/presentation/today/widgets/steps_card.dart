@@ -16,7 +16,7 @@ class StepsCard extends StatelessWidget {
     var percentage = steps / stepGoal;
 
     return GenericCard(
-      title: AppLocalizations.of(context)!.steps,
+      title: AppLocalizations.of(context)!.common_health_data_steps,
       color: color,
       iconData: Icons.directions_walk_outlined,
       contentAlignment: CrossAxisAlignment.center,
