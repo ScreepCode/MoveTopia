@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
+import 'package:movetopia/presentation/activities/routes.dart';
+import 'package:movetopia/presentation/challanges/routes.dart';
+import 'package:movetopia/presentation/profile/routes.dart';
+import 'package:movetopia/presentation/today/routes.dart';
 
 class MoveTopiaNavigator extends HookConsumerWidget {
   final StatefulNavigationShell navigationShell;
@@ -12,10 +15,10 @@ class MoveTopiaNavigator extends HookConsumerWidget {
   bool _isRootRoute(BuildContext context) {
     final currentLocation = GoRouterState.of(context).fullPath;
 
-    return currentLocation == '/' ||
-        currentLocation == '/activities' ||
-        currentLocation == '/challenges' ||
-        currentLocation == '/me';
+    return currentLocation == todayPath ||
+        currentLocation == activitiesListPath ||
+        currentLocation == challengesPath ||
+        currentLocation == profilePath;
   }
 
   @override

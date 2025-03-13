@@ -1,9 +1,9 @@
 import 'package:logging/logging.dart';
-import 'package:movetopia/presentation/me/view_model/profile_state.dart';
+import 'package:movetopia/data/repositories/profile_repository_impl.dart';
+import 'package:movetopia/domain/repositories/profile_repository.dart';
 import 'package:riverpod/riverpod.dart';
 
-import '../../../data/repositories/profile_repository_impl.dart';
-import '../../../domain/repositories/profile_repository.dart';
+import 'profile_state.dart';
 
 final logger = Logger('ProfileViewModel');
 
@@ -43,7 +43,9 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
   }
 
   int get stepGoal => state.stepGoal;
+
   int get count => state.count;
+
   bool get isDarkMode => state.isDarkMode;
 
   void setStepGoal(int stepGoal) async {

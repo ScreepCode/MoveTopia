@@ -5,11 +5,11 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:movetopia/core/health_authorized_view_model.dart';
-import 'package:movetopia/presentation/activities/view_model/activities_view_model.dart';
 import 'package:movetopia/utils/health_utils.dart';
+import 'package:movetopia/data/model/activity.dart';
 
-import '../../../data/model/activity.dart';
 import '../view_model/activities_state.dart';
+import '../view_model/activities_view_model.dart';
 
 final log = Logger("ActivitiesScreen");
 

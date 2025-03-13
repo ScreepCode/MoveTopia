@@ -3,8 +3,9 @@ import 'dart:typed_data';
 import 'package:logging/logging.dart';
 import 'package:movetopia/data/model/activity.dart';
 import 'package:movetopia/data/repositories/local_health_impl.dart';
-import 'package:movetopia/presentation/activity_details/view_model/activity_detail_state.dart';
 import 'package:riverpod/riverpod.dart';
+
+import 'activity_detail_state.dart';
 
 final activityDetailedViewModelProvider = StateNotifierProvider.autoDispose<
     ActivityDetailedViewModel, ActivityDetailState>((ref) {

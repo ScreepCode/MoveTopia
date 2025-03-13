@@ -5,11 +5,12 @@ import 'package:installed_apps/installed_apps.dart';
 import 'package:logging/logging.dart';
 import 'package:movetopia/core/health_authorized_view_model.dart';
 import 'package:movetopia/data/model/activity.dart';
-import 'package:movetopia/presentation/activity_details/view_model/activity_detail_state.dart';
-import 'package:movetopia/presentation/activity_details/view_model/activity_detail_view_model.dart';
-import 'package:movetopia/presentation/activity_details/widget/header_details.dart';
-import 'package:movetopia/presentation/activity_details/widget/workout_details.dart';
 import 'package:movetopia/utils/health_utils.dart';
+
+import '../view_model/activity_detail_state.dart';
+import '../view_model/activity_detail_view_model.dart';
+import '../widget/header_details.dart';
+import '../widget/workout_details.dart';
 
 class ActivityDetailsScreen extends HookConsumerWidget {
   const ActivityDetailsScreen({super.key, required this.activityPreview});
