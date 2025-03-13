@@ -30,7 +30,7 @@ class TodayOverview extends StatelessWidget {
     return Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       Row(
         children: [
-          Text(AppLocalizations.of(context)!.your_stats,
+          Text(AppLocalizations.of(context)!.stats_title,
               style: const TextStyle(fontSize: 20)),
           const Spacer(),
           const Icon(Icons.navigate_next)

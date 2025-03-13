@@ -12,7 +12,7 @@ class SleepCard extends StatelessWidget {
     const color = Colors.amber;
 
     return GenericCard(
-        title: AppLocalizations.of(context)!.sleep,
+        title: AppLocalizations.of(context)!.common_health_data_sleep,
         iconData: Icons.bedtime,
         color: color,
         content:
@@ -21,7 +21,7 @@ class SleepCard extends StatelessWidget {
               style:
                   const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           Text(
-            AppLocalizations.of(context)!.hours,
+            AppLocalizations.of(context)!.common_health_data_hours,
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
           ),
         ]));
