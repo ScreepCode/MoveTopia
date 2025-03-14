@@ -21,14 +21,14 @@ class LastActivityCard extends StatelessWidget {
         child: GenericCard(
       title:
            getTranslatedActivityType(Localizations.localeOf(context), lastActivity.activityType),
-      subtitles: [(AppLocalizations.of(context)!.last_activity)],
+      subtitles: [(AppLocalizations.of(context)!.activity_last_activity)],
       iconData: Icons.directions_walk_outlined,
       color: Colors.lightGreen,
       content: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "${AppLocalizations.of(context)!.duration}: ${(lastActivity.getDuration() / 60).toStringAsFixed(0)}min   ${lastActivity.caloriesBurnt} kcal",
+              "${AppLocalizations.of(context)!.activity_duration}: ${(lastActivity.getDuration() / 60).toStringAsFixed(0)}min   ${lastActivity.caloriesBurnt} kcal",
               style: const TextStyle(fontSize: 16),
             ),
           ],

@@ -18,7 +18,7 @@ class AuthorizationWrapper extends HookConsumerWidget {
     } else if (authState == HealthAuthViewModelState.authorizationNotGranted ||
         authState == HealthAuthViewModelState.error) {
       return Center(
-          child: Text(AppLocalizations.of(context)!.please_allow_access));
+          child: Text(AppLocalizations.of(context)!.common_access_health));
     } else if (authState == HealthAuthViewModelState.authorized) {
       return child;
     } else {
