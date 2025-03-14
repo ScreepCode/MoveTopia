@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:health/health.dart';
 import 'package:logging/logging.dart';
 import 'package:movetopia/data/model/activity.dart';
@@ -16,7 +18,7 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
       _compareDate(start, end);
 
       List<HealthDataPoint> dataPoint = await Health()
-          .getHealthDataFromTypes(types: types, startTime: start, endTime: end);
+          .getHealthDataFromTypes(types: types, startTime: start, endTime: end );
       return dataPoint;
     } catch (e) {
       log.info(e);
@@ -45,16 +47,25 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
   /// Get the total distance covered in the given interval
   @override
   Future<double> getDistanceInInterval(
-      DateTime start, DateTime end, List<HealthDataType> distanceTypes) async {
+      DateTime start, DateTime end) async {
+    var distanceTypes;
+    if(Platform.isAndroid) {
+      distanceTypes = [HealthDataType.DISTANCE_DELTA];
+    } else if(Platform.isIOS) {
+      distanceTypes = [HealthDataType.DISTANCE_WALKING_RUNNING];
+    } else {
+      throw Exception("Unsupported platform");
+    }
+
     try {
       var distances = await getHealthDataInInterval(
-          start, end, [HealthDataType.DISTANCE_DELTA]);
+          start, end, distanceTypes);
       double combinedDistance = 0;
       for (var data in distances!) {
         combinedDistance +=
             NumericHealthValue.fromJson(data.value.toJson()).numericValue;
       }
-      return combinedDistance / 1000;
+      return combinedDistance ;
     } catch (e) {
       //log.info(e);
       return -1;
@@ -209,5 +220,28 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
     } else {
       throw Exception("Start date is greater than end date");
     }
+  }
+
+  @override
+  Future<double> getDistanceOfWorkoutsInInterval(DateTime start, DateTime end, List<HealthWorkoutActivityType> workoutTypes) async {
+    try {
+      var workouts = await getHealthDataInInterval(
+          start, end, [
+        HealthDataType.WORKOUT,
+      ]);
+      if (workouts == null || workouts.isEmpty) {
+        return 0;
+      } else {
+        workouts = workouts.where((element) => workoutTypes.contains((element.value as WorkoutHealthValue).workoutActivityType)).toList();
+        double distance = 0;
+        for (var workout in workouts) {
+          distance += (workout.value as WorkoutHealthValue).totalDistance ?? 0;
+        }
+        return distance;
+      }
+    } catch (e) {
+      log.info(e);
+    }
+    return 0;
   }
 }

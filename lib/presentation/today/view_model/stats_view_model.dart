@@ -1,4 +1,3 @@
-import 'package:health/health.dart';
 import 'package:movetopia/data/repositories/local_health_impl.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -23,7 +22,7 @@ class StatsViewModel extends StateNotifier<StatsState> {
     double distance = await ref
         .read(localHealthRepositoryProvider)
         .getDistanceInInterval(
-            lastMidnight, now, [HealthDataType.DISTANCE_DELTA]);
+            lastMidnight, now) / 1000;
     int sleep = await ref
         .read(localHealthRepositoryProvider)
         .getSleepFromDate(now.subtract(const Duration(days: 1)));
