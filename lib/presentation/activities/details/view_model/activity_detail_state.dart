@@ -41,8 +41,8 @@ class ActivityDetailState {
     final heartRates = activity.heartRates;
     if (heartRates != null && heartRates.isNotEmpty) {
       double sum = 0;
-      for (var e in heartRates) {
-        sum += e.value;
+      for (var heartRate in heartRates) {
+        sum += heartRate.value;
       }
       return (sum / heartRates.length).round();
     }
