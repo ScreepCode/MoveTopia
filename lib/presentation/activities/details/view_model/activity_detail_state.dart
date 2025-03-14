@@ -39,11 +39,11 @@ class ActivityDetailState {
 
   int getAverageHeartBeat() {
     final heartRates = activity.heartRates;
-    if (heartRates != null) {
+    if (heartRates != null && heartRates.isNotEmpty) {
       double sum = 0;
-      heartRates.forEach((e) {
-        sum += e.value;
-      });
+      for (var heartRate in heartRates) {
+        sum += heartRate.value;
+      }
       return (sum / heartRates.length).round();
     }
     return 0;
