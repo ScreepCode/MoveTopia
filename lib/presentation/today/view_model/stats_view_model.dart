@@ -15,14 +15,16 @@ class StatsViewModel extends StateNotifier<StatsState> {
 
   Future<void> fetchStats() async {
     DateTime now = DateTime.now();
-    var lastMidnight = DateTime(now.year, now.month, now.day);
+    final startOfDay = DateTime(now.year, now.month, now.day);
+    final endOfDay =
+    startOfDay.add(const Duration(hours: 23, minutes: 59, seconds: 59));
     int steps = await ref
         .read(localHealthRepositoryProvider)
-        .getStepsInInterval(lastMidnight, now);
+        .getStepsInInterval(startOfDay, endOfDay);
     double distance = await ref
         .read(localHealthRepositoryProvider)
         .getDistanceInInterval(
-            lastMidnight, now) / 1000;
+            startOfDay, endOfDay) / 1000;
     int sleep = await ref
         .read(localHealthRepositoryProvider)
         .getSleepFromDate(now.subtract(const Duration(days: 1)));
