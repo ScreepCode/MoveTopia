@@ -4,7 +4,7 @@ import 'package:movetopia/data/model/badge.dart';
 import 'package:movetopia/domain/service/badge_service.dart';
 
 class BadgeListViewModel
-    extends StateNotifier<AsyncValue<List<AchivementBadge>>> {
+    extends StateNotifier<AsyncValue<List<AchievementBadge>>> {
   final BadgeService _badgeService;
   final log = Logger('BadgeListViewModel');
 
@@ -24,7 +24,7 @@ class BadgeListViewModel
       await _badgeService.checkAndUpdateBadges();
       final updatedBadges = await _badgeService.getAllBadges();
 
-      state = AsyncValue.data(updatedBadges.cast<AchivementBadge>());
+      state = AsyncValue.data(updatedBadges.cast<AchievementBadge>());
       log.info('Loaded ${updatedBadges.length} badges');
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
@@ -36,20 +36,21 @@ class BadgeListViewModel
     await loadBadges();
   }
 
-  List<AchivementBadge> getBadgesByCategory(AchivementBadgeCategory category) {
+  List<AchievementBadge> getBadgesByCategory(
+      AchievementBadgeCategory category) {
     return state.valueOrNull
             ?.where((badge) => badge.category == category)
             .toList() ??
         [];
   }
 
-  List<AchivementBadge> getAchievedBadges() {
+  List<AchievementBadge> getAchievedBadges() {
     return state.valueOrNull?.where((badge) => badge.isAchieved).toList() ?? [];
   }
 }
 
 final badgeListsViewModelProvider = StateNotifierProvider<BadgeListViewModel,
-    AsyncValue<List<AchivementBadge>>>((ref) {
+    AsyncValue<List<AchievementBadge>>>((ref) {
   final badgeService = ref.watch(badgeServiceProvider);
   return BadgeListViewModel(badgeService: badgeService);
 });

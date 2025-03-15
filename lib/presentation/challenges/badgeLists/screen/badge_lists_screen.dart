@@ -39,9 +39,9 @@ class BadgeListsScreen extends HookConsumerWidget {
         data: (badges) {
           // Only include the three specific categories
           final categories = [
-            model.AchivementBadgeCategory.dailySteps,
-            model.AchivementBadgeCategory.totalSteps,
-            model.AchivementBadgeCategory.totalCyclingDistance,
+            model.AchievementBadgeCategory.dailySteps,
+            model.AchievementBadgeCategory.totalSteps,
+            model.AchievementBadgeCategory.totalCyclingDistance,
           ];
 
           return DefaultTabController(
@@ -72,25 +72,25 @@ class BadgeListsScreen extends HookConsumerWidget {
   }
 
   Widget _buildCategoryTab(BuildContext context, WidgetRef ref,
-      model.AchivementBadgeCategory category) {
+      model.AchievementBadgeCategory category) {
     // Return specific widget based on category
     switch (category) {
-      case model.AchivementBadgeCategory.dailySteps:
+      case model.AchievementBadgeCategory.dailySteps:
         return const DailyStepsWidget();
-      case model.AchivementBadgeCategory.totalSteps:
+      case model.AchievementBadgeCategory.totalSteps:
         return const TotalStepsWidget();
-      case model.AchivementBadgeCategory.totalCyclingDistance:
+      case model.AchievementBadgeCategory.totalCyclingDistance:
         return const CyclingWidget();
     }
   }
 
-  String _getCategoryName(model.AchivementBadgeCategory category, l10n) {
+  String _getCategoryName(model.AchievementBadgeCategory category, l10n) {
     switch (category) {
-      case model.AchivementBadgeCategory.dailySteps:
+      case model.AchievementBadgeCategory.dailySteps:
         return l10n.badge_daily_steps_category;
-      case model.AchivementBadgeCategory.totalSteps:
+      case model.AchievementBadgeCategory.totalSteps:
         return l10n.badge_total_steps_category;
-      case model.AchivementBadgeCategory.totalCyclingDistance:
+      case model.AchievementBadgeCategory.totalCyclingDistance:
         return l10n.badge_cycling_category;
     }
   }
@@ -108,7 +108,7 @@ class DailyStepsWidget extends ConsumerWidget {
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(child: Text(l10n.common_error(error))),
       data: (todaySteps) => CategoryBadgesSection(
-        category: AchivementBadgeCategory.dailySteps,
+        category: AchievementBadgeCategory.dailySteps,
         currentValue: todaySteps,
       ),
     );
@@ -127,7 +127,7 @@ class TotalStepsWidget extends ConsumerWidget {
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(child: Text(l10n.common_error(error))),
       data: (totalSteps) => CategoryBadgesSection(
-        category: AchivementBadgeCategory.totalSteps,
+        category: AchievementBadgeCategory.totalSteps,
         currentValue: totalSteps,
       ),
     );
@@ -146,7 +146,7 @@ class CyclingWidget extends ConsumerWidget {
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(child: Text(l10n.common_error(error))),
       data: (totalCycling) => CategoryBadgesSection(
-        category: AchivementBadgeCategory.totalCyclingDistance,
+        category: AchievementBadgeCategory.totalCyclingDistance,
         currentValue: totalCycling,
       ),
     );

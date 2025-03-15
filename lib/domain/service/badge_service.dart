@@ -43,7 +43,7 @@ class BadgeService {
         await localHealthRepository.getStepsInInterval(installationDate, end);
     print(totalSteps);
     final badges = await badgeRepository
-        .getBadgesByCategory(AchivementBadgeCategory.totalSteps);
+        .getBadgesByCategory(AchievementBadgeCategory.totalSteps);
 
     for (var badge in badges) {
       if (totalSteps >= badge.threshold && !badge.isAchieved) {
@@ -63,7 +63,7 @@ class BadgeService {
                 installationDate, end, [HealthWorkoutActivityType.BIKING]) /
         1000; // Convert to km
     final badges = await badgeRepository
-        .getBadgesByCategory(AchivementBadgeCategory.totalCyclingDistance);
+        .getBadgesByCategory(AchievementBadgeCategory.totalCyclingDistance);
 
     for (var badge in badges) {
       if (totalCyclingKm >= badge.threshold && !badge.isAchieved) {
@@ -79,7 +79,7 @@ class BadgeService {
   Future<void> _checkDailyStepsBadges(
       DateTime lastCheckDate, DateTime now) async {
     final badges = await badgeRepository
-        .getBadgesByCategory(AchivementBadgeCategory.dailySteps);
+        .getBadgesByCategory(AchievementBadgeCategory.dailySteps);
 
     // Only check completed days (yesterday and earlier)
     final yesterday = DateTime(now.year, now.month, now.day)
@@ -109,12 +109,12 @@ class BadgeService {
     }
   }
 
-  Future<List<AchivementBadge>> getBadgesByCategory(
-      AchivementBadgeCategory category) async {
+  Future<List<AchievementBadge>> getBadgesByCategory(
+      AchievementBadgeCategory category) async {
     return await badgeRepository.getBadgesByCategory(category);
   }
 
-  Future<List<AchivementBadge>> getAllBadges() async {
+  Future<List<AchievementBadge>> getAllBadges() async {
     return await badgeRepository.getAllBadges();
   }
 }

@@ -8,7 +8,7 @@ import 'package:movetopia/presentation/challenges/badgeLists/widgets/badge_item.
 import 'progress_card.dart';
 
 class CategoryBadgesSection extends StatefulHookConsumerWidget {
-  final AchivementBadgeCategory category;
+  final AchievementBadgeCategory category;
   final double currentValue;
 
   const CategoryBadgesSection({
@@ -32,7 +32,7 @@ class _CategoryBadgesSectionState extends ConsumerState<CategoryBadgesSection> {
     final badgesFuture =
         ref.watch(badgeServiceProvider).getBadgesByCategory(widget.category);
 
-    return FutureBuilder<List<AchivementBadge>>(
+    return FutureBuilder<List<AchievementBadge>>(
       future: badgesFuture,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
@@ -120,7 +120,7 @@ class _CategoryBadgesSectionState extends ConsumerState<CategoryBadgesSection> {
     );
   }
 
-  Widget _buildAllAchievedLayout(List<AchivementBadge> achievedBadges) {
+  Widget _buildAllAchievedLayout(List<AchievementBadge> achievedBadges) {
     final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,15 +154,15 @@ class _CategoryBadgesSectionState extends ConsumerState<CategoryBadgesSection> {
     String label;
 
     switch (widget.category) {
-      case AchivementBadgeCategory.dailySteps:
+      case AchievementBadgeCategory.dailySteps:
         title = l10n.badge_daily_steps_title;
         label = l10n.common_health_data_steps;
         break;
-      case AchivementBadgeCategory.totalSteps:
+      case AchievementBadgeCategory.totalSteps:
         title = l10n.badge_total_steps_title;
         label = l10n.common_health_data_steps;
         break;
-      case AchivementBadgeCategory.totalCyclingDistance:
+      case AchievementBadgeCategory.totalCyclingDistance:
         title = l10n.badge_cycling_title;
         label = l10n.common_health_data_distance_type;
         break;
@@ -171,7 +171,7 @@ class _CategoryBadgesSectionState extends ConsumerState<CategoryBadgesSection> {
         label = '';
     }
 
-    return FutureBuilder<List<AchivementBadge>>(
+    return FutureBuilder<List<AchievementBadge>>(
         future: ref
             .watch(badgeServiceProvider)
             .getBadgesByCategory(widget.category),

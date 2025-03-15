@@ -1,15 +1,15 @@
-enum AchivementBadgeCategory {
+enum AchievementBadgeCategory {
   totalSteps,
   totalCyclingDistance,
   dailySteps,
 }
 
-class AchivementBadge {
+class AchievementBadge {
   final int id;
   final String name;
   final String description;
   final int tier;
-  final AchivementBadgeCategory category;
+  final AchievementBadgeCategory category;
   final int threshold;
   final String iconPath;
   final bool isAchieved;
@@ -18,7 +18,7 @@ class AchivementBadge {
   final bool isRepeatable;
   final int? epValue;
 
-  AchivementBadge({
+  AchievementBadge({
     required this.id,
     required this.name,
     required this.description,
@@ -33,12 +33,12 @@ class AchivementBadge {
     this.epValue,
   });
 
-  AchivementBadge copyWith({
+  AchievementBadge copyWith({
     int? id,
     String? name,
     String? description,
     int? tier,
-    AchivementBadgeCategory? category,
+    AchievementBadgeCategory? category,
     int? threshold,
     String? iconPath,
     bool? isAchieved,
@@ -47,7 +47,7 @@ class AchivementBadge {
     bool? isRepeatable,
     int? epValue,
   }) {
-    return AchivementBadge(
+    return AchievementBadge(
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
@@ -80,13 +80,13 @@ class AchivementBadge {
     };
   }
 
-  factory AchivementBadge.fromMap(Map<String, dynamic> map) {
-    return AchivementBadge(
+  factory AchievementBadge.fromMap(Map<String, dynamic> map) {
+    return AchievementBadge(
       id: map['id'],
       name: map['name'],
       description: map['description'],
       tier: map['tier'],
-      category: AchivementBadgeCategory.values[map['category']],
+      category: AchievementBadgeCategory.values[map['category']],
       threshold: map['threshold'],
       iconPath: map['iconPath'],
       isAchieved: map['isAchieved'] == 1,

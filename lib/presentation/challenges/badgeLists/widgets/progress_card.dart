@@ -5,7 +5,7 @@ import 'package:movetopia/data/model/badge.dart';
 class ProgressCard extends StatelessWidget {
   final String title;
   final int currentValue;
-  final List<AchivementBadge> badges;
+  final List<AchievementBadge> badges;
   final Widget countDisplay;
   final bool showProgress;
 
@@ -49,12 +49,13 @@ class ProgressCard extends StatelessWidget {
     );
   }
 
-  _BadgeInfo _getNextBadgeInfo(List<AchivementBadge> badges, int currentValue) {
+  _BadgeInfo _getNextBadgeInfo(
+      List<AchievementBadge> badges, int currentValue) {
     // First sort badges by threshold
     final sortedBadges = [...badges]
       ..sort((a, b) => a.threshold.compareTo(b.threshold));
 
-    AchivementBadge? nextBadge;
+    AchievementBadge? nextBadge;
     int nextThreshold = 0;
 
     for (final badge in sortedBadges) {
@@ -76,7 +77,7 @@ class ProgressCard extends StatelessWidget {
 }
 
 class _BadgeInfo {
-  final AchivementBadge? badge;
+  final AchievementBadge? badge;
   final int threshold;
 
   _BadgeInfo(this.badge, this.threshold);
@@ -84,7 +85,7 @@ class _BadgeInfo {
 
 class ProgressIndicator extends StatelessWidget {
   final int currentValue;
-  final AchivementBadge nextBadge;
+  final AchievementBadge nextBadge;
   final int nextThreshold;
 
   const ProgressIndicator({

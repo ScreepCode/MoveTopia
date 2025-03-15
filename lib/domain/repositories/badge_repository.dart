@@ -1,14 +1,14 @@
 import 'package:movetopia/data/model/badge.dart';
 
 abstract class BadgeRepository {
-  Future<void> saveBadge(AchivementBadge badge);
+  Future<void> saveBadge(AchievementBadge badge);
 
-  Future<List<AchivementBadge>> getBadgesByCategory(
-      AchivementBadgeCategory category);
+  Future<List<AchievementBadge>> getBadgesByCategory(
+      AchievementBadgeCategory category);
 
-  Future<List<AchivementBadge>> getAllBadges();
+  Future<List<AchievementBadge>> getAllBadges();
 
-  Future<AchivementBadge> getBadgeById(int id);
+  Future<AchievementBadge> getBadgeById(int id);
 
   Future<void> initializeAppDates();
 

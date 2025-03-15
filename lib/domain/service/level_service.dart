@@ -88,13 +88,13 @@ class LevelService {
     await profileRepository.saveUserLevel(1);
   }
 
-  Future<bool> addEpForBadge(AchivementBadge badge, bool isRepeat) async {
+  Future<bool> addEpForBadge(AchievementBadge badge, bool isRepeat) async {
     int xpAmount = getEpForBadge(badge);
     return await addEp(xpAmount);
   }
 
   // Get EP for a badge - moved from BadgeService
-  int getEpForBadge(AchivementBadge badge) {
+  int getEpForBadge(AchievementBadge badge) {
     // Check if badge has XP value in its JSON
     if (badge.epValue != null) {
       return badge.epValue!;

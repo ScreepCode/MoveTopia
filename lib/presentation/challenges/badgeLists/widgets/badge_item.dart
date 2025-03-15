@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:movetopia/data/model/badge.dart';
 
 class BadgeItem extends StatelessWidget {
-  final AchivementBadge badge;
+  final AchievementBadge badge;
   final double currentValue;
   final bool showProgress;
 
@@ -49,7 +49,7 @@ class BadgeItem extends StatelessWidget {
 }
 
 class BadgeIcon extends StatelessWidget {
-  final AchivementBadge badge;
+  final AchievementBadge badge;
 
   const BadgeIcon({
     super.key,
@@ -78,7 +78,7 @@ class BadgeIcon extends StatelessWidget {
 }
 
 class BadgeDetailsSection extends StatelessWidget {
-  final AchivementBadge badge;
+  final AchievementBadge badge;
 
   const BadgeDetailsSection({
     super.key,
@@ -110,7 +110,7 @@ class BadgeDetailsSection extends StatelessWidget {
 }
 
 class BadgeProgressSection extends StatelessWidget {
-  final AchivementBadge badge;
+  final AchievementBadge badge;
   final double currentValue;
   final bool showProgress;
 
@@ -156,7 +156,7 @@ class BadgeProgressSection extends StatelessWidget {
 }
 
 class BadgeAchievementDate extends StatelessWidget {
-  final AchivementBadge badge;
+  final AchievementBadge badge;
 
   const BadgeAchievementDate({
     super.key,
