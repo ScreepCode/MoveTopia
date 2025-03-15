@@ -1,0 +1,2 @@
+# The package name of your Android app
+package_name("de.movetopia") # Release application ID

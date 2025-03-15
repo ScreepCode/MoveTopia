@@ -28,7 +28,7 @@ android {
     namespace = "de.movetopia"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = globalProperties.getProperty('flutter.ndkVersion')
-    
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
@@ -38,25 +38,46 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "de.movetopia"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdk = globalProperties.getProperty('flutter.minSdkVersion').toInteger()
         targetSdk = flutter.targetSdkVersion
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
     }
 
+    signingConfigs {
+        // You can set up a release signing config here
+        release {
+            // Comment out these lines and replace with your own signing config
+            // storeFile file("release.keystore")
+            // storePassword "your-store-password"
+            // keyAlias "release"
+            // keyPassword "your-key-password"
+        }
+    }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            signingConfig signingConfigs.debug // For now, using debug signing
+
+            // Release-specific settings
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
             applicationIdSuffix '.debug'
             resValue "string", "app_name", "@string/app_name_debug"
+            debuggable true
+        }
+    }
+
+    // Create a resource file for Fastlane to use
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            outputFileName = "movetopia-${variant.buildType.name}.apk"
         }
     }
 }
