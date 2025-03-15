@@ -1,0 +1,59 @@
+default_platform(:android)
+
+platform :android do
+  desc "Build debug APK"
+  lane :buildDebug do
+    # Ensure Flutter dependencies are up-to-date
+    sh("cd .. && flutter pub get")
+
+    # Build debug APK
+    sh("cd .. && flutter build apk --debug")
+
+    # Create output directory
+    sh("mkdir -p build/outputs")
+
+    # Copy the APK using the correct path
+    sh("cp ../../build/app/outputs/apk/debug/movetopia-debug.apk build/outputs/movetopia-debug.apk")
+
+    # Output the path to the debug APK
+    UI.success("Debug APK built at: android/fastlane/build/outputs/movetopia-debug.apk (Package: de.movetopia.debug)")
+  end
+
+  desc "Build release APK"
+  lane :buildRelease do
+    # Ensure Flutter dependencies are up-to-date
+    sh("cd .. && flutter pub get")
+
+    # Build release APK
+    sh("cd .. && flutter build apk --release")
+
+    # Create output directory
+    sh("mkdir -p build/outputs")
+
+    # Copy the APK using the correct path
+    sh("cp ../../build/app/outputs/apk/release/movetopia-release.apk build/outputs/movetopia-release.apk")
+
+    # Output the path to the release APK
+    UI.success("Release APK built at: android/fastlane/build/outputs/movetopia-release.apk (Package: de.movetopia)")
+  end
+
+#   desc "Build release APK and upload to Play Store beta track"
+#   lane :buildAndPublishBeta do
+#     # Ensure Flutter dependencies are up-to-date
+#     sh("cd .. && flutter pub get")
+#
+#     # Build release App Bundle
+#     sh("cd .. && flutter build appbundle --release")
+#
+#     # Upload to Play Store beta track
+#     upload_to_play_store(
+#       track: 'beta',
+#       aab: "../../build/app/outputs/bundle/release/app-release.aab",
+#       skip_upload_metadata: true,
+#       skip_upload_images: true,
+#       skip_upload_screenshots: true,
+#     )
+#
+#     UI.success("App Bundle uploaded to Play Store beta track (Package: de.movetopia)")
+#   end
+end
