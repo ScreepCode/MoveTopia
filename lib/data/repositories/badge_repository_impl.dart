@@ -29,12 +29,15 @@ class BadgeRepositoryImpl implements BadgeRepository {
             id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
             description TEXT NOT NULL,
+            tier INTEGER NOT NULL,
             category INTEGER NOT NULL,
             threshold INTEGER NOT NULL,
             iconPath TEXT NOT NULL,
             isAchieved INTEGER NOT NULL,
             achievedCount INTEGER NOT NULL,
-            lastAchievedDate INTEGER
+            lastAchievedDate INTEGER,
+            isRepeatable INTEGER NOT NULL,
+            epValue INTEGER NOT NULL
           )
         ''');
 
@@ -52,14 +55,17 @@ class BadgeRepositoryImpl implements BadgeRepository {
       final List<dynamic> jsonData = json.decode(jsonString);
 
       // Convert JSON to Badge objects
-      final List<AchivementBadge> badges = jsonData.map((data) {
-        return AchivementBadge(
+      final List<AchievementBadge> badges = jsonData.map((data) {
+        return AchievementBadge(
           id: data['id'],
           name: data['name'],
           description: data['description'],
-          category: AchivementBadgeCategory.values[data['category']],
+          tier: data['tier'] ?? 1,
+          category: AchievementBadgeCategory.values[data['category']],
           threshold: data['threshold'],
           iconPath: data['iconPath'],
+          isRepeatable: data['isRepeatable'] ?? 0,
+          epValue: data['epValue'] ?? 0,
         );
       }).toList();
 
@@ -82,7 +88,7 @@ class BadgeRepositoryImpl implements BadgeRepository {
 
   // Rest of the repository implementation remains the same
   @override
-  Future<void> saveBadge(AchivementBadge badge) async {
+  Future<void> saveBadge(AchievementBadge badge) async {
     final db = await database;
     await db.update(
       tableName,
@@ -93,8 +99,8 @@ class BadgeRepositoryImpl implements BadgeRepository {
   }
 
   @override
-  Future<List<AchivementBadge>> getBadgesByCategory(
-      AchivementBadgeCategory category) async {
+  Future<List<AchievementBadge>> getBadgesByCategory(
+      AchievementBadgeCategory category) async {
     final db = await database;
     final maps = await db.query(
       tableName,
@@ -102,19 +108,19 @@ class BadgeRepositoryImpl implements BadgeRepository {
       whereArgs: [category.index],
     );
 
-    return List.generate(maps.length, (i) => AchivementBadge.fromMap(maps[i]));
+    return List.generate(maps.length, (i) => AchievementBadge.fromMap(maps[i]));
   }
 
   @override
-  Future<List<AchivementBadge>> getAllBadges() async {
+  Future<List<AchievementBadge>> getAllBadges() async {
     final db = await database;
     final maps = await db.query(tableName);
 
-    return List.generate(maps.length, (i) => AchivementBadge.fromMap(maps[i]));
+    return List.generate(maps.length, (i) => AchievementBadge.fromMap(maps[i]));
   }
 
   @override
-  Future<AchivementBadge> getBadgeById(int id) async {
+  Future<AchievementBadge> getBadgeById(int id) async {
     final db = await database;
     final maps = await db.query(
       tableName,
@@ -122,7 +128,7 @@ class BadgeRepositoryImpl implements BadgeRepository {
       whereArgs: [id],
     );
 
-    return AchivementBadge.fromMap(maps.first);
+    return AchievementBadge.fromMap(maps.first);
   }
 
   @override

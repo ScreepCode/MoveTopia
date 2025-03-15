@@ -60,5 +60,20 @@
   "badge_reset_dialog_message": "Sind Sie sicher, dass Sie alle Abzeichen zurücksetzen möchten?",
   "badge_reset_dialog_cancel": "Abbrechen",
   "badge_reset_dialog_confirm": "Zurücksetzen",
-  "badge_reset_success": "Alle Abzeichen wurden zurückgesetzt"
+  "badge_reset_success": "Alle Abzeichen wurden zurückgesetzt",
+  "@_LEVEL_SYSTEM": {},
+  "user_level_title": "Dein Level",
+  "user_level_progress": "Fortschritt zum nächsten Level",
+  "user_level_ep": "EP",
+  "user_level_needed_ep": "{ep} EP needed",
+  "level_up_title": "Level Up!",
+  "level_up_message": "Herzlichen Glückwunsch! Du hast Level {level} erreicht!",
+  "@_CHALLENGES_DASHBOARD": {},
+  "challenges_dashboard_title": "Challenges",
+  "challenges_achievements_title": "Deine Erfolge",
+  "challenges_highest_achieved": "Höchster Erfolg",
+  "challenges_next_goal": "Nächstes Ziel",
+  "challenges_see_all": "Alle anzeigen",
+  "challenges_see_all_badges": "Alle Abzeichen anzeigen",
+  "challenges_no_achieved_badges": "Keine erreichten Abzeichen bisher"
 }
