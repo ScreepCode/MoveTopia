@@ -6,12 +6,14 @@ import 'package:movetopia/data/model/badge.dart' as model;
 import 'package:movetopia/presentation/challenges/badgeLists/widgets/reset_badges_button.dart';
 
 import '../../../../data/model/badge.dart';
-import '../viewmodel/badge_lists_provider.dart';
+import '../../provider/badge_lists_provider.dart';
 import '../viewmodel/badge_lists_view_model.dart';
 import '../widgets/category_badges_section.dart';
 
 class BadgeListsScreen extends HookConsumerWidget {
-  const BadgeListsScreen({super.key});
+  final AchievementBadgeCategory? initialCategory;
+
+  const BadgeListsScreen({super.key, this.initialCategory});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -44,8 +46,16 @@ class BadgeListsScreen extends HookConsumerWidget {
             model.AchievementBadgeCategory.totalCyclingDistance,
           ];
 
+          // Find initial tab index if initialCategory is provided
+          int initialIndex = 0;
+          if (initialCategory != null) {
+            final idx = categories.indexOf(initialCategory!);
+            if (idx >= 0) initialIndex = idx;
+          }
+
           return DefaultTabController(
             length: categories.length,
+            initialIndex: initialIndex,
             child: Column(
               children: [
                 TabBar(

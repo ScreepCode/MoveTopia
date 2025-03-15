@@ -10,18 +10,21 @@ import 'package:movetopia/domain/repositories/local_health.dart';
 import '../../data/repositories/local_health_impl.dart';
 import '../../presentation/profile/view_model/profile_view_model.dart';
 import '../repositories/profile_repository.dart';
+import 'level_service.dart';
 
 class BadgeService {
   final BadgeRepository badgeRepository;
   final LocalHealthRepository localHealthRepository;
   final DeviceInfoRepository deviceInfoRepository;
   final ProfileRepository profileRepository;
+  final LevelService levelService;
 
   BadgeService({
     required this.badgeRepository,
     required this.localHealthRepository,
     required this.deviceInfoRepository,
     required this.profileRepository,
+    required this.levelService,
   });
 
   Future<void> checkAndUpdateBadges() async {
@@ -37,22 +40,53 @@ class BadgeService {
         .updateLastOpenedDate(now.subtract(Duration(days: 30)));
   }
 
+  // Check and update badge status, return whether a level up occurred
+  Future<bool> checkAndUpdateBadgeStatus(
+      AchievementBadge badge, int currentValue) async {
+    bool leveledUp = false;
+    bool wasAchieved = badge.isAchieved;
+
+    if (currentValue >= badge.threshold) {
+      if (!badge.isAchieved) {
+        // First achievement of this badge
+        final updatedBadge = badge.copyWith(
+          isAchieved: true,
+          achievedCount: 1,
+          lastAchievedDate: DateTime.now(),
+        );
+
+        await badgeRepository.saveBadge(updatedBadge);
+
+        // Award EP for new badge achievement
+        leveledUp = await levelService.addEp(badge.epValue);
+      } else if (badge.isRepeatable &&
+          badge.lastAchievedDate?.day != DateTime.now().day) {
+        // Repeated achievement of repeatable badge (only once per day)
+        final updatedBadge = badge.copyWith(
+          achievedCount: badge.achievedCount + 1,
+          lastAchievedDate: DateTime.now(),
+        );
+
+        await badgeRepository.saveBadge(updatedBadge);
+
+        // Award partial EP for repeat achievements
+        int ep = (badge.epValue * 0.3).floor(); // 30% of original EP
+        leveledUp = await levelService.addEp(ep);
+      }
+    }
+
+    return leveledUp;
+  }
+
   Future<void> _checkTotalStepsBadges(
       DateTime installationDate, DateTime end) async {
     final totalSteps =
         await localHealthRepository.getStepsInInterval(installationDate, end);
-    print(totalSteps);
     final badges = await badgeRepository
         .getBadgesByCategory(AchievementBadgeCategory.totalSteps);
 
     for (var badge in badges) {
-      if (totalSteps >= badge.threshold && !badge.isAchieved) {
-        await badgeRepository.saveBadge(badge.copyWith(
-          isAchieved: true,
-          achievedCount: 1,
-          lastAchievedDate: DateTime.now(),
-        ));
-      }
+      await checkAndUpdateBadgeStatus(badge, totalSteps);
     }
   }
 
@@ -66,13 +100,7 @@ class BadgeService {
         .getBadgesByCategory(AchievementBadgeCategory.totalCyclingDistance);
 
     for (var badge in badges) {
-      if (totalCyclingKm >= badge.threshold && !badge.isAchieved) {
-        await badgeRepository.saveBadge(badge.copyWith(
-          isAchieved: true,
-          achievedCount: 1,
-          lastAchievedDate: DateTime.now(),
-        ));
-      }
+      await checkAndUpdateBadgeStatus(badge, totalCyclingKm.floor());
     }
   }
 
@@ -97,14 +125,8 @@ class BadgeService {
           await localHealthRepository.getStepsInInterval(startOfDay, endOfDay);
 
       for (var badge in badges) {
-        if (steps >= badge.threshold) {
-          final currentBadge = await badgeRepository.getBadgeById(badge.id);
-          await badgeRepository.saveBadge(currentBadge.copyWith(
-            isAchieved: true,
-            achievedCount: currentBadge.achievedCount + 1,
-            lastAchievedDate: DateTime.now(),
-          ));
-        }
+        final currentBadge = await badgeRepository.getBadgeById(badge.id);
+        await checkAndUpdateBadgeStatus(currentBadge, steps);
       }
     }
   }
@@ -125,5 +147,6 @@ final badgeServiceProvider = Provider<BadgeService>((ref) {
     localHealthRepository: ref.watch(localHealthRepositoryProvider),
     deviceInfoRepository: ref.watch(deviceInfoRepositoryProvider),
     profileRepository: ref.watch(profileRepositoryProvider),
+    levelService: ref.watch(levelServiceProvider),
   );
 });

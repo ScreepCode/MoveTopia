@@ -64,5 +64,20 @@
   "badge_reset_dialog_message": "Are you sure you want to reset all badges?",
   "badge_reset_dialog_cancel": "Cancel",
   "badge_reset_dialog_confirm": "Reset",
-  "badge_reset_success": "All badges have been reset"
+  "badge_reset_success": "All badges have been reset",
+  "@_LEVEL_SYSTEM": {},
+  "user_level_title": "Your Level",
+  "user_level_progress": "Progress to Next Level",
+  "user_level_ep": "EP",
+  "user_level_needed_ep": "{ep} EP needed",
+  "level_up_title": "Level Up!",
+  "level_up_message": "Congratulations! You've reached level {level}",
+  "@_CHALLENGES_DASHBOARD": {},
+  "challenges_dashboard_title": "Challenges",
+  "challenges_achievements_title": "Your Achievements",
+  "challenges_highest_achieved": "Highest Achieved",
+  "challenges_next_goal": "Next Goal",
+  "challenges_see_all": "See all",
+  "challenges_see_all_badges": "See all badges",
+  "challenges_no_achieved_badges": "No badges achieved yet"
 }

@@ -16,7 +16,7 @@ class AchievementBadge {
   final int achievedCount;
   final DateTime? lastAchievedDate;
   final bool isRepeatable;
-  final int? epValue;
+  final int epValue;
 
   AchievementBadge({
     required this.id,
@@ -30,7 +30,7 @@ class AchievementBadge {
     this.achievedCount = 0,
     this.lastAchievedDate,
     this.isRepeatable = false,
-    this.epValue,
+    required this.epValue,
   });
 
   AchievementBadge copyWith({

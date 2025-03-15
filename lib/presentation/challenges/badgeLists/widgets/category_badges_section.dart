@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:movetopia/data/model/badge.dart';
 import 'package:movetopia/domain/service/badge_service.dart';
-import 'package:movetopia/presentation/challenges/badgeLists/widgets/badge_item.dart';
+import 'package:movetopia/presentation/challenges/widgets/badge_item.dart';
 
 import 'progress_card.dart';
 

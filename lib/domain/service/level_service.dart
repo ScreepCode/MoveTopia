@@ -1,5 +1,4 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:movetopia/data/model/badge.dart';
 import 'package:movetopia/domain/repositories/profile_repository.dart';
 
 import '../../presentation/profile/view_model/profile_view_model.dart';
@@ -86,27 +85,6 @@ class LevelService {
   Future<void> resetLevelAndEp() async {
     await profileRepository.saveUserEP(0);
     await profileRepository.saveUserLevel(1);
-  }
-
-  Future<bool> addEpForBadge(AchievementBadge badge, bool isRepeat) async {
-    int xpAmount = getEpForBadge(badge);
-    return await addEp(xpAmount);
-  }
-
-  // Get EP for a badge - moved from BadgeService
-  int getEpForBadge(AchievementBadge badge) {
-    // Check if badge has XP value in its JSON
-    if (badge.epValue != null) {
-      return badge.epValue!;
-    }
-
-    // Fallback calculation if XP isn't specified in JSON
-    int baseXp = 50;
-
-    // Modifier based on tier
-    int tierMultiplier = badge.tier;
-
-    return baseXp * tierMultiplier;
   }
 }
 
