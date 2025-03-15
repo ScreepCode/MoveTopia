@@ -61,4 +61,26 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<void> saveIsDarkMode(bool isDarkMode) async {
     await saveSetting(isDarkModeKey, isDarkMode);
   }
+
+  @override
+  Future<int> getUserEP() async {
+    final value = await loadSetting(userEPKey);
+    return value != null ? value as int : 0; // Default EP
+  }
+
+  @override
+  Future<void> saveUserEP(int ep) async {
+    await saveSetting(userEPKey, ep);
+  }
+
+  @override
+  Future<int> getUserLevel() async {
+    final value = await loadSetting(userLevelKey);
+    return value != null ? value as int : 1; // Default level
+  }
+
+  @override
+  Future<void> saveUserLevel(int level) async {
+    await saveSetting(userLevelKey, level);
+  }
 }

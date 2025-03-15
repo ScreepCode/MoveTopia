@@ -5,7 +5,10 @@
     "description": "5.000 Schritte täglich",
     "category": 2,
     "threshold": 5000,
-    "iconPath": "assets/icons/daily_morgenmuffel.png"
+    "iconPath": "assets/icons/daily_morgenmuffel.png",
+    "tier": 1,
+    "isRepeatable": 1,
+    "epValue": 5
   },
   {
     "id": 11,
@@ -13,7 +16,10 @@
     "description": "10.000 Schritte täglich",
     "category": 2,
     "threshold": 10000,
-    "iconPath": "assets/icons/daily_flotterfeger.png"
+    "iconPath": "assets/icons/daily_flotterfeger.png",
+    "tier": 2,
+    "isRepeatable": 1,
+    "epValue": 10
   },
   {
     "id": 12,
@@ -21,7 +27,10 @@
     "description": "15.000 Schritte täglich",
     "category": 2,
     "threshold": 15000,
-    "iconPath": "assets/icons/daily_stadtlaufer.png"
+    "iconPath": "assets/icons/daily_stadtlaufer.png",
+    "tier": 3,
+    "isRepeatable": 1,
+    "epValue": 15
   },
   {
     "id": 13,
@@ -29,7 +38,10 @@
     "description": "20.000 Schritte täglich",
     "category": 2,
     "threshold": 20000,
-    "iconPath": "assets/icons/daily_powerwalker.png"
+    "iconPath": "assets/icons/daily_powerwalker.png",
+    "tier": 4,
+    "isRepeatable": 1,
+    "epValue": 20
   },
   {
     "id": 14,
@@ -37,7 +49,10 @@
     "description": "25.000 Schritte täglich",
     "category": 2,
     "threshold": 25000,
-    "iconPath": "assets/icons/daily_halbmarathon.png"
+    "iconPath": "assets/icons/daily_halbmarathon.png",
+    "tier": 5,
+    "isRepeatable": 1,
+    "epValue": 25
   },
   {
     "id": 15,
@@ -45,7 +60,10 @@
     "description": "50.000 Schritte täglich",
     "category": 2,
     "threshold": 50000,
-    "iconPath": "assets/icons/daily_marathon.png"
+    "iconPath": "assets/icons/daily_marathon.png",
+    "tier": 6,
+    "isRepeatable": 1,
+    "epValue": 50
   },
   {
     "id": 16,
@@ -53,7 +71,10 @@
     "description": "10.000 Schritte gesamt",
     "category": 0,
     "threshold": 10000,
-    "iconPath": "assets/icons/steps_ersterschritt.png"
+    "iconPath": "assets/icons/steps_ersterschritt.png",
+    "tier": 1,
+    "isRepeatable": 0,
+    "epValue": 100
   },
   {
     "id": 17,
@@ -61,7 +82,10 @@
     "description": "25.000 Schritte gesamt",
     "category": 0,
     "threshold": 25000,
-    "iconPath": "assets/icons/steps_spaziergaenger.png"
+    "iconPath": "assets/icons/steps_spaziergaenger.png",
+    "tier": 2,
+    "isRepeatable": 0,
+    "epValue": 200
   },
   {
     "id": 18,
@@ -69,7 +93,10 @@
     "description": "50.000 Schritte gesamt",
     "category": 0,
     "threshold": 50000,
-    "iconPath": "assets/icons/steps_wanderer.png"
+    "iconPath": "assets/icons/steps_wanderer.png",
+    "tier": 3,
+    "isRepeatable": 0,
+    "epValue": 400
   },
   {
     "id": 19,
@@ -77,7 +104,10 @@
     "description": "75.000 Schritte gesamt",
     "category": 0,
     "threshold": 75000,
-    "iconPath": "assets/icons/steps_fitnessfreund.png"
+    "iconPath": "assets/icons/steps_fitnessfreund.png",
+    "tier": 4,
+    "isRepeatable": 0,
+    "epValue": 800
   },
   {
     "id": 20,
@@ -85,7 +115,10 @@
     "description": "100.000 Schritte gesamt",
     "category": 0,
     "threshold": 100000,
-    "iconPath": "assets/icons/steps_laeufer.png"
+    "iconPath": "assets/icons/steps_laeufer.png",
+    "tier": 5,
+    "isRepeatable": 0,
+    "epValue": 1600
   },
   {
     "id": 21,
@@ -93,7 +126,10 @@
     "description": "150.000 Schritte gesamt",
     "category": 0,
     "threshold": 150000,
-    "iconPath": "assets/icons/steps_kilometerfresser.png"
+    "iconPath": "assets/icons/steps_kilometerfresser.png",
+    "tier": 6,
+    "isRepeatable": 0,
+    "epValue": 2000
   },
   {
     "id": 22,
@@ -101,7 +137,10 @@
     "description": "200.000 Schritte gesamt",
     "category": 0,
     "threshold": 200000,
-    "iconPath": "assets/icons/steps_reisebegleiter.png"
+    "iconPath": "assets/icons/steps_reisebegleiter.png",
+    "tier": 7,
+    "isRepeatable": 0,
+    "epValue": 3000
   },
   {
     "id": 23,
@@ -109,7 +148,10 @@
     "description": "500.000 Schritte gesamt",
     "category": 0,
     "threshold": 500000,
-    "iconPath": "assets/icons/steps_abenteuer.png"
+    "iconPath": "assets/icons/steps_abenteuer.png",
+    "tier": 8,
+    "isRepeatable": 0,
+    "epValue": 4000
   },
   {
     "id": 24,
@@ -117,7 +159,10 @@
     "description": "1.000.000 Schritte gesamt",
     "category": 0,
     "threshold": 1000000,
-    "iconPath": "assets/icons/steps_weltentdecker.png"
+    "iconPath": "assets/icons/steps_weltentdecker.png",
+    "tier": 9,
+    "isRepeatable": 0,
+    "epValue": 5000
   },
   {
     "id": 25,
@@ -125,7 +170,10 @@
     "description": "2.000.000 Schritte gesamt",
     "category": 0,
     "threshold": 2000000,
-    "iconPath": "assets/icons/steps_legende.png"
+    "iconPath": "assets/icons/steps_legende.png",
+    "tier": 10,
+    "isRepeatable": 0,
+    "epValue": 6000
   },
   {
     "id": 26,
@@ -133,7 +181,10 @@
     "description": "20 km gesamt",
     "category": 1,
     "threshold": 20,
-    "iconPath": "assets/icons/cycling_tagesausflug.png"
+    "iconPath": "assets/icons/cycling_tagesausflug.png",
+    "tier": 1,
+    "isRepeatable": 0,
+    "epValue": 20
   },
   {
     "id": 27,
@@ -141,7 +192,10 @@
     "description": "200 km gesamt",
     "category": 1,
     "threshold": 200,
-    "iconPath": "assets/icons/cycling_pinguin.png"
+    "iconPath": "assets/icons/cycling_pinguin.png",
+    "tier": 2,
+    "isRepeatable": 0,
+    "epValue": 200
   },
   {
     "id": 28,
@@ -149,7 +203,10 @@
     "description": "260 km gesamt",
     "category": 1,
     "threshold": 260,
-    "iconPath": "assets/icons/cycling_bodensee.png"
+    "iconPath": "assets/icons/cycling_bodensee.png",
+    "tier": 3,
+    "isRepeatable": 0,
+    "epValue": 300
   },
   {
     "id": 29,
@@ -157,7 +214,10 @@
     "description": "410 km gesamt",
     "category": 1,
     "threshold": 410,
-    "iconPath": "assets/icons/cycling_alpen.png"
+    "iconPath": "assets/icons/cycling_alpen.png",
+    "tier": 4,
+    "isRepeatable": 0,
+    "epValue": 400
   },
   {
     "id": 30,
@@ -165,7 +225,10 @@
     "description": "3.940 km gesamt",
     "category": 1,
     "threshold": 3940,
-    "iconPath": "assets/icons/cycling_route66.png"
+    "iconPath": "assets/icons/cycling_route66.png",
+    "tier": 5,
+    "isRepeatable": 0,
+    "epValue": 2000
   },
   {
     "id": 31,
@@ -173,7 +236,10 @@
     "description": "6.650 km gesamt",
     "category": 1,
     "threshold": 6650,
-    "iconPath": "assets/icons/cycling_nil.png"
+    "iconPath": "assets/icons/cycling_nil.png",
+    "tier": 6,
+    "isRepeatable": 0,
+    "epValue": 6000
   },
   {
     "id": 32,
@@ -181,7 +247,10 @@
     "description": "9.289 km gesamt",
     "category": 1,
     "threshold": 9289,
-    "iconPath": "assets/icons/cycling_transsibirisch.png"
+    "iconPath": "assets/icons/cycling_transsibirisch.png",
+    "tier": 7,
+    "isRepeatable": 0,
+    "epValue": 9000
   },
   {
     "id": 33,
@@ -189,7 +258,10 @@
     "description": "21.196 km gesamt",
     "category": 1,
     "threshold": 21196,
-    "iconPath": "assets/icons/cycling_mauer.png"
+    "iconPath": "assets/icons/cycling_mauer.png",
+    "tier": 8,
+    "isRepeatable": 0,
+    "epValue": 21000
   },
   {
     "id": 34,
@@ -197,7 +269,10 @@
     "description": "40.075 km gesamt",
     "category": 1,
     "threshold": 40075,
-    "iconPath": "assets/icons/cycling_erdumrundung.png"
+    "iconPath": "assets/icons/cycling_erdumrundung.png",
+    "tier": 9,
+    "isRepeatable": 0,
+    "epValue": 40000
   },
   {
     "id": 35,
@@ -205,6 +280,9 @@
     "description": "384.400 km gesamt",
     "category": 1,
     "threshold": 384400,
-    "iconPath": "assets/icons/cycling_mond.png"
+    "iconPath": "assets/icons/cycling_mond.png",
+    "tier": 10,
+    "isRepeatable": 0,
+    "epValue": 384000
   }
 ]

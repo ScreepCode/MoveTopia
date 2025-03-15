@@ -29,12 +29,15 @@ class BadgeRepositoryImpl implements BadgeRepository {
             id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
             description TEXT NOT NULL,
+            tier INTEGER NOT NULL,
             category INTEGER NOT NULL,
             threshold INTEGER NOT NULL,
             iconPath TEXT NOT NULL,
             isAchieved INTEGER NOT NULL,
             achievedCount INTEGER NOT NULL,
-            lastAchievedDate INTEGER
+            lastAchievedDate INTEGER,
+            isRepeatable INTEGER NOT NULL,
+            epValue INTEGER NOT NULL
           )
         ''');
 
@@ -57,9 +60,12 @@ class BadgeRepositoryImpl implements BadgeRepository {
           id: data['id'],
           name: data['name'],
           description: data['description'],
+          tier: data['tier'] ?? 1,
           category: AchivementBadgeCategory.values[data['category']],
           threshold: data['threshold'],
           iconPath: data['iconPath'],
+          isRepeatable: data['isRepeatable'] ?? 0,
+          epValue: data['epValue'] ?? 0,
         );
       }).toList();
 
