@@ -28,4 +28,37 @@ class ProfileRepositoryImpl implements ProfileRepository {
     final prefs = await _prefs;
     return prefs.get(key);
   }
+
+  @override
+  Future<int> getStepGoal() async {
+    final value = await loadSetting(stepGoalKey);
+    return value != null ? value as int : 5000; // Default step goal
+  }
+
+  @override
+  Future<void> saveStepGoal(int stepGoal) async {
+    await saveSetting(stepGoalKey, stepGoal);
+  }
+
+  @override
+  Future<int> getCount() async {
+    final value = await loadSetting(countKey);
+    return value != null ? value as int : 0; // Default count
+  }
+
+  @override
+  Future<void> saveCount(int count) async {
+    await saveSetting(countKey, count);
+  }
+
+  @override
+  Future<bool> getIsDarkMode() async {
+    final value = await loadSetting(isDarkModeKey);
+    return value != null ? value as bool : false; // Default mode
+  }
+
+  @override
+  Future<void> saveIsDarkMode(bool isDarkMode) async {
+    await saveSetting(isDarkModeKey, isDarkMode);
+  }
 }

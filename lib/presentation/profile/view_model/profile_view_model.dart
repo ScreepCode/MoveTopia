@@ -7,16 +7,6 @@ import 'profile_state.dart';
 
 final logger = Logger('ProfileViewModel');
 
-final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
-  return ProfileRepositoryImpl();
-});
-
-final profileProvider =
-    StateNotifierProvider<ProfileViewModel, ProfileState>((ref) {
-  final repository = ref.watch(profileRepositoryProvider);
-  return ProfileViewModel(repository);
-});
-
 class ProfileViewModel extends StateNotifier<ProfileState> {
   final ProfileRepository _repository;
 
@@ -26,14 +16,14 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
 
   Future<void> loadSettings() async {
     try {
-      final stepGoal = await _repository.loadSetting('stepGoal');
-      final count = await _repository.loadSetting('count');
-      final isDarkMode = await _repository.loadSetting('isDarkMode');
+      final stepGoal = await _repository.getStepGoal();
+      final count = await _repository.getCount();
+      final isDarkMode = await _repository.getIsDarkMode();
 
       state = state.copyWith(
-        stepGoal: stepGoal ?? state.stepGoal,
-        count: count ?? state.count,
-        isDarkMode: isDarkMode ?? state.isDarkMode,
+        stepGoal: stepGoal,
+        count: count,
+        isDarkMode: isDarkMode,
       );
 
       logger.info('Profile settings loaded');
@@ -49,18 +39,28 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
   bool get isDarkMode => state.isDarkMode;
 
   void setStepGoal(int stepGoal) async {
-    await _repository.saveSetting('stepGoal', stepGoal);
+    await _repository.saveStepGoal(stepGoal);
     state = state.copyWith(stepGoal: stepGoal);
   }
 
   void incrementCount() async {
     final newCount = state.count + 1;
-    await _repository.saveSetting('count', newCount);
+    await _repository.saveCount(newCount);
     state = state.copyWith(count: newCount);
   }
 
   void setIsDarkMode(bool isDarkMode) async {
-    await _repository.saveSetting('isDarkMode', isDarkMode);
+    await _repository.saveIsDarkMode(isDarkMode);
     state = state.copyWith(isDarkMode: isDarkMode);
   }
 }
+
+final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
+  return ProfileRepositoryImpl();
+});
+
+final profileProvider =
+    StateNotifierProvider<ProfileViewModel, ProfileState>((ref) {
+  final repository = ref.watch(profileRepositoryProvider);
+  return ProfileViewModel(repository);
+});

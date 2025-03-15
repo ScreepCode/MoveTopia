@@ -9,6 +9,7 @@ import 'package:movetopia/presentation/common/theme.dart';
 import 'package:movetopia/presentation/profile/view_model/profile_view_model.dart';
 
 import 'core/health_authorized_view_model.dart';
+import 'data/repositories/device_info_repository_impl.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +30,7 @@ interface class MoveTopiaAppViewModel {
 
   MoveTopiaAppViewModel(this.ref);
 
-  void init() {
+  Future<void> init() async {
     if (_isInitialized) {
       return;
     }
@@ -48,7 +49,14 @@ interface class MoveTopiaAppViewModel {
       systemStatusBarContrastEnforced: false,
     ));
 
+    await _initializeAppDates();
     _checkAuthorization();
+  }
+
+  Future<void> _initializeAppDates() async {
+    final deviceInfoRepository = ref.read(deviceInfoRepositoryProvider);
+    await deviceInfoRepository.initializeAppDates();
+    log.info('App dates initialized successfully.');
   }
 
   Future<void> _checkAuthorization() async {
