@@ -3,6 +3,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:movetopia/data/model/badge.dart';
 
+import 'badge_detail_dialog.dart';
+
 class BadgeItem extends StatelessWidget {
   final AchievementBadge badge;
   final double currentValue;
@@ -17,32 +19,44 @@ class BadgeItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          children: [
-            BadgeIcon(badge: badge),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  BadgeDetailsSection(badge: badge),
-                  if (badge.isAchieved)
-                    BadgeAchievementDate(badge: badge)
-                  else
-                    BadgeProgressSection(
-                      badge: badge,
-                      currentValue: currentValue,
-                      showProgress: showProgress,
-                    ),
-                ],
-              ),
+    return InkWell(
+        onTap: () => _showBadgeDetails(context),
+        child: Card(
+          elevation: 4,
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                BadgeIcon(badge: badge),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      BadgeDetailsSection(badge: badge),
+                      if (badge.isAchieved)
+                        BadgeAchievementDate(badge: badge)
+                      else
+                        BadgeProgressSection(
+                          badge: badge,
+                          currentValue: currentValue,
+                          showProgress: showProgress,
+                        ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ));
+  }
+
+  void _showBadgeDetails(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => BadgeDetailDialog(
+        badge: badge,
+        currentValue: currentValue,
       ),
     );
   }
