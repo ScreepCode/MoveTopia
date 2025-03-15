@@ -1,0 +1,98 @@
+name: "Release Build APK"
+on:
+  workflow_dispatch:
+
+jobs:
+  build-release:
+    name: "Build Release APK"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+
+      # Caching strategies
+      - name: "Flutter cache"
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            .dart_tool/
+            build/
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-flutter-
+
+      - name: "Java cache"
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: "Set up Java"
+        uses: actions/setup-java@v4
+        with:
+          distribution: "oracle"
+          java-version: "22"
+          cache: "gradle"
+
+      - name: "Set up Flutter"
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version-file: pubspec.yaml
+          cache: true
+
+      - name: "Install Flutter dependencies"
+        run: flutter pub get
+
+      - name: "Setup Ruby"
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+          working-directory: 'android'
+          bundler-cache: true
+
+      - name: "Find next release tag"
+        id: find_tag
+        run: |
+          TAG_DATE=$(date +'%Y.%m.%d')
+          TAG_PREFIX="Release-"
+          BASE_TAG="$TAG_DATE"
+          COUNT=0
+          FULL_TAG="${TAG_PREFIX}${BASE_TAG}.${COUNT}"
+
+          git fetch --tags
+
+          while git ls-remote --tags origin | grep -q "refs/tags/$FULL_TAG"; do
+            COUNT=$((COUNT + 1))
+            FULL_TAG="${TAG_PREFIX}${BASE_TAG}.${COUNT}"
+          done
+
+          echo "Next tag: $FULL_TAG"
+          echo "VERSION_NAME=$FULL_TAG" >> $GITHUB_ENV
+          echo "VERSION_CODE=$BASE_TAG.$COUNT" >> $GITHUB_ENV
+
+      - name: "Run Fastlane Release Build"
+        working-directory: android
+        run: bundle exec fastlane buildRelease
+
+      - name: "Upload Release APK"
+        uses: actions/upload-artifact@v4
+        with:
+          name: movetopia-release
+          path: android/fastlane/build/outputs/movetopia-release.apk
+
+      - name: "Get current date"
+        id: date
+        run: echo "date=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+
+      - name: "Create release tag"
+        uses: ncipollo/release-action@v1
+        with:
+          generateReleaseNotes: true
+          prerelease: false
+          tag: ${{ env.VERSION_NAME }}
+          name: ${{ env.VERSION_NAME }}
+          artifacts: "android/fastlane/build/outputs/movetopia-release.apk"
