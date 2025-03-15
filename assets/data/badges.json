@@ -1,0 +1,210 @@
+[
+  {
+    "id": 10,
+    "name": "Morgenmuffel",
+    "description": "5.000 Schritte täglich",
+    "category": 2,
+    "threshold": 5000,
+    "iconPath": "assets/icons/daily_morgenmuffel.png"
+  },
+  {
+    "id": 11,
+    "name": "Flotter Feger",
+    "description": "10.000 Schritte täglich",
+    "category": 2,
+    "threshold": 10000,
+    "iconPath": "assets/icons/daily_flotterfeger.png"
+  },
+  {
+    "id": 12,
+    "name": "Stadtläufer",
+    "description": "15.000 Schritte täglich",
+    "category": 2,
+    "threshold": 15000,
+    "iconPath": "assets/icons/daily_stadtlaufer.png"
+  },
+  {
+    "id": 13,
+    "name": "Power-Walker",
+    "description": "20.000 Schritte täglich",
+    "category": 2,
+    "threshold": 20000,
+    "iconPath": "assets/icons/daily_powerwalker.png"
+  },
+  {
+    "id": 14,
+    "name": "Halbmarathon-Held",
+    "description": "25.000 Schritte täglich",
+    "category": 2,
+    "threshold": 25000,
+    "iconPath": "assets/icons/daily_halbmarathon.png"
+  },
+  {
+    "id": 15,
+    "name": "Marathon-Meister",
+    "description": "50.000 Schritte täglich",
+    "category": 2,
+    "threshold": 50000,
+    "iconPath": "assets/icons/daily_marathon.png"
+  },
+  {
+    "id": 16,
+    "name": "Erster Schritt",
+    "description": "10.000 Schritte gesamt",
+    "category": 0,
+    "threshold": 10000,
+    "iconPath": "assets/icons/steps_ersterschritt.png"
+  },
+  {
+    "id": 17,
+    "name": "Spaziergänger",
+    "description": "25.000 Schritte gesamt",
+    "category": 0,
+    "threshold": 25000,
+    "iconPath": "assets/icons/steps_spaziergaenger.png"
+  },
+  {
+    "id": 18,
+    "name": "Wanderer",
+    "description": "50.000 Schritte gesamt",
+    "category": 0,
+    "threshold": 50000,
+    "iconPath": "assets/icons/steps_wanderer.png"
+  },
+  {
+    "id": 19,
+    "name": "Fitness-Freund",
+    "description": "75.000 Schritte gesamt",
+    "category": 0,
+    "threshold": 75000,
+    "iconPath": "assets/icons/steps_fitnessfreund.png"
+  },
+  {
+    "id": 20,
+    "name": "Ausdauernder Läufer",
+    "description": "100.000 Schritte gesamt",
+    "category": 0,
+    "threshold": 100000,
+    "iconPath": "assets/icons/steps_laeufer.png"
+  },
+  {
+    "id": 21,
+    "name": "Kilometerfresser",
+    "description": "150.000 Schritte gesamt",
+    "category": 0,
+    "threshold": 150000,
+    "iconPath": "assets/icons/steps_kilometerfresser.png"
+  },
+  {
+    "id": 22,
+    "name": "Reise-Begleiter",
+    "description": "200.000 Schritte gesamt",
+    "category": 0,
+    "threshold": 200000,
+    "iconPath": "assets/icons/steps_reisebegleiter.png"
+  },
+  {
+    "id": 23,
+    "name": "Abenteuerlustiger Wanderer",
+    "description": "500.000 Schritte gesamt",
+    "category": 0,
+    "threshold": 500000,
+    "iconPath": "assets/icons/steps_abenteuer.png"
+  },
+  {
+    "id": 24,
+    "name": "Weltentdecker",
+    "description": "1.000.000 Schritte gesamt",
+    "category": 0,
+    "threshold": 1000000,
+    "iconPath": "assets/icons/steps_weltentdecker.png"
+  },
+  {
+    "id": 25,
+    "name": "Schritte-Legende",
+    "description": "2.000.000 Schritte gesamt",
+    "category": 0,
+    "threshold": 2000000,
+    "iconPath": "assets/icons/steps_legende.png"
+  },
+  {
+    "id": 26,
+    "name": "Tagesausflug",
+    "description": "20 km gesamt",
+    "category": 1,
+    "threshold": 20,
+    "iconPath": "assets/icons/cycling_tagesausflug.png"
+  },
+  {
+    "id": 27,
+    "name": "Pinguinwanderung",
+    "description": "200 km gesamt",
+    "category": 1,
+    "threshold": 200,
+    "iconPath": "assets/icons/cycling_pinguin.png"
+  },
+  {
+    "id": 28,
+    "name": "Bodensee-Umrundung",
+    "description": "260 km gesamt",
+    "category": 1,
+    "threshold": 260,
+    "iconPath": "assets/icons/cycling_bodensee.png"
+  },
+  {
+    "id": 29,
+    "name": "Alpenüberquerung",
+    "description": "410 km gesamt",
+    "category": 1,
+    "threshold": 410,
+    "iconPath": "assets/icons/cycling_alpen.png"
+  },
+  {
+    "id": 30,
+    "name": "Route 66",
+    "description": "3.940 km gesamt",
+    "category": 1,
+    "threshold": 3940,
+    "iconPath": "assets/icons/cycling_route66.png"
+  },
+  {
+    "id": 31,
+    "name": "Nil-Radtour",
+    "description": "6.650 km gesamt",
+    "category": 1,
+    "threshold": 6650,
+    "iconPath": "assets/icons/cycling_nil.png"
+  },
+  {
+    "id": 32,
+    "name": "Transsibirische Eisenbahn",
+    "description": "9.289 km gesamt",
+    "category": 1,
+    "threshold": 9289,
+    "iconPath": "assets/icons/cycling_transsibirisch.png"
+  },
+  {
+    "id": 33,
+    "name": "Chinesische Mauer",
+    "description": "21.196 km gesamt",
+    "category": 1,
+    "threshold": 21196,
+    "iconPath": "assets/icons/cycling_mauer.png"
+  },
+  {
+    "id": 34,
+    "name": "Erdumrundung",
+    "description": "40.075 km gesamt",
+    "category": 1,
+    "threshold": 40075,
+    "iconPath": "assets/icons/cycling_erdumrundung.png"
+  },
+  {
+    "id": 35,
+    "name": "Mondumlaufbahn",
+    "description": "384.400 km gesamt",
+    "category": 1,
+    "threshold": 384400,
+    "iconPath": "assets/icons/cycling_mond.png"
+  }
+]
