@@ -1,5 +1,6 @@
 // lib/presentation/challenges/badgeLists/screen/badge_lists_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:movetopia/data/model/badge.dart' as model;
 import 'package:movetopia/presentation/challenges/badgeLists/widgets/reset_badges_button.dart';
@@ -14,11 +15,12 @@ class BadgeListsScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final badgesState = ref.watch(badgeListsViewModelProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Badge Collection'),
+        title: Text(l10n.badge_list_title),
         actions: [
           const ResetBadgesButton(),
           IconButton(
@@ -32,7 +34,7 @@ class BadgeListsScreen extends HookConsumerWidget {
       body: badgesState.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => Center(
-          child: Text('Error loading badges: $error'),
+          child: Text(l10n.badge_error_loading(error)),
         ),
         data: (badges) {
           // Only include the three specific categories
@@ -49,7 +51,8 @@ class BadgeListsScreen extends HookConsumerWidget {
                 TabBar(
                   isScrollable: true,
                   tabs: categories
-                      .map((category) => Tab(text: _getCategoryName(category)))
+                      .map((category) =>
+                          Tab(text: _getCategoryName(category, l10n)))
                       .toList(),
                 ),
                 Expanded(
@@ -81,14 +84,14 @@ class BadgeListsScreen extends HookConsumerWidget {
     }
   }
 
-  String _getCategoryName(model.AchivementBadgeCategory category) {
+  String _getCategoryName(model.AchivementBadgeCategory category, l10n) {
     switch (category) {
       case model.AchivementBadgeCategory.dailySteps:
-        return 'Daily Steps';
+        return l10n.badge_daily_steps_category;
       case model.AchivementBadgeCategory.totalSteps:
-        return 'Total Steps';
+        return l10n.badge_total_steps_category;
       case model.AchivementBadgeCategory.totalCyclingDistance:
-        return 'Cycling';
+        return l10n.badge_cycling_category;
     }
   }
 }
@@ -98,11 +101,12 @@ class DailyStepsWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final todayStepsAsync = ref.watch(todayStepsProvider);
 
     return todayStepsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('Error: $error')),
+      error: (error, stack) => Center(child: Text(l10n.common_error(error))),
       data: (todaySteps) => CategoryBadgesSection(
         category: AchivementBadgeCategory.dailySteps,
         currentValue: todaySteps,
@@ -116,11 +120,12 @@ class TotalStepsWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final totalStepsAsync = ref.watch(totalStepsProvider);
 
     return totalStepsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('Error: $error')),
+      error: (error, stack) => Center(child: Text(l10n.common_error(error))),
       data: (totalSteps) => CategoryBadgesSection(
         category: AchivementBadgeCategory.totalSteps,
         currentValue: totalSteps,
@@ -134,11 +139,12 @@ class CyclingWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final totalCyclingAsync = ref.watch(totalCyclingProvider);
 
     return totalCyclingAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('Error: $error')),
+      error: (error, stack) => Center(child: Text(l10n.common_error(error))),
       data: (totalCycling) => CategoryBadgesSection(
         category: AchivementBadgeCategory.totalCyclingDistance,
         currentValue: totalCycling,

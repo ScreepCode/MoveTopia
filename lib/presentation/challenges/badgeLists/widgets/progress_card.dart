@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:movetopia/data/model/badge.dart';
 
 class ProgressCard extends StatelessWidget {
@@ -95,6 +96,8 @@ class ProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -109,7 +112,11 @@ class ProgressIndicator extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Progress to ${nextBadge.name}: ${(currentValue / nextThreshold * 100).toInt()}% (${currentValue.toInt()}/${nextThreshold.toInt()})',
+          l10n.badge_progress(
+              nextBadge.name,
+              currentValue / nextThreshold * 100,
+              currentValue.toInt(),
+              nextThreshold.toInt()),
           style: Theme.of(context).textTheme.bodySmall,
         ),
       ],

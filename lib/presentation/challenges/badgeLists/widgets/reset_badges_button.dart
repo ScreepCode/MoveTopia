@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:movetopia/domain/service/badge_service.dart';
 
@@ -8,24 +9,25 @@ class ResetBadgesButton extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final badgeService = ref.read(badgeServiceProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return IconButton(
       icon: const Icon(Icons.restore),
-      tooltip: 'Reset all badges',
+      tooltip: l10n.badge_reset_button_tooltip,
       onPressed: () async {
         final confirmed = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Reset Badges'),
-            content: const Text('Are you sure you want to reset all badges?'),
+            title: Text(l10n.badge_reset_dialog_title),
+            content: Text(l10n.badge_reset_dialog_message),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel'),
+                child: Text(l10n.badge_reset_dialog_cancel),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: const Text('Reset'),
+                child: Text(l10n.badge_reset_dialog_confirm),
               ),
             ],
           ),
@@ -34,7 +36,7 @@ class ResetBadgesButton extends HookConsumerWidget {
         if (confirmed == true) {
           await _resetAllBadges(badgeService);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('All badges have been reset')),
+            SnackBar(content: Text(l10n.badge_reset_success)),
           );
         }
       },

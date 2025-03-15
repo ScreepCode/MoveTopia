@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:movetopia/data/model/badge.dart';
 
@@ -168,6 +169,7 @@ class BadgeAchievementDate extends StatelessWidget {
       return const SizedBox(height: 4);
     }
 
+    final l10n = AppLocalizations.of(context)!;
     final DateFormat formatter = DateFormat('dd.MM.yyyy');
     final String formattedDate = formatter.format(badge.lastAchievedDate!);
 
@@ -184,7 +186,7 @@ class BadgeAchievementDate extends StatelessWidget {
             ),
             const SizedBox(width: 4),
             Text(
-              'Achieved on $formattedDate',
+              l10n.badge_achieved_on(formattedDate),
               style: const TextStyle(
                 fontSize: 12,
                 color: Colors.green,
@@ -197,7 +199,7 @@ class BadgeAchievementDate extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 4.0),
             child: Text(
-              'Completed ${badge.achievedCount} times',
+              l10n.badge_completed_x_times(badge.achievedCount),
               style: const TextStyle(fontSize: 11, color: Colors.grey),
             ),
           ),

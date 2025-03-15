@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:movetopia/data/model/badge.dart';
 import 'package:movetopia/domain/service/badge_service.dart';
@@ -27,6 +28,7 @@ class _CategoryBadgesSectionState extends ConsumerState<CategoryBadgesSection> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final badgesFuture =
         ref.watch(badgeServiceProvider).getBadgesByCategory(widget.category);
 
@@ -69,7 +71,7 @@ class _CategoryBadgesSectionState extends ConsumerState<CategoryBadgesSection> {
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
                   child: Text(
-                    'Next Goal:',
+                    l10n.badge_next_goal,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -85,7 +87,8 @@ class _CategoryBadgesSectionState extends ConsumerState<CategoryBadgesSection> {
                 // Other remaining badges (expandable)
                 if (remainingBadges.length > 1)
                   _buildExpandableSection(
-                    title: 'Upcoming Badges (${remainingBadges.length - 1})',
+                    title:
+                        "${l10n.badge_upcoming_badges} (${remainingBadges.length - 1})",
                     isExpanded: _showRemainingBadges,
                     onTap: () => setState(
                         () => _showRemainingBadges = !_showRemainingBadges),
@@ -102,7 +105,8 @@ class _CategoryBadgesSectionState extends ConsumerState<CategoryBadgesSection> {
                 // Achieved badges (expandable)
                 if (achievedBadges.isNotEmpty)
                   _buildExpandableSection(
-                    title: 'Achieved Badges (${achievedBadges.length})',
+                    title:
+                        "${l10n.badge_achieved_badges} (${achievedBadges.length})",
                     isExpanded: _showAchievedBadges,
                     onTap: () => setState(
                         () => _showAchievedBadges = !_showAchievedBadges),
@@ -117,6 +121,7 @@ class _CategoryBadgesSectionState extends ConsumerState<CategoryBadgesSection> {
   }
 
   Widget _buildAllAchievedLayout(List<AchivementBadge> achievedBadges) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -124,7 +129,7 @@ class _CategoryBadgesSectionState extends ConsumerState<CategoryBadgesSection> {
         Padding(
           padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
           child: Text(
-            'All Badges Achieved in this category!',
+            l10n.badge_all_achieved,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Colors.green,
@@ -132,7 +137,7 @@ class _CategoryBadgesSectionState extends ConsumerState<CategoryBadgesSection> {
           ),
         ),
         _buildExpandableSection(
-          title: 'Achieved Badges (${achievedBadges.length})',
+          title: "${l10n.badge_achieved_badges} (${achievedBadges.length})",
           isExpanded: _showAchievedBadges,
           onTap: () =>
               setState(() => _showAchievedBadges = !_showAchievedBadges),
@@ -144,24 +149,25 @@ class _CategoryBadgesSectionState extends ConsumerState<CategoryBadgesSection> {
   }
 
   Widget _buildProgressCard() {
+    final l10n = AppLocalizations.of(context)!;
     String title;
     String label;
 
     switch (widget.category) {
       case AchivementBadgeCategory.dailySteps:
-        title = "Today's Steps";
-        label = 'steps';
+        title = l10n.badge_daily_steps_title;
+        label = l10n.common_health_data_steps;
         break;
       case AchivementBadgeCategory.totalSteps:
-        title = 'Total Steps';
-        label = 'steps';
+        title = l10n.badge_total_steps_title;
+        label = l10n.common_health_data_steps;
         break;
       case AchivementBadgeCategory.totalCyclingDistance:
-        title = 'Total Cycling Distance';
-        label = 'km';
+        title = l10n.badge_cycling_title;
+        label = l10n.common_health_data_distance_type;
         break;
       default:
-        title = 'Unknown';
+        title = l10n.common_unknown;
         label = '';
     }
 
