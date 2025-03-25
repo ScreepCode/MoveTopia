@@ -79,5 +79,7 @@
   "challenges_next_goal": "Next Goal",
   "challenges_see_all": "See all",
   "challenges_see_all_badges": "See all badges",
-  "challenges_no_achieved_badges": "No badges achieved yet"
+  "challenges_no_achieved_badges": "No badges achieved yet",
+  "@_TRACKING": {},
+  "tracking_title": "Fitness Tracking"
 }

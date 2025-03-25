@@ -75,5 +75,7 @@
   "challenges_next_goal": "Nächstes Ziel",
   "challenges_see_all": "Alle anzeigen",
   "challenges_see_all_badges": "Alle Abzeichen anzeigen",
-  "challenges_no_achieved_badges": "Keine erreichten Abzeichen bisher"
+  "challenges_no_achieved_badges": "Keine erreichten Abzeichen bisher",
+  "@_TRACKING": {},
+  "tracking_title": "Fitness Tracking"
 }
