@@ -1,31 +1,35 @@
-import 'dart:typed_data';
-
 import 'package:activity_tracking/model/Location.dart';
+import 'package:activity_tracking/model/activity.dart';
 import 'package:activity_tracking/model/activity_type.dart';
 import 'package:logging/logging.dart';
-import 'package:activity_tracking/model/activity.dart';
-
 
 class TrackingState {
-  Activity? activity;
+  Activity activity;
   bool isRecording = false;
-
+  String duration = "--";
   final log = Logger('trackingState');
 
   TrackingState(
-      {required this.activity, required this.isRecording});
+      {required this.activity,
+      required this.isRecording,
+      required this.duration});
 
   factory TrackingState.initial() {
     return TrackingState(
         isRecording: false,
-        activity: Activity(activityType: ActivityType.unknown, distance: 0.0, steps: 0, locations: <DateTime, Location>{}));
+        duration: "--",
+        activity: Activity(
+            activityType: ActivityType.unknown,
+            distance: 0.0,
+            steps: 0,
+            locations: <DateTime, Location>{}));
   }
 
   TrackingState copyWith(
-      {Activity? newActivity, bool newIsRecording = false}) {
+      {Activity? newActivity, bool? newIsRecording, String? newDuration}) {
     return TrackingState(
-        isRecording: newIsRecording,
+        isRecording: newIsRecording ?? isRecording,
+        duration: newDuration ?? duration,
         activity: newActivity ?? activity);
   }
-  
 }

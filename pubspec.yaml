@@ -33,6 +33,7 @@ dependencies:
     git:
       url: git@github.com:Jozys/activity_tracking.git
       ref: main
+  permission_handler: ^11.4.0
 
 dev_dependencies:
   flutter_test:

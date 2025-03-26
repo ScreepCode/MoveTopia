@@ -1,24 +1,21 @@
 import 'package:activity_tracking/model/activity_type.dart';
 import 'package:flutter/material.dart';
 import 'package:movetopia/presentation/tracking/widgets/activity_button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class StartActivity extends StatelessWidget{
   final Function onStart;
 
-  const StartActivity({Key? key, required this.onStart}) : super(key: key);
+  const StartActivity({super.key, required this.onStart});
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return Container(child:
-          Column(mainAxisAlignment: MainAxisAlignment.center,children: [
-            const Center(
-              child: Text("Start your Activity", style: TextStyle(fontSize: 20),),
-            ),
-            _buildTrackingButtons(context, (activityType) => () => onStart(activityType),)
+    return Column(mainAxisAlignment: MainAxisAlignment.center,children: [
+        Text(AppLocalizations.of(context)!.tracking_start_activity, style: const TextStyle(fontSize: 36),),
+      const SizedBox(height: 20),
+      _buildTrackingButtons(context, (activityType) => () => onStart(activityType),)
 
-          ],)
-      ,);
+    ],);
   }
 
 
@@ -27,11 +24,11 @@ class StartActivity extends StatelessWidget{
     types.addAll(ActivityType.values);
     types.remove(ActivityType.unknown);
 
-    return Row(mainAxisAlignment: MainAxisAlignment.center,children: types.map((e) => _buildActivityItem(context, e, onPressed )).toList(),);
+    return Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center,children: types.map((e) => _buildActivityItem(context, e, onPressed )).toList(),);
   }
 
   Widget _buildActivityItem(BuildContext context, ActivityType activityType, Function onPressed) {
-    return ActivityButton(activityType: activityType, onPressed: onPressed);
+    return Row(children: [ActivityButton(activityType: activityType, onPressed: onPressed), const SizedBox(width: 10)]);
   }
 
 }

@@ -15,6 +15,7 @@ class ActivityButton extends StatelessWidget {
     
 
     return FilledButton(
+      style: FilledButton.styleFrom(shape: CircleBorder(), padding: EdgeInsets.all(24)),
       onPressed: onPressed(activityType),
       child: Column(
         children: [
