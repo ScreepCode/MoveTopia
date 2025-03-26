@@ -64,7 +64,7 @@ class BadgeRepositoryImpl implements BadgeRepository {
           category: AchievementBadgeCategory.values[data['category']],
           threshold: data['threshold'],
           iconPath: data['iconPath'],
-          isRepeatable: data['isRepeatable'] ?? 0,
+          isRepeatable: data['isRepeatable'] == 0 ? false : true,
           epValue: data['epValue'] ?? 0,
         );
       }).toList();
