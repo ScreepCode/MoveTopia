@@ -42,7 +42,7 @@ class ActivitiesScreen extends HookConsumerWidget {
       body: activities.isLoading && activities.activities.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : _buildBody(context, activities, fetchHealthData),
-      floatingActionButton: FloatingActionButton(onPressed: () {
+      floatingActionButton: FloatingActionButton(child: Icon(Icons.add),onPressed: () {
         context.push("/tracking");
       }),
     );

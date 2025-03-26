@@ -13,6 +13,7 @@
   "activity_last_activity": "Last Activity",
   "activity_details": "{distance}km in {minutes} minutes",
   "activity_distance": "Distance",
+  "activity_steps": "Steps",
   "activity_duration": "Duration",
   "activity_avg_heart_rate": "Average Heart Rate",
   "activity_burnt_calories": "Total burnt calories",

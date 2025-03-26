@@ -11,6 +11,7 @@
   "activity_details": "{distance}km in {minutes} Minuten",
   "activity_distance": "Distanz",
   "activity_duration": "Dauer",
+  "activity_steps": "Schritte",
   "activity_burnt_calories": "Verbrauchte Kalorien",
   "activity_avg_heart_rate": "Durchschnittliche Herzfrequenz",
   "activity_details_title": "Aktivitätsdetails",
