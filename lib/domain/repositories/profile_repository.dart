@@ -2,6 +2,8 @@ const stepGoalKey = 'stepGoal';
 const isDarkModeKey = 'isDarkMode';
 const userEPKey = 'userEP';
 const userLevelKey = 'userLevel';
+const installationDateKey = 'installationDate';
+const lastUpdatedKey = 'lastUpdated';
 
 abstract class ProfileRepository {
   Future<void> saveSetting(String key, dynamic value);
@@ -24,4 +26,12 @@ abstract class ProfileRepository {
   Future<int> getUserLevel();
 
   Future<void> saveUserLevel(int level);
+
+  Future<DateTime> getInstallationDate();
+
+  Future<void> saveInstallationDate(DateTime date);
+
+  Future<DateTime> getLastUpdated();
+
+  Future<void> saveLastUpdated(DateTime date);
 }

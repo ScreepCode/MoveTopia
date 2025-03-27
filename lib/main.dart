@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:movetopia/core/authorizationWrapper.dart';
 import 'package:movetopia/core/navigation_host.dart';
+import 'package:movetopia/domain/service/app_startup_service.dart';
 import 'package:movetopia/presentation/common/theme.dart';
 import 'package:movetopia/presentation/profile/view_model/profile_view_model.dart';
 
@@ -50,6 +51,7 @@ interface class MoveTopiaAppViewModel {
     ));
 
     await _initializeAppDates();
+    await _initializeStreaks();
     _checkAuthorization();
   }
 
@@ -57,6 +59,17 @@ interface class MoveTopiaAppViewModel {
     final deviceInfoRepository = ref.read(deviceInfoRepositoryProvider);
     await deviceInfoRepository.initializeAppDates();
     log.info('App dates initialized successfully.');
+  }
+
+  Future<void> _initializeStreaks() async {
+    log.info('Initializing streaks from installation date...');
+    try {
+      // Erst lesen und dann die Future überwachen, um die Initialisierung zu starten
+      ref.read(appInitializationProvider);
+      log.info('Streak initialization request sent.');
+    } catch (e) {
+      log.severe('Error during streak initialization: $e');
+    }
   }
 
   Future<void> _checkAuthorization() async {
@@ -97,6 +110,10 @@ class MoveTopiaApp extends HookConsumerWidget {
     var isDarkMode = ref.watch(profileProvider).isDarkMode;
     var theme = isDarkMode ? darkTheme : lightTheme;
     provider.init();
+
+    // Überwache den Initialisierungsstatus (kann später für Anzeige verwendet werden)
+    ref.watch(appInitializationProvider);
+
     return AuthorizationWrapper(
       child: buildMaterialApp(theme),
     );

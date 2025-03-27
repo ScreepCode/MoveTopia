@@ -18,4 +18,7 @@ abstract class StreakRepository {
   Future<void> saveCompletedDaysList(List<DateTime> days);
 
   Future<bool> checkAndUpdateStreak(int steps, int goal);
+
+  Future<void> checkAndUpdateStreaksSinceInstallation(
+      DateTime installationDate, int currentGoal);
 }

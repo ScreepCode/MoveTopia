@@ -18,10 +18,14 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
     try {
       final stepGoal = await _repository.getStepGoal();
       final isDarkMode = await _repository.getIsDarkMode();
+      final installationDate = await _repository.getInstallationDate();
+      final lastUpdated = await _repository.getLastUpdated();
 
       state = state.copyWith(
         stepGoal: stepGoal,
         isDarkMode: isDarkMode,
+        installationDate: installationDate,
+        lastUpdated: lastUpdated,
       );
 
       logger.info('Profile settings loaded');
@@ -34,6 +38,10 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
 
   bool get isDarkMode => state.isDarkMode;
 
+  DateTime get installationDate => state.installationDate;
+
+  DateTime get lastUpdated => state.lastUpdated;
+
   void setStepGoal(int stepGoal) async {
     await _repository.saveStepGoal(stepGoal);
     state = state.copyWith(stepGoal: stepGoal);
@@ -42,6 +50,16 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
   void setIsDarkMode(bool isDarkMode) async {
     await _repository.saveIsDarkMode(isDarkMode);
     state = state.copyWith(isDarkMode: isDarkMode);
+  }
+
+  void setInstallationDate(DateTime date) async {
+    await _repository.saveInstallationDate(date);
+    state = state.copyWith(installationDate: date);
+  }
+
+  void setLastUpdated(DateTime date) async {
+    await _repository.saveLastUpdated(date);
+    state = state.copyWith(lastUpdated: date);
   }
 }
 

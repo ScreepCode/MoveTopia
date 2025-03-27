@@ -8,22 +8,18 @@ import 'package:movetopia/domain/repositories/device_info_repository.dart';
 import 'package:movetopia/domain/repositories/local_health.dart';
 
 import '../../data/repositories/local_health_impl.dart';
-import '../../presentation/profile/view_model/profile_view_model.dart';
-import '../repositories/profile_repository.dart';
 import 'level_service.dart';
 
 class BadgeService {
   final BadgeRepository badgeRepository;
   final LocalHealthRepository localHealthRepository;
   final DeviceInfoRepository deviceInfoRepository;
-  final ProfileRepository profileRepository;
   final LevelService levelService;
 
   BadgeService({
     required this.badgeRepository,
     required this.localHealthRepository,
     required this.deviceInfoRepository,
-    required this.profileRepository,
     required this.levelService,
   });
 
@@ -31,13 +27,14 @@ class BadgeService {
     final installationDate = await deviceInfoRepository.getInstallationDate();
     final lastCheckDate = await deviceInfoRepository.getLastOpenedDate();
     final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
 
     await _checkTotalStepsBadges(installationDate, now);
     await _checkTotalCyclingBadges(installationDate, now);
     await _checkDailyStepsBadges(lastCheckDate, now);
 
-    await deviceInfoRepository
-        .updateLastOpenedDate(now.subtract(Duration(days: 30)));
+    // Update the last check date to today
+    await deviceInfoRepository.updateLastOpenedDate(today);
   }
 
   // Check and update badge status, return whether a level up occurred
@@ -146,7 +143,6 @@ final badgeServiceProvider = Provider<BadgeService>((ref) {
     badgeRepository: ref.watch(badgeRepositoryProvider),
     localHealthRepository: ref.watch(localHealthRepositoryProvider),
     deviceInfoRepository: ref.watch(deviceInfoRepositoryProvider),
-    profileRepository: ref.watch(profileRepositoryProvider),
     levelService: ref.watch(levelServiceProvider),
   );
 });

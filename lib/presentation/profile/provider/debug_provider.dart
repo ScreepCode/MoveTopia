@@ -1,6 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../data/repositories/debug_repository_impl.dart';
+import '../../../data/repositories/device_info_repository_impl.dart';
+import '../../../data/repositories/streak_repository_impl.dart';
 import '../../../domain/repositories/debug_repository.dart';
+import '../../../domain/repositories/device_info_repository.dart';
 import '../../challenges/provider/streak_provider.dart';
 
 // Provider für das Debug-Repository
@@ -13,6 +17,40 @@ final debugRepositoryProvider = Provider<DebugRepository>((ref) {
 final isDebugBuildProvider = FutureProvider<bool>((ref) async {
   final debugRepository = ref.watch(debugRepositoryProvider);
   return debugRepository.isDebugBuild();
+});
+
+// Provider für das Installationsdatum
+final installationDateProvider = FutureProvider<DateTime>((ref) async {
+  final deviceInfoRepository = ref.watch(deviceInfoRepositoryProvider);
+  return await deviceInfoRepository.getInstallationDate();
+});
+
+// Provider für das letzte Aktualisierungsdatum
+final lastOpenedDateProvider = FutureProvider<DateTime>((ref) async {
+  final deviceInfoRepository = ref.watch(deviceInfoRepositoryProvider);
+  return await deviceInfoRepository.getLastOpenedDate();
+});
+
+// Provider zum Aktualisieren des Installationsdatums
+final updateInstallationDateProvider =
+    Provider<Future<void> Function(DateTime)>((ref) {
+  return (DateTime newDate) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('installationDate', newDate.toIso8601String());
+    // Refresh the provider
+    ref.refresh(installationDateProvider);
+  };
+});
+
+// Provider zum Aktualisieren des letzten Aktualisierungsdatums
+final updateLastOpenedDateProvider =
+    Provider<Future<void> Function(DateTime)>((ref) {
+  return (DateTime newDate) async {
+    final deviceInfoRepository = ref.read(deviceInfoRepositoryProvider);
+    await deviceInfoRepository.updateLastOpenedDate(newDate);
+    // Refresh the provider
+    ref.refresh(lastOpenedDateProvider);
+  };
 });
 
 // Provider für das Zurücksetzen der Streak-Daten

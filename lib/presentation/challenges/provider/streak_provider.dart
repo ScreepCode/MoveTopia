@@ -2,17 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../data/repositories/device_info_repository_impl.dart';
 import '../../../data/repositories/streak_repository_impl.dart';
 import '../../../domain/repositories/streak_repository.dart';
 
 // Provider für SharedPreferences
 final sharedPreferencesProvider = Provider<Future<SharedPreferences>>((ref) {
   return SharedPreferences.getInstance();
-});
-
-// Provider für das Streak-Repository
-final streakRepositoryProvider = Provider<StreakRepository>((ref) {
-  return StreakRepositoryImpl();
 });
 
 // StreamProvider für Aktualisierungen
@@ -82,51 +78,96 @@ extension DateTimeExtension on DateTime {
     // Sortiere die abgeschlossenen Tage
     final sortedDays = List<DateTime>.from(completedDays)..sort();
 
-    // Finde die längste zusammenhängende Streak, die diesen Tag enthält
-    DateTime streakStart = this;
-    DateTime streakEnd = this;
+    // Finde die aktuelle Streak (die bis heute reicht)
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
 
-    // Prüfe nach vorwärts
-    DateTime currentDate = this;
-    while (true) {
-      final nextDay = currentDate.add(const Duration(days: 1));
-      if (nextDay.isAfter(DateTime.now())) break;
+    // Prüfe, ob heute in der Liste der abgeschlossenen Tage ist
+    final isTodayCompleted = sortedDays.any((day) =>
+        day.year == today.year &&
+        day.month == today.month &&
+        day.day == today.day);
 
-      if (sortedDays.any((day) =>
-          day.year == nextDay.year &&
-          day.month == nextDay.month &&
-          day.day == nextDay.day)) {
-        currentDate = nextDay;
-        streakEnd = nextDay;
-      } else {
-        break;
+    // Finde die aktuelle aktive Streak (die bis heute reicht oder gestern endet)
+    DateTime currentStreakStart = today;
+    bool isPartOfCurrentStreak = false;
+
+    if (isTodayCompleted) {
+      // Wenn heute erledigt ist, prüfe wie weit die aktuelle Streak zurückreicht
+      DateTime checkDate = today;
+      while (true) {
+        final previousDay = checkDate.subtract(const Duration(days: 1));
+        if (previousDay.isBefore(DateTime(2024, 1, 1))) break;
+
+        final isPreviousDayCompleted = sortedDays.any((day) =>
+            day.year == previousDay.year &&
+            day.month == previousDay.month &&
+            day.day == previousDay.day);
+
+        if (isPreviousDayCompleted) {
+          checkDate = previousDay;
+          currentStreakStart = previousDay;
+        } else {
+          break;
+        }
+      }
+
+      // Prüfe, ob der aktuelle Tag Teil der aktuellen Streak ist
+      isPartOfCurrentStreak =
+          (this.isAfter(currentStreakStart.subtract(const Duration(days: 1))) ||
+                  this.year == currentStreakStart.year &&
+                      this.month == currentStreakStart.month &&
+                      this.day == currentStreakStart.day) &&
+              (this.isBefore(today.add(const Duration(days: 1))) ||
+                  this.year == today.year &&
+                      this.month == today.month &&
+                      this.day == today.day);
+    } else {
+      // Wenn heute nicht erledigt ist, prüfe ob gestern erledigt wurde (dann ist das noch Teil der aktuellen Streak)
+      final yesterday = today.subtract(const Duration(days: 1));
+      final isYesterdayCompleted = sortedDays.any((day) =>
+          day.year == yesterday.year &&
+          day.month == yesterday.month &&
+          day.day == yesterday.day);
+
+      if (isYesterdayCompleted) {
+        currentStreakStart = yesterday;
+        DateTime checkDate = yesterday;
+
+        while (true) {
+          final previousDay = checkDate.subtract(const Duration(days: 1));
+          if (previousDay.isBefore(DateTime(2024, 1, 1))) break;
+
+          final isPreviousDayCompleted = sortedDays.any((day) =>
+              day.year == previousDay.year &&
+              day.month == previousDay.month &&
+              day.day == previousDay.day);
+
+          if (isPreviousDayCompleted) {
+            checkDate = previousDay;
+            currentStreakStart = previousDay;
+          } else {
+            break;
+          }
+        }
+
+        // Prüfe, ob der aktuelle Tag Teil der gestern endenden Streak ist
+        isPartOfCurrentStreak = (this.isAfter(
+                    currentStreakStart.subtract(const Duration(days: 1))) ||
+                this.year == currentStreakStart.year &&
+                    this.month == currentStreakStart.month &&
+                    this.day == currentStreakStart.day) &&
+            (this.isBefore(yesterday.add(const Duration(days: 1))) ||
+                this.year == yesterday.year &&
+                    this.month == yesterday.month &&
+                    this.day == yesterday.day);
       }
     }
 
-    // Prüfe nach rückwärts
-    currentDate = this;
-    while (true) {
-      final previousDay = currentDate.subtract(const Duration(days: 1));
-      if (previousDay.isBefore(DateTime(2024, 1, 1))) break;
-
-      if (sortedDays.any((day) =>
-          day.year == previousDay.year &&
-          day.month == previousDay.month &&
-          day.day == previousDay.day)) {
-        currentDate = previousDay;
-        streakStart = previousDay;
-      } else {
-        break;
-      }
-    }
-
-    // Nur wenn es mindestens 2 zusammenhängende Tage gibt, ist es eine aktive Streak
-    final isPartOfActiveStreak = streakEnd.difference(streakStart).inDays >= 1;
-
-    if (isPartOfActiveStreak) {
+    if (isPartOfCurrentStreak) {
       return const Color(0xFFAF52DE); // Lila für aktive Streak
     } else {
-      return Colors.red.shade300; // Rot für verfallene Streak
+      return Colors.red.shade300; // Rot für unterbrochene Streak
     }
   }
 }
