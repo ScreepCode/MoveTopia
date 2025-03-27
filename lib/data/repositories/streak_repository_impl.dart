@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:logging/logging.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:movetopia/domain/repositories/device_info_repository.dart';
 import 'package:movetopia/data/repositories/device_info_repository_impl.dart';
+import 'package:movetopia/data/repositories/local_health_impl.dart';
+import 'package:movetopia/domain/repositories/device_info_repository.dart';
+import 'package:movetopia/domain/repositories/local_health.dart';
 import 'package:riverpod/riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../domain/repositories/streak_repository.dart';
 
@@ -16,8 +18,10 @@ class StreakRepositoryImpl implements StreakRepository {
   final logger = Logger('StreakRepositoryImpl');
   late Future<SharedPreferences> _prefsInstance;
   final DeviceInfoRepository _deviceInfoRepository;
+  final LocalHealthRepository _localHealthRepository;
 
-  StreakRepositoryImpl(this._deviceInfoRepository) {
+  StreakRepositoryImpl(
+      this._deviceInfoRepository, this._localHealthRepository) {
     _prefsInstance = SharedPreferences.getInstance();
   }
 
@@ -131,6 +135,8 @@ class StreakRepositoryImpl implements StreakRepository {
     logger.info(
         'Checking streaks since installation date: $installationDate with goal: $currentGoal');
 
+    final localHealthRepository = _localHealthRepository;
+
     // Hole die Liste der bereits abgeschlossenen Tage
     final allCompletedDays = await getCompletedDays() ?? [];
     final now = DateTime.now();
@@ -142,31 +148,52 @@ class StreakRepositoryImpl implements StreakRepository {
     for (var day = oldestDay;
         !(day.isAfter(today) || day.isAtSameMomentAs(today));
         day = day.add(const Duration(days: 1))) {
-      // Format date as string in format "yyyy-MM-dd"
-      final dayString = day.toIso8601String();
+      final normalizedDay = DateTime(day.year, day.month, day.day);
 
       // Prüfe, ob der Tag bereits in der Liste der abgeschlossenen Tage ist
       final dayExists =
-          allCompletedDays.any((d) => d.toIso8601String() == dayString);
+          allCompletedDays.any((d) => _isSameDay(d, normalizedDay));
+
       if (!dayExists) {
-        // Tag hinzufügen, wenn er noch nicht in der Liste ist
-        logger.info('Adding day $dayString to completed days');
-        await saveCompletedDay(day);
-        daysAdded = true;
+        // Hole die Schritte für diesen Tag aus HealthKit/Google Fit
+        final startOfDay = normalizedDay;
+        final endOfDay = DateTime(normalizedDay.year, normalizedDay.month,
+            normalizedDay.day, 23, 59, 59);
+
+        final steps = await localHealthRepository.getStepsInInterval(
+            startOfDay, endOfDay);
+        logger
+            .info('Tag: $normalizedDay, Schritte: $steps, Ziel: $currentGoal');
+
+        // Prüfe, ob das Tagesziel erreicht wurde
+        if (steps >= currentGoal) {
+          // Tag hinzufügen, nur wenn das Schrittziel erreicht wurde
+          logger.info(
+              'Adding day $normalizedDay to completed days (steps: $steps >= goal: $currentGoal)');
+          await saveCompletedDay(normalizedDay);
+          daysAdded = true;
+        } else {
+          logger.info(
+              'Day $normalizedDay did not reach goal (steps: $steps < goal: $currentGoal)');
+        }
       }
     }
 
+    // Aktualisiere die Liste der abgeschlossenen Tage - immer ausführen, unabhängig davon,
+    // ob neue Tage hinzugefügt wurden
+    final updatedCompletedDays = await getCompletedDays() ?? [];
+    logger.info(
+        'Updated completed days list, length: ${updatedCompletedDays.length}');
+
+    // Berechne die aktuelle Streak-Länge neu - immer ausführen
+    await _recalculateStreakCount(updatedCompletedDays);
+    logger.info('Streak count recalculated');
+
+    // Zum Schluss das aktuelle Datum als letztes geprüftes Datum speichern
+    await _deviceInfoRepository.updateLastOpenedDate(today);
+
     if (daysAdded) {
-      // Aktualisiere die Liste der abgeschlossenen Tage
-      final updatedCompletedDays = await getCompletedDays() ?? [];
-      logger.info(
-          'Updated completed days list, new length: ${updatedCompletedDays.length}');
-
-      // Berechne die aktuelle Streak-Länge neu
-      await _recalculateStreakCount(updatedCompletedDays);
-
-      // Zum Schluss das aktuelle Datum als letztes geprüftes Datum speichern
-      await _deviceInfoRepository.updateLastOpenedDate(today);
+      logger.info('New days were added to streak history');
     } else {
       logger.info('No new days to add to streak history');
     }
@@ -186,27 +213,22 @@ class StreakRepositoryImpl implements StreakRepository {
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
 
-    // Prüfe ob heute oder gestern in der Liste ist
-    bool hasTodayOrYesterday = completedDays
-        .any((d) => _isSameDay(d, today) || _isSameDay(d, yesterday));
+    // Prüfe ob gestern in der Liste ist - das ist entscheidend für die Streak
+    bool hasYesterdayCompleted =
+        completedDays.any((d) => _isSameDay(d, yesterday));
 
-    if (!hasTodayOrYesterday) {
-      // Wenn weder heute noch gestern in der Liste ist, ist die Streak unterbrochen
+    // Wenn gestern nicht in der Liste ist, ist die Streak unterbrochen
+    if (!hasYesterdayCompleted) {
       await saveStreakCount(0);
       return;
     }
 
-    // Zähle die aktuelle Streak (vom letzten Tag rückwärts)
-    int currentStreak = 0;
-    DateTime checkDate;
+    // Zähle die aktuelle Streak vom Vortag rückwärts
+    int currentStreak = 1; // Gestern ist mindestens erfüllt
+    DateTime checkDate =
+        yesterday.subtract(const Duration(days: 1)); // Beginne mit vorgestern
 
-    // Entscheide, welcher Tag der letzte in der Serie ist
-    if (completedDays.any((d) => _isSameDay(d, today))) {
-      checkDate = today;
-    } else {
-      checkDate = yesterday;
-    }
-
+    // Zähle zurück, bis ein Tag in der Serie fehlt
     while (true) {
       if (completedDays.any((d) => _isSameDay(d, checkDate))) {
         currentStreak++;
@@ -216,12 +238,20 @@ class StreakRepositoryImpl implements StreakRepository {
       }
     }
 
+    // Prüfe ob heute bereits erfüllt ist und füge es zur Streak hinzu
+    bool hasTodayCompleted = completedDays.any((d) => _isSameDay(d, today));
+    if (hasTodayCompleted) {
+      currentStreak++;
+    }
+
     await saveStreakCount(currentStreak);
-    logger.info('Updated streak count to $currentStreak');
+    logger.info(
+        'Updated streak count to $currentStreak (today completed: $hasTodayCompleted)');
   }
 }
 
 final streakRepositoryProvider = Provider<StreakRepository>((ref) {
   final deviceInfoRepository = ref.watch(deviceInfoRepositoryProvider);
-  return StreakRepositoryImpl(deviceInfoRepository);
+  final localHealthRepository = ref.watch(localHealthRepositoryProvider);
+  return StreakRepositoryImpl(deviceInfoRepository, localHealthRepository);
 });
