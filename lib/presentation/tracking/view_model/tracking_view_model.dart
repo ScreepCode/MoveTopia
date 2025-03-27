@@ -6,6 +6,7 @@ import 'package:activity_tracking/model/activity.dart';
 import 'package:activity_tracking/model/activity_type.dart';
 import 'package:activity_tracking/model/message.dart';
 import 'package:logging/logging.dart';
+import 'package:movetopia/data/repositories/local_health_impl.dart';
 import 'package:movetopia/presentation/tracking/view_model/tracking_state.dart';
 import 'package:movetopia/utils/tracking_utils.dart';
 import 'package:riverpod/riverpod.dart';
@@ -24,14 +25,13 @@ class TrackingViewModel extends StateNotifier<TrackingState?> {
   TrackingViewModel(this.ref) : super(TrackingState.initial());
 
   startTracking(ActivityType activityType) async {
-    var sucess = await checkPermission();
-    if (!sucess) {
+    var success = await checkPermission();
+    if (!success) {
       return;
     }
     Activity? startedActivity =
         await activityTrackingPlugin.startActivity(activityType);
     state = state?.copyWith(newActivity: startedActivity, newIsRecording: true);
-    //  log.info('startTracking: $type');
     activityStreamSubscription =
         activityTrackingPlugin.getNativeEvents().listen(_onActivityUpdate);
   }
@@ -40,12 +40,12 @@ class TrackingViewModel extends StateNotifier<TrackingState?> {
     activityStreamSubscription.cancel();
     var finalResult = await activityTrackingPlugin.stopCurrentActivity();
     if (finalResult != null) {
-      print(finalResult.steps);
-      print(finalResult.startDateTime);
-      print(finalResult.endDateTime);
-      print(finalResult.locations?.values);
       state = state?.copyWith(
           newActivity: finalResult, newIsRecording: false, newDuration: "");
+
+      await ref
+          .read(localHealthRepositoryProvider)
+          .writeTrackingToHealth(finalResult);
     }
   }
 

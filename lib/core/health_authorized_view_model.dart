@@ -29,7 +29,8 @@ class HealthAuthViewModel extends StateNotifier<HealthAuthViewModelState> {
     bool? hasPermissions = await _health.hasPermissions(neededPermissions);
     if (hasPermissions == null || !hasPermissions) {
       try {
-        bool authorized = await _health.requestAuthorization(neededPermissions);
+        bool authorized = await _health.requestAuthorization(neededPermissions,
+            permissions: [HealthDataAccess.READ_WRITE]);
         if (authorized) {
           state = HealthAuthViewModelState.authorized;
         } else {
