@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:logging/logging.dart';
 
 import '../../../data/repositories/device_info_repository_impl.dart';
+import '../../../data/repositories/local_health_impl.dart';
 import '../../../data/repositories/streak_repository_impl.dart';
+import '../../../domain/repositories/local_health.dart';
 import '../../../domain/repositories/streak_repository.dart';
+import '../../profile/view_model/profile_view_model.dart';
+
+// Logger für Streak-Provider
+final _logger = Logger('StreakProvider');
 
 // Provider für SharedPreferences
 final sharedPreferencesProvider = Provider<Future<SharedPreferences>>((ref) {
@@ -45,6 +52,79 @@ final updateStreakProvider =
         await streakRepository.checkAndUpdateStreak(params.steps, params.goal);
     if (updated) {
       ref.read(streakRefreshProvider.notifier).state++;
+    }
+  };
+});
+
+// Provider zum Aktualisieren der Streak-Daten anhand von echten Health-Daten
+final refreshStreakFromHealthDataProvider =
+    Provider<Future<void> Function()>((ref) {
+  return () async {
+    _logger.info('Aktualisiere Streak-Daten mit echten Health-Daten...');
+
+    final deviceInfoRepository = ref.read(deviceInfoRepositoryProvider);
+    final streakRepository = ref.read(streakRepositoryProvider);
+    final healthRepository = ref.read(localHealthRepositoryProvider);
+    final profileRepository = ref.read(profileRepositoryProvider);
+
+    try {
+      // Lade das Installationsdatum und das Schrittziel
+      final installationDate = await deviceInfoRepository.getInstallationDate();
+      final stepGoal = await profileRepository.getStepGoal();
+
+      _logger.info(
+          'Installationsdatum: $installationDate, Schrittziel: $stepGoal');
+
+      // Hole die bestehenden abgeschlossenen Tage
+      final existingCompletedDays = await streakRepository.getCompletedDays();
+      _logger.info(
+          'Bestehende abgeschlossene Tage: ${existingCompletedDays.length}');
+
+      // Prüfe jeden Tag seit der Installation
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final completedDaysSet = <String>{};
+
+      // Setze alle bestehenden Tage zurück
+      _logger.info('Setze bestehende Tage zurück...');
+      await streakRepository.saveCompletedDaysList([]);
+
+      // Iteriere über alle Tage seit der Installation
+      for (var day = installationDate;
+          day.isBefore(today) || day.isAtSameMomentAs(today);
+          day = day.add(const Duration(days: 1))) {
+        final normalizedDay = DateTime(day.year, day.month, day.day);
+
+        // Hole die Schritte für diesen Tag
+        final startOfDay = normalizedDay;
+        final endOfDay = DateTime(normalizedDay.year, normalizedDay.month,
+            normalizedDay.day, 23, 59, 59);
+
+        final steps =
+            await healthRepository.getStepsInInterval(startOfDay, endOfDay);
+        _logger.info('Tag: $normalizedDay, Schritte: $steps, Ziel: $stepGoal');
+
+        // Prüfe, ob das Tagesziel erreicht wurde
+        if (steps >= stepGoal) {
+          _logger.info('Tagesziel erreicht für $normalizedDay');
+          await streakRepository.saveCompletedDay(normalizedDay);
+          // Vermerke den Tag als abgeschlossen
+          completedDaysSet.add(normalizedDay.toIso8601String().split('T')[0]);
+        }
+      }
+
+      // Aktualisiere den letzten Aktualisierungszeitpunkt
+      await deviceInfoRepository.updateLastOpenedDate(today);
+
+      // Aktualisiere den UI-Provider
+      ref.read(streakRefreshProvider.notifier).state++;
+
+      _logger.info(
+          'Streak-Aktualisierung abgeschlossen. ${completedDaysSet.length} Tage erfüllt.');
+    } catch (e, stackTrace) {
+      _logger.severe(
+          'Fehler beim Aktualisieren der Streak-Daten', e, stackTrace);
+      throw Exception('Fehler beim Aktualisieren der Streak-Daten: $e');
     }
   };
 });

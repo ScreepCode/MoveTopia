@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../provider/debug_provider.dart';
+import '../../challenges/provider/streak_provider.dart';
 
 class DebugSection extends HookConsumerWidget {
   const DebugSection({super.key});
@@ -235,6 +236,47 @@ class StreakDebugSection extends HookConsumerWidget {
               ),
               const Divider(color: Colors.red),
             ],
+          ),
+        ),
+
+        // Streak aus echten Health-Daten neu laden
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16.0),
+          child: ElevatedButton.icon(
+            onPressed: isLoading.value
+                ? null
+                : () async {
+                    isLoading.value = true;
+                    try {
+                      await ref.read(refreshStreakFromHealthDataProvider)();
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'Streak-Daten aus Health-Daten neu geladen'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Fehler beim Laden: $e'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    } finally {
+                      isLoading.value = false;
+                    }
+                  },
+            icon: const Icon(Icons.refresh, color: Colors.green),
+            label: const Text('Echte Health-Daten laden'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green.shade50,
+              foregroundColor: Colors.green,
+            ),
           ),
         ),
 
