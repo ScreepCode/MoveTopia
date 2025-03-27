@@ -6,6 +6,7 @@ import 'package:movetopia/data/model/badge.dart';
 import 'package:movetopia/presentation/challenges/dashboard/widgets/category_highlight_widget.dart';
 import 'package:movetopia/presentation/challenges/provider/badge_lists_provider.dart';
 import 'package:movetopia/presentation/challenges/routes.dart';
+import 'package:movetopia/presentation/challenges/widgets/streak_card.dart';
 
 import '../../widgets/user_level_card.dart';
 
@@ -20,69 +21,79 @@ class ChallengeDashboardScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(l10n.challenges_dashboard_title),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const UserLevelDisplay(),
+      body: _buildContent(context, ref, l10n),
+    );
+  }
 
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                l10n.challenges_achievements_title,
-                style: Theme.of(context).textTheme.titleLarge,
+  Widget _buildContent(
+      BuildContext context, WidgetRef ref, AppLocalizations l10n) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const UserLevelDisplay(),
+
+          // Streak Card
+          const StreakCard(isCompact: false),
+
+          const SizedBox(height: 16),
+
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              l10n.challenges_achievements_title,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+          ),
+
+          // Daily Steps Category Highlight
+          CategoryHighlightWidget(
+            category: AchievementBadgeCategory.dailySteps,
+            categoryName: l10n.badge_daily_steps_category,
+            categoryProgress: todayStepsProvider,
+            onSeeAll: () => _navigateToBadgeList(context,
+                category: AchievementBadgeCategory.dailySteps),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Total Steps Category Highlight
+          CategoryHighlightWidget(
+            category: AchievementBadgeCategory.totalSteps,
+            categoryName: l10n.badge_total_steps_category,
+            categoryProgress: totalStepsProvider,
+            onSeeAll: () => _navigateToBadgeList(context,
+                category: AchievementBadgeCategory.totalSteps),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Cycling Distance Category Highlight
+          CategoryHighlightWidget(
+            category: AchievementBadgeCategory.totalCyclingDistance,
+            categoryName: l10n.badge_cycling_category,
+            categoryProgress: totalCyclingProvider,
+            onSeeAll: () => _navigateToBadgeList(context,
+                category: AchievementBadgeCategory.totalCyclingDistance),
+          ),
+
+          const SizedBox(height: 32),
+
+          // Button to see all badges
+          Center(
+            child: ElevatedButton.icon(
+              onPressed: () => _navigateToBadgeList(context),
+              icon: const Icon(Icons.emoji_events),
+              label: Text(l10n.challenges_see_all_badges),
+              style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
             ),
+          ),
 
-            // Daily Steps Category Highlight
-            CategoryHighlightWidget(
-              category: AchievementBadgeCategory.dailySteps,
-              categoryName: l10n.badge_daily_steps_category,
-              categoryProgress: todayStepsProvider,
-              onSeeAll: () => _navigateToBadgeList(context,
-                  category: AchievementBadgeCategory.dailySteps),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Total Steps Category Highlight
-            CategoryHighlightWidget(
-              category: AchievementBadgeCategory.totalSteps,
-              categoryName: l10n.badge_total_steps_category,
-              categoryProgress: totalStepsProvider,
-              onSeeAll: () => _navigateToBadgeList(context,
-                  category: AchievementBadgeCategory.totalSteps),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Cycling Distance Category Highlight
-            CategoryHighlightWidget(
-              category: AchievementBadgeCategory.totalCyclingDistance,
-              categoryName: l10n.badge_cycling_category,
-              categoryProgress: totalCyclingProvider,
-              onSeeAll: () => _navigateToBadgeList(context,
-                  category: AchievementBadgeCategory.totalCyclingDistance),
-            ),
-
-            const SizedBox(height: 32),
-
-            // Button to see all badges
-            Center(
-              child: ElevatedButton.icon(
-                onPressed: () => _navigateToBadgeList(context),
-                icon: const Icon(Icons.emoji_events),
-                label: Text(l10n.challenges_see_all_badges),
-                style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 24),
-          ],
-        ),
+          const SizedBox(height: 24),
+        ],
       ),
     );
   }

@@ -83,6 +83,68 @@
   "challenges_see_all": "See all",
   "challenges_see_all_badges": "See all badges",
   "challenges_no_achieved_badges": "No badges achieved yet",
+  "streakTitle": "Streak",
+  "streakSubtitle": "Your daily streak",
+  "streakCount": "{count} days",
+  "@streakCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakDetails": "Streak Details",
+  "streakCalendar": "Calendar",
+  "streakNoData": "No streak data available",
+  "streakActive": "Active Streak",
+  "streakBroken": "Broken Streak",
+  "streakNotCompleted": "Not Completed",
+  "streakLegend": "Legend",
+  "streakStats": "Statistics",
+  "streakMonthlyAchievement": "You reached your goal on {days} days this month!",
+  "@streakMonthlyAchievement": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "streakTotalDays": "Total: {days} days",
+  "@streakTotalDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "streakMessage": "Keep going! You're on the right track.",
+  "streakStart": "Start your streak by reaching your daily step goal.",
+  "streakDebugTitle": "Debug Streak",
+  "streakDebugSimulate": "Simulate Streak",
+  "streakDebugReset": "Reset Streak Data",
+  "streakDebugDays": "Number of days",
+  "streakDebugDate": "Select date",
+  "streakDebugSimulatePast": "Simulate streak for past days",
+  "streakDebugSimulateDate": "Simulate streak for specific date",
+  "streakDebugMarkButton": "Mark Day",
+  "streakDebugDaysSimulated": "Streak simulated for {days} days!",
+  "@streakDebugDaysSimulated": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "streakDebugDateMarked": "Day {date} marked as completed!",
+  "@streakDebugDateMarked": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "streakDebugResetSuccess": "Streak has been reset!"
+  "challenges_no_achieved_badges": "No badges achieved yet",
   "@_TRACKING": {},
   "tracking_title": "Fitness Tracking",
   "tracking_start_activity": "Start Activity",

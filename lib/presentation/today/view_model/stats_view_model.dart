@@ -1,4 +1,6 @@
 import 'package:movetopia/data/repositories/local_health_impl.dart';
+import 'package:movetopia/presentation/challenges/provider/streak_provider.dart';
+import 'package:movetopia/presentation/profile/view_model/profile_view_model.dart';
 import 'package:riverpod/riverpod.dart';
 
 import 'stats_state.dart';
@@ -29,5 +31,12 @@ class StatsViewModel extends StateNotifier<StatsState> {
         .read(localHealthRepositoryProvider)
         .getSleepFromDate(now.subtract(const Duration(days: 1)));
     state = state.copyWith(steps: steps, distance: distance, sleep: sleep);
+
+    final stepGoal = ref.read(profileProvider).stepGoal;
+
+    if (steps >= stepGoal) {
+      final params = UpdateStreakParams(steps: steps, goal: stepGoal);
+      await ref.read(updateStreakProvider)(params);
+    }
   }
 }

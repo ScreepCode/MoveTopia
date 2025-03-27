@@ -29,6 +29,7 @@
   "common_health_data_sleep": "Schlaf",
   "common_health_data_hours": "Stunden",
   "common_health_data_steps": "Schritte",
+  "common_health_data_distance_type": "km",
   "common_settings": "Einstellungen",
   "common_dark_mode": "Dunkler Modus",
   "common_counter": "Zähler",
@@ -78,6 +79,68 @@
   "challenges_next_goal": "Nächstes Ziel",
   "challenges_see_all": "Alle anzeigen",
   "challenges_see_all_badges": "Alle Abzeichen anzeigen",
+  "challenges_no_achieved_badges": "Keine erreichten Abzeichen bisher",
+  "streakTitle": "Serie",
+  "streakSubtitle": "Deine tägliche Serie",
+  "streakCount": "{count} Tage",
+  "@streakCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakDetails": "Serien-Details",
+  "streakCalendar": "Kalender",
+  "streakNoData": "Keine Serien-Daten verfügbar",
+  "streakActive": "Aktive Serie",
+  "streakBroken": "Unterbrochene Serie",
+  "streakNotCompleted": "Nicht abgeschlossen",
+  "streakLegend": "Legende",
+  "streakStats": "Statistik",
+  "streakMonthlyAchievement": "Du hast diesen Monat an {days} Tagen dein Ziel erreicht!",
+  "@streakMonthlyAchievement": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "streakTotalDays": "Insgesamt: {days} Tage",
+  "@streakTotalDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "streakMessage": "Weiter so! Du bist auf dem richtigen Weg.",
+  "streakStart": "Starte deine Serie, indem du dein tägliches Schrittziel erreichst.",
+  "streakDebugTitle": "Serie Debuggen",
+  "streakDebugSimulate": "Serie simulieren",
+  "streakDebugReset": "Serien-Daten zurücksetzen",
+  "streakDebugDays": "Anzahl der Tage",
+  "streakDebugDate": "Datum auswählen",
+  "streakDebugSimulatePast": "Serie für vergangene Tage simulieren",
+  "streakDebugSimulateDate": "Serie für bestimmtes Datum simulieren",
+  "streakDebugMarkButton": "Tag markieren",
+  "streakDebugDaysSimulated": "Serie für {days} Tage simuliert!",
+  "@streakDebugDaysSimulated": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "streakDebugDateMarked": "Tag {date} als erreicht markiert!",
+  "@streakDebugDateMarked": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "streakDebugResetSuccess": "Serie wurde zurückgesetzt!"
   "challenges_no_achieved_badges": "Keine erreichten Abzeichen bisher",
   "@_TRACKING": {},
   "tracking_title": "Fitness Tracking",
