@@ -6,6 +6,7 @@ import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../view_model/profile_view_model.dart';
+import 'debug_section.dart';
 
 final logger = Logger('ProfileScreen');
 
@@ -24,13 +25,13 @@ class ProfileScreen extends HookConsumerWidget {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
             children: <Widget>[
               _buildActivityGoals(context, ref),
               _buildSettings(context, ref),
               _buildAboutSection(context, packageInfoFuture),
               _buildCounter(context, profileViewModel),
+              const DebugSection(),
             ],
           ),
         ),
