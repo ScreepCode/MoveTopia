@@ -41,17 +41,6 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
-  Future<int> getCount() async {
-    final value = await loadSetting(countKey);
-    return value != null ? value as int : 0; // Default count
-  }
-
-  @override
-  Future<void> saveCount(int count) async {
-    await saveSetting(countKey, count);
-  }
-
-  @override
   Future<bool> getIsDarkMode() async {
     final value = await loadSetting(isDarkModeKey);
     return value != null ? value as bool : false; // Default mode

@@ -1,4 +1,5 @@
 import 'package:logging/logging.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../domain/repositories/debug_repository.dart';
 import '../../domain/repositories/streak_repository.dart';
@@ -11,8 +12,16 @@ class DebugRepositoryImpl implements DebugRepository {
 
   @override
   Future<bool> isDebugBuild() async {
-    // Im Debug-Modus immer true für einfacheres Testen
-    return true;
+    try {
+      final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      final String packageName = packageInfo.packageName;
+
+      // Check if the package name contains '.debug' or ends with '.debug'
+      // You might need to adjust this condition based on your actual naming convention
+      return packageName.contains('.debug') || packageName.endsWith('.debug');
+    } catch (e) {
+      return false;
+    }
   }
 
   @override

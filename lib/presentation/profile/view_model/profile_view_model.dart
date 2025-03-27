@@ -17,12 +17,10 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
   Future<void> loadSettings() async {
     try {
       final stepGoal = await _repository.getStepGoal();
-      final count = await _repository.getCount();
       final isDarkMode = await _repository.getIsDarkMode();
 
       state = state.copyWith(
         stepGoal: stepGoal,
-        count: count,
         isDarkMode: isDarkMode,
       );
 
@@ -34,19 +32,11 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
 
   int get stepGoal => state.stepGoal;
 
-  int get count => state.count;
-
   bool get isDarkMode => state.isDarkMode;
 
   void setStepGoal(int stepGoal) async {
     await _repository.saveStepGoal(stepGoal);
     state = state.copyWith(stepGoal: stepGoal);
-  }
-
-  void incrementCount() async {
-    final newCount = state.count + 1;
-    await _repository.saveCount(newCount);
-    state = state.copyWith(count: newCount);
   }
 
   void setIsDarkMode(bool isDarkMode) async {

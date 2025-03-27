@@ -36,7 +36,7 @@ class DebugSection extends HookConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    l10n.streakDebugTitle,
+                    l10n.settingsDebugStreakTitle,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           color: Colors.red,
                         ),
@@ -56,7 +56,7 @@ class DebugSection extends HookConsumerWidget {
                       controller: daysController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        labelText: l10n.streakDebugDays,
+                        labelText: l10n.settingsDebugStreakDays,
                         border: const OutlineInputBorder(),
                       ),
                     ),
@@ -76,7 +76,8 @@ class DebugSection extends HookConsumerWidget {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                          l10n.streakDebugDaysSimulated(days)),
+                                          l10n.settingsDebugStreakDaysSimulated(
+                                              days)),
                                       backgroundColor: Colors.green,
                                     ),
                                   );
@@ -86,7 +87,7 @@ class DebugSection extends HookConsumerWidget {
                               }
                             }
                           },
-                    child: Text(l10n.streakDebugSimulatePast),
+                    child: Text(l10n.settingsDebugStreakSimulatePast),
                   ),
                 ],
               ),
@@ -112,7 +113,7 @@ class DebugSection extends HookConsumerWidget {
                       },
                       child: InputDecorator(
                         decoration: InputDecoration(
-                          labelText: l10n.streakDebugDate,
+                          labelText: l10n.settingsDebugStreakDate,
                           border: const OutlineInputBorder(),
                         ),
                         child: Text(dateFormat.format(selectedDate.value)),
@@ -131,8 +132,10 @@ class DebugSection extends HookConsumerWidget {
                               if (context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(l10n.streakDebugDateMarked(
-                                        dateFormat.format(selectedDate.value))),
+                                    content: Text(
+                                        l10n.settingsDebugStreakDateMarked(
+                                            dateFormat
+                                                .format(selectedDate.value))),
                                     backgroundColor: Colors.green,
                                   ),
                                 );
@@ -141,7 +144,7 @@ class DebugSection extends HookConsumerWidget {
                               isLoading.value = false;
                             }
                           },
-                    child: Text(l10n.streakDebugMarkButton),
+                    child: Text(l10n.settingsDebugStreakMarkButton),
                   ),
                 ],
               ),
@@ -160,7 +163,8 @@ class DebugSection extends HookConsumerWidget {
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(l10n.streakDebugResetSuccess),
+                                content:
+                                    Text(l10n.settingsDebugStreakResetSuccess),
                                 backgroundColor: Colors.orange,
                               ),
                             );
@@ -170,7 +174,7 @@ class DebugSection extends HookConsumerWidget {
                         }
                       },
                 icon: const Icon(Icons.delete_forever, color: Colors.red),
-                label: Text(l10n.streakDebugReset),
+                label: Text(l10n.settingsDebugStreakReset),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red.shade50,
                   foregroundColor: Colors.red,

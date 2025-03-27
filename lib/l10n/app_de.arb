@@ -32,7 +32,6 @@
   "common_health_data_distance_type": "km",
   "common_settings": "Einstellungen",
   "common_dark_mode": "Dunkler Modus",
-  "common_counter": "Zähler",
   "common_about": "Über",
   "common_version": "Version",
   "common_error_version": "Fehler beim Laden der Version",
@@ -116,30 +115,35 @@
   },
   "streakMessage": "Weiter so! Du bist auf dem richtigen Weg.",
   "streakStart": "Starte deine Serie, indem du dein tägliches Schrittziel erreichst.",
-  "streakDebugTitle": "Serie Debuggen",
-  "streakDebugSimulate": "Serie simulieren",
-  "streakDebugReset": "Serien-Daten zurücksetzen",
-  "streakDebugDays": "Anzahl der Tage",
-  "streakDebugDate": "Datum auswählen",
-  "streakDebugSimulatePast": "Serie für vergangene Tage simulieren",
-  "streakDebugSimulateDate": "Serie für bestimmtes Datum simulieren",
-  "streakDebugMarkButton": "Tag markieren",
-  "streakDebugDaysSimulated": "Serie für {days} Tage simuliert!",
-  "@streakDebugDaysSimulated": {
+  "@_DEBUGGING": {},
+  "settingsDebugTitle": "Debug-Einstellungen",
+  "settingsDebugMenu": "Debug-Werkzeuge",
+  "settingsDebugNotAvailable": "Dieser Bildschirm ist nur in Debug-Builds verfügbar",
+  "settingsDebugStreakTitle": "Serie Debuggen",
+  "settingsDebugStreakSimulate": "Serie simulieren",
+  "settingsDebugStreakReset": "Serien-Daten zurücksetzen",
+  "settingsDebugStreakDays": "Anzahl der Tage",
+  "settingsDebugStreakDate": "Datum auswählen",
+  "settingsDebugStreakSimulatePast": "Serie für vergangene Tage simulieren",
+  "settingsDebugStreakSimulateDate": "Serie für bestimmtes Datum simulieren",
+  "settingsDebugStreakMarkButton": "Tag markieren",
+  "settingsDebugStreakDaysSimulated": "Serie für {days} Tage simuliert!",
+  "@settingsDebugStreakDaysSimulated": {
     "placeholders": {
       "days": {
         "type": "int"
       }
     }
   },
-  "streakDebugDateMarked": "Tag {date} als erreicht markiert!",
-  "@streakDebugDateMarked": {
+  "settingsDebugStreakDateMarked": "Tag {date} als erreicht markiert!",
+  "@settingsDebugStreakDateMarked": {
     "placeholders": {
       "date": {
         "type": "String"
       }
     }
   },
+  "settingsDebugStreakResetSuccess": "Serie wurde zurückgesetzt!"
   "streakDebugResetSuccess": "Serie wurde zurückgesetzt!"
   "challenges_no_achieved_badges": "Keine erreichten Abzeichen bisher",
   "@_TRACKING": {},

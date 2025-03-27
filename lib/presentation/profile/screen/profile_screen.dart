@@ -5,8 +5,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../provider/debug_provider.dart';
 import '../view_model/profile_view_model.dart';
-import 'debug_section.dart';
+import 'debug_settings_screen.dart';
 
 final logger = Logger('ProfileScreen');
 
@@ -15,12 +16,13 @@ class ProfileScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final packageInfoFuture = useMemoized(() => PackageInfo.fromPlatform());
-    final profileViewModel = ref.read(profileProvider.notifier);
+    final isDebugBuild = ref.watch(isDebugBuildProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.navigation_profile),
+        title: Text(l10n.navigation_profile),
       ),
       body: Center(
         child: Padding(
@@ -28,20 +30,11 @@ class ProfileScreen extends HookConsumerWidget {
           child: ListView(
             children: <Widget>[
               _buildActivityGoals(context, ref),
-              _buildSettings(context, ref),
+              _buildSettings(context, ref, isDebugBuild),
               _buildAboutSection(context, packageInfoFuture),
-              _buildCounter(context, profileViewModel),
-              const DebugSection(),
             ],
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          profileViewModel.incrementCount();
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
@@ -93,7 +86,9 @@ class ProfileScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _buildSettings(BuildContext context, WidgetRef ref) {
+  Widget _buildSettings(
+      BuildContext context, WidgetRef ref, AsyncValue<bool> isDebugBuild) {
+    final l10n = AppLocalizations.of(context)!;
     final isDarkMode = ref.read(profileProvider).isDarkMode;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,14 +98,14 @@ class ProfileScreen extends HookConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(AppLocalizations.of(context)!.navigation_app_settings,
+              Text(l10n.navigation_app_settings,
                   style: Theme.of(context).textTheme.titleMedium),
               const Divider()
             ],
           ),
         ),
         SwitchListTile(
-          title: Text(AppLocalizations.of(context)!.common_dark_mode),
+          title: Text(l10n.common_dark_mode),
           contentPadding: EdgeInsets.zero,
           value: isDarkMode,
           onChanged: (value) {
@@ -118,19 +113,33 @@ class ProfileScreen extends HookConsumerWidget {
             logger.info('Change in Dropdown');
           },
         ),
-      ],
-    );
-  }
 
-  Widget _buildCounter(
-      BuildContext context, ProfileViewModel profileViewModel) {
-    final count = profileViewModel.count;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Text(
-        "${AppLocalizations.of(context)!.common_counter}: $count",
-        style: Theme.of(context).textTheme.titleMedium,
-      ),
+        // Debug-Einstellungen Link, nur im Debug-Build zeigen
+        isDebugBuild.when(
+          data: (isDebug) {
+            if (!isDebug) return const SizedBox.shrink();
+
+            return ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.bug_report, color: Colors.red),
+              title: Text(
+                l10n.settingsDebugTitle,
+                style: const TextStyle(color: Colors.red),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const DebugSettingsScreen(),
+                  ),
+                );
+              },
+            );
+          },
+          loading: () => const SizedBox.shrink(),
+          error: (_, __) => const SizedBox.shrink(),
+        ),
+      ],
     );
   }
 

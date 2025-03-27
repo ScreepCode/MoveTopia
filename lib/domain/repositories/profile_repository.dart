@@ -1,5 +1,4 @@
 const stepGoalKey = 'stepGoal';
-const countKey = 'count';
 const isDarkModeKey = 'isDarkMode';
 const userEPKey = 'userEP';
 const userLevelKey = 'userLevel';
@@ -13,10 +12,6 @@ abstract class ProfileRepository {
   Future<int> getStepGoal();
 
   Future<void> saveStepGoal(int stepGoal);
-
-  Future<int> getCount();
-
-  Future<void> saveCount(int count);
 
   Future<bool> getIsDarkMode();
 
