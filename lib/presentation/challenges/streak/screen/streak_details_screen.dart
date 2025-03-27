@@ -5,6 +5,9 @@ import 'package:table_calendar/table_calendar.dart';
 
 import '../../provider/streak_provider.dart';
 
+// Provider für den Ladezustand des manuellen Refreshs
+final manualRefreshLoadingProvider = StateProvider<bool>((ref) => false);
+
 class StreakDetailsScreen extends ConsumerWidget {
   const StreakDetailsScreen({super.key});
 
@@ -13,6 +16,9 @@ class StreakDetailsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final completedDays = ref.watch(completedDaysProvider);
     final streakCount = ref.watch(streakCountProvider);
+
+    // Key für den RefreshIndicator
+    final refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
     return Scaffold(
       appBar: AppBar(
@@ -24,14 +30,22 @@ class StreakDetailsScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
-              _refreshData(context, ref);
+              // Löse den Pull-to-Refresh aus
+              refreshIndicatorKey.currentState?.show();
             },
             tooltip: 'Daten aktualisieren',
           ),
         ],
       ),
       body: completedDays.when(
-        data: (days) => _buildContent(context, days, streakCount, l10n, ref),
+        data: (days) => _buildContent(
+          context,
+          days,
+          streakCount,
+          l10n,
+          ref,
+          refreshIndicatorKey,
+        ),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
           child: Text(
@@ -45,10 +59,7 @@ class StreakDetailsScreen extends ConsumerWidget {
 
   Future<void> _refreshData(BuildContext context, WidgetRef ref) async {
     try {
-      // Daten von Health neu laden
       await ref.read(refreshStreakFromHealthDataProvider)();
-
-      // UI-Refresh wurde bereits im Provider ausgelöst
 
       // Optional: Bestätigung anzeigen
       if (context.mounted) {
@@ -77,8 +88,10 @@ class StreakDetailsScreen extends ConsumerWidget {
     AsyncValue<int> streakCount,
     AppLocalizations l10n,
     WidgetRef ref,
+    GlobalKey<RefreshIndicatorState> refreshIndicatorKey,
   ) {
     return RefreshIndicator(
+      key: refreshIndicatorKey,
       onRefresh: () => _refreshData(context, ref),
       child: Column(
         children: [
@@ -88,8 +101,8 @@ class StreakDetailsScreen extends ConsumerWidget {
           // Kalender
           Expanded(
             child: SingleChildScrollView(
-              physics:
-                  const AlwaysScrollableScrollPhysics(), // Wichtig für RefreshIndicator
+              physics: const AlwaysScrollableScrollPhysics(),
+              // Wichtig für RefreshIndicator
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [

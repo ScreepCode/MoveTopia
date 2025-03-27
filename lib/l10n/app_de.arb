@@ -146,9 +146,7 @@
       }
     }
   },
-  "settingsDebugStreakResetSuccess": "Serie wurde zurückgesetzt!"
-  "streakDebugResetSuccess": "Serie wurde zurückgesetzt!"
-  "challenges_no_achieved_badges": "Keine erreichten Abzeichen bisher",
+  "settingsDebugStreakResetSuccess": "Serie wurde zurückgesetzt!",
   "@_TRACKING": {},
   "tracking_title": "Fitness Tracking",
   "tracking_start_activity": "Aktivität starten",

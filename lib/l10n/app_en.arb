@@ -149,9 +149,7 @@
       }
     }
   },
-  "settingsDebugStreakResetSuccess": "Streak has been reset!"
-  "streakDebugResetSuccess": "Streak has been reset!"
-  "challenges_no_achieved_badges": "No badges achieved yet",
+  "settingsDebugStreakResetSuccess": "Streak has been reset!",
   "@_TRACKING": {},
   "tracking_title": "Fitness Tracking",
   "tracking_start_activity": "Start Activity",
