@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:movetopia/presentation/common/app_assets.dart';
 import 'package:movetopia/presentation/today/view_model/last_activity_view_model.dart';
@@ -53,6 +54,9 @@ class TodayScreen extends HookConsumerWidget {
       ),
       body: _buildBody(
           context, ref, lastActivityState, statsState, fetchHealthData),
+        floatingActionButton: FloatingActionButton(child: Icon(Icons.add),onPressed: () {
+          context.push("/tracking");
+        })
     );
   }
 }

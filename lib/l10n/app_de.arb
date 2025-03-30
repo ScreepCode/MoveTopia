@@ -11,6 +11,9 @@
   "activity_details": "{distance}km in {minutes} Minuten",
   "activity_distance": "Distanz",
   "activity_duration": "Dauer",
+  "activity_steps": "Schritte",
+  "activity_current_speed": "Geschwindigkeit",
+  "activity_avg_speed": "Durchschnittsgeschwindigkeit",
   "activity_burnt_calories": "Verbrauchte Kalorien",
   "activity_avg_heart_rate": "Durchschnittliche Herzfrequenz",
   "activity_details_title": "Aktivitätsdetails",
@@ -75,5 +78,14 @@
   "challenges_next_goal": "Nächstes Ziel",
   "challenges_see_all": "Alle anzeigen",
   "challenges_see_all_badges": "Alle Abzeichen anzeigen",
-  "challenges_no_achieved_badges": "Keine erreichten Abzeichen bisher"
+  "challenges_no_achieved_badges": "Keine erreichten Abzeichen bisher",
+  "@_TRACKING": {},
+  "tracking_title": "Fitness Tracking",
+  "tracking_start_activity": "Aktivität starten",
+  "tracking_stop_activity": "Aktivität stoppen",
+  "tracking_activity_paused": "Aktivität pausiert",
+  "tracking_leave_title": "Bist du dir sicher das du gehen möchtest?",
+  "tracking_leave_message": "Die Aufzeichnung wird beendet, wenn du gehst.",
+  "tracking_leave_cancel": "Abbrechen",
+  "tracking_leave_confirm": "Verlassen"
 }

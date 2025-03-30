@@ -26,9 +26,14 @@ dependencies:
   shared_preferences: ^2.3.1
   fl_chart: ^0.68.0
   installed_apps: ^1.5.2
-  package_info_plus: ^8.1.2
+  package_info_plus: ^8.3.0
   sqflite: ^2.4.1
   path: ^1.9.0
+  activity_tracking:
+    git:
+      url: git@github.com:Jozys/activity_tracking.git
+      ref: main
+  permission_handler: ^11.4.0
 
 dev_dependencies:
   flutter_test:

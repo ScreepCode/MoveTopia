@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movetopia/presentation/common/navigator.dart';
+import 'package:movetopia/presentation/tracking/routes.dart';
 
 import '../presentation/activities/routes.dart';
 import '../presentation/challenges/routes.dart';
@@ -35,6 +36,9 @@ final navigationRoutes = GoRouter(
           navigatorKey: ProfileRoutes.navigatorKey,
           routes: ProfileRoutes.routes,
         ),
+        StatefulShellBranch(
+            navigatorKey: TrackingRoutes.navigatorKey,
+            routes: TrackingRoutes.routes)
       ],
     ),
   ],

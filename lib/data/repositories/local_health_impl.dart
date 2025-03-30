@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:activity_tracking/model/activity.dart' as tracking_activity;
 import 'package:health/health.dart';
 import 'package:logging/logging.dart';
 import 'package:movetopia/data/model/activity.dart';
 import 'package:movetopia/domain/repositories/local_health.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod/riverpod.dart';
 
 final localHealthRepositoryProvider =
@@ -18,7 +20,7 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
       _compareDate(start, end);
 
       List<HealthDataPoint> dataPoint = await Health()
-          .getHealthDataFromTypes(types: types, startTime: start, endTime: end );
+          .getHealthDataFromTypes(types: types, startTime: start, endTime: end);
       return dataPoint;
     } catch (e) {
       log.info(e);
@@ -46,26 +48,24 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
 
   /// Get the total distance covered in the given interval
   @override
-  Future<double> getDistanceInInterval(
-      DateTime start, DateTime end) async {
+  Future<double> getDistanceInInterval(DateTime start, DateTime end) async {
     var distanceTypes;
-    if(Platform.isAndroid) {
+    if (Platform.isAndroid) {
       distanceTypes = [HealthDataType.DISTANCE_DELTA];
-    } else if(Platform.isIOS) {
+    } else if (Platform.isIOS) {
       distanceTypes = [HealthDataType.DISTANCE_WALKING_RUNNING];
     } else {
       throw Exception("Unsupported platform");
     }
 
     try {
-      var distances = await getHealthDataInInterval(
-          start, end, distanceTypes);
+      var distances = await getHealthDataInInterval(start, end, distanceTypes);
       double combinedDistance = 0;
       for (var data in distances!) {
         combinedDistance +=
             NumericHealthValue.fromJson(data.value.toJson()).numericValue;
       }
-      return combinedDistance ;
+      return combinedDistance;
     } catch (e) {
       //log.info(e);
       return -1;
@@ -163,8 +163,11 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
 
       List<HealthDataPoint>? heartFrequency = await getHealthDataInInterval(
           preview.start, preview.end, [HealthDataType.HEART_RATE]);
-      if (data!.isEmpty || heartFrequency!.isEmpty) return null;
+      if (heartFrequency == null) {
+        return null;
+      }
       List<Data<int>> heartRates = List.empty(growable: true);
+
       for (var value in heartFrequency) {
         heartRates.add(Data(
             value: (value.value as NumericHealthValue).numericValue.toInt(),
@@ -181,6 +184,7 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
           heartRates: heartRates,
           sourceId: preview.sourceId);
     } catch (e) {
+      log.info(e);
       return null;
     }
   }
@@ -223,16 +227,19 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
   }
 
   @override
-  Future<double> getDistanceOfWorkoutsInInterval(DateTime start, DateTime end, List<HealthWorkoutActivityType> workoutTypes) async {
+  Future<double> getDistanceOfWorkoutsInInterval(DateTime start, DateTime end,
+      List<HealthWorkoutActivityType> workoutTypes) async {
     try {
-      var workouts = await getHealthDataInInterval(
-          start, end, [
+      var workouts = await getHealthDataInInterval(start, end, [
         HealthDataType.WORKOUT,
       ]);
       if (workouts == null || workouts.isEmpty) {
         return 0;
       } else {
-        workouts = workouts.where((element) => workoutTypes.contains((element.value as WorkoutHealthValue).workoutActivityType)).toList();
+        workouts = workouts
+            .where((element) => workoutTypes.contains(
+                (element.value as WorkoutHealthValue).workoutActivityType))
+            .toList();
         double distance = 0;
         for (var workout in workouts) {
           distance += (workout.value as WorkoutHealthValue).totalDistance ?? 0;
@@ -243,5 +250,47 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
       log.info(e);
     }
     return 0;
+  }
+
+  @override
+  Future<ActivityPreview?> writeTrackingToHealth(
+      tracking_activity.Activity preview) async {
+    final startTime =
+        DateTime.fromMillisecondsSinceEpoch(preview.startDateTime ?? 0);
+    final endTime =
+        DateTime.fromMillisecondsSinceEpoch(preview.endDateTime ?? 0);
+    var success = true;
+    try {
+      if (preview.steps! > 0) {
+        success = await Health().writeHealthData(
+            value: (preview.steps ?? 0).toDouble(),
+            type: HealthDataType.STEPS,
+            startTime: startTime,
+            endTime: endTime);
+      } else {
+        return null;
+      }
+      success = await Health().writeWorkoutData(
+          activityType: HealthWorkoutActivityType.values.firstWhere(
+              (element) => element.name == preview.activityType?.name),
+          start: startTime,
+          end: endTime,
+          totalDistance: (preview.distance ?? 0).toInt() * 1000,
+          totalDistanceUnit: HealthDataUnit.METER);
+    } catch (e) {
+      log.info(e);
+    }
+    if (success) {
+      var appPackage = await PackageInfo.fromPlatform();
+      return ActivityPreview(
+          activityType: HealthWorkoutActivityType.values.firstWhere(
+              (element) => element.name == preview.activityType?.name),
+          start: startTime,
+          end: endTime,
+          distance: preview.distance ?? 0,
+          sourceId: appPackage.packageName,
+          caloriesBurnt: 0);
+    }
+    return await getLastActivity();
   }
 }

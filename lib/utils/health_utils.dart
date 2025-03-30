@@ -369,3 +369,5 @@ IconData getActivityIcon(HealthWorkoutActivityType type) {
   }
   return Icons.abc;
 }
+
+

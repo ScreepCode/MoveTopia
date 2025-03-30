@@ -13,7 +13,10 @@
   "activity_last_activity": "Last Activity",
   "activity_details": "{distance}km in {minutes} minutes",
   "activity_distance": "Distance",
+  "activity_steps": "Steps",
   "activity_duration": "Duration",
+  "activity_current_speed": "Speed",
+  "activity_avg_speed": "Average Speed",
   "activity_avg_heart_rate": "Average Heart Rate",
   "activity_burnt_calories": "Total burnt calories",
   "activity_details_title": "Workout Details",
@@ -79,5 +82,14 @@
   "challenges_next_goal": "Next Goal",
   "challenges_see_all": "See all",
   "challenges_see_all_badges": "See all badges",
-  "challenges_no_achieved_badges": "No badges achieved yet"
+  "challenges_no_achieved_badges": "No badges achieved yet",
+  "@_TRACKING": {},
+  "tracking_title": "Fitness Tracking",
+  "tracking_start_activity": "Start Activity",
+  "tracking_stop_activity": "Stop Activity",
+  "tracking_activity_paused": "Activity Paused",
+  "tracking_leave_title": "Are you sure you want to leave?",
+  "tracking_leave_message": "Your activity recording will be stopped if you leave",
+  "tracking_leave_cancel": "Cancel",
+  "tracking_leave_confirm": "Leave"
 }
