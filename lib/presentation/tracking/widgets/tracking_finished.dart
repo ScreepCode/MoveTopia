@@ -42,7 +42,7 @@ class TrackingFinished extends StatelessWidget {
   Widget _buildHeaderDetails(BuildContext context, Activity activity) {
     return HeaderDetails(
       title: getTranslatedActivityType(
-          Localizations.localeOf(context),
+          context,
           HealthWorkoutActivityType.values
               .firstWhere((t) => t.name == activity.activityType?.name)),
       start: DateTime.fromMillisecondsSinceEpoch(activity.startDateTime ?? 0),
@@ -53,24 +53,24 @@ class TrackingFinished extends StatelessWidget {
   }
 
   Widget _buildActivityDetails(BuildContext context, Activity activity) {
+    final l10n = AppLocalizations.of(context)!;
     return GenericCard(
-      title: AppLocalizations.of(context)!.activity_details_title,
+      title: l10n.activity_details_title,
       content: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           DetailStatsCardEntry(
-              displayName: AppLocalizations.of(context)!.activity_steps,
-              value: "${activity.steps}"),
+              displayName: l10n.activity_steps, value: "${activity.steps}"),
           DetailStatsCardEntry(
-              displayName: AppLocalizations.of(context)!.activity_distance,
+              displayName: l10n.activity_distance,
               value: "${activity.distance} km"),
           DetailStatsCardEntry(
-              displayName: AppLocalizations.of(context)!.activity_duration,
+              displayName: l10n.activity_duration,
               value: getDuration(
                   activity.startDateTime ?? 0, activity.endDateTime ?? 0)),
           DetailStatsCardEntry(
-              displayName: AppLocalizations.of(context)!.activity_avg_speed,
+              displayName: l10n.activity_avg_speed,
               value: "${getAverageSpeed(activity)} km/h")
         ],
       ),

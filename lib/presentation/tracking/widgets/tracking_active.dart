@@ -15,31 +15,20 @@ class TrackingRecording extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _buildDetailEntry(
-            context,
-            Icons.streetview,
-            AppLocalizations.of(context)!.activity_distance,
+        _buildDetailEntry(context, Icons.streetview, l10n.activity_distance,
             "${activity?.distance ?? "--"} km"),
-        _buildDetailEntry(
-            context,
-            Icons.timelapse,
-            AppLocalizations.of(context)!.activity_duration,
+        _buildDetailEntry(context, Icons.timelapse, l10n.activity_duration,
             duration.toString()),
         if (activity?.locations != null)
-          _buildDetailEntry(
-              context,
-              Icons.speed,
-              AppLocalizations.of(context)!.activity_current_speed,
+          _buildDetailEntry(context, Icons.speed, l10n.activity_current_speed,
               "${activity!.locations!.isEmpty ? "--" : ((activity?.locations?.entries.last.value.speed ?? 0) * 10).roundToDouble() / 10} km/h"),
         if (activity?.steps != null)
-          _buildDetailEntry(
-              context,
-              Icons.nordic_walking,
-              AppLocalizations.of(context)!.activity_steps,
+          _buildDetailEntry(context, Icons.nordic_walking, l10n.activity_steps,
               "${activity?.steps ?? "--"}"),
         _buildActionButtons(context, onStop),
       ],

@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:movetopia/core/health_authorized_view_model.dart';
-import 'package:movetopia/utils/health_utils.dart';
 import 'package:movetopia/data/model/activity.dart';
+import 'package:movetopia/utils/health_utils.dart';
 
 import '../view_model/activities_state.dart';
 import '../view_model/activities_view_model.dart';
@@ -42,9 +42,11 @@ class ActivitiesScreen extends HookConsumerWidget {
       body: activities.isLoading && activities.activities.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : _buildBody(context, activities, fetchHealthData),
-      floatingActionButton: FloatingActionButton(child: Icon(Icons.add),onPressed: () {
-        context.push("/tracking");
-      }),
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            context.push("/tracking");
+          }),
     );
   }
 }
@@ -60,7 +62,8 @@ Widget _buildBody(BuildContext context, ActivitiesState activities,
         : activities.isLoading
             ? const Center(child: CircularProgressIndicator())
             : Center(
-                child: Text(AppLocalizations.of(context)!.activity_no_activities_found)),
+                child: Text(AppLocalizations.of(context)!
+                    .activity_no_activities_found)),
   );
 }
 
@@ -84,8 +87,7 @@ Widget _buildActivityItem(BuildContext context, ActivityPreview activity) {
       context.push("/activities/details", extra: activity);
     },
     isThreeLine: true,
-    title: Text(getTranslatedActivityType(
-        Localizations.localeOf(context), activity.activityType)),
+    title: Text(getTranslatedActivityType(context, activity.activityType)),
     subtitle: Text(AppLocalizations.of(context)!.activity_details(
         activity.distance, activity.end.difference(activity.start).inMinutes)),
     trailing: CircleAvatar(
