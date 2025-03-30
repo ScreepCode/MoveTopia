@@ -58,15 +58,17 @@ class StreakDetailsScreen extends ConsumerWidget {
   }
 
   Future<void> _refreshData(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
+
     try {
       await ref.read(refreshStreakFromHealthDataProvider)();
 
       // Optional: Bestätigung anzeigen
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Streak-Daten wurden mit Health-Daten aktualisiert'),
-            duration: Duration(seconds: 2),
+          SnackBar(
+            content: Text(l10n.streakDataUpdated),
+            duration: const Duration(seconds: 2),
           ),
         );
       }
@@ -74,7 +76,7 @@ class StreakDetailsScreen extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Fehler beim Aktualisieren: $e'),
+            content: Text(l10n.streakUpdateError(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -399,7 +401,7 @@ class StreakDetailsScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'Tage die Teil deiner aktuellen Streak sind (aufeinanderfolgende Tage bis heute/gestern)',
+                        l10n.streakActiveDescription,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
@@ -436,7 +438,7 @@ class StreakDetailsScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'Tage die du früher erreicht hast, aber nicht Teil deiner aktuellen Streak sind',
+                        l10n.streakBrokenDescription,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
@@ -473,7 +475,7 @@ class StreakDetailsScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'Tage an denen du dein Schrittziel nicht erreicht hast',
+                        l10n.streakNotCompletedDescription,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],

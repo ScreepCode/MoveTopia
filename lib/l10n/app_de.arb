@@ -217,6 +217,18 @@
   },
   "streakMessage": "Weiter so! Du bist auf dem richtigen Weg.",
   "streakStart": "Starte deine Serie, indem du dein tägliches Schrittziel erreichst.",
+  "streakActiveDescription": "Tage die Teil deiner aktuellen Serie sind (aufeinanderfolgende Tage bis heute/gestern)",
+  "streakBrokenDescription": "Tage die du früher erreicht hast, aber nicht Teil deiner aktuellen Serie sind",
+  "streakNotCompletedDescription": "Tage an denen du dein Schrittziel nicht erreicht hast",
+  "streakDataUpdated": "Serien-Daten wurden mit aktualisiert",
+  "streakUpdateError": "Fehler beim Aktualisieren: {error}",
+  "@streakUpdateError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "@_DEBUGGING": {},
   "settingsDebugTitle": "Debug-Einstellungen",
   "settingsDebugMenu": "Debug-Werkzeuge",

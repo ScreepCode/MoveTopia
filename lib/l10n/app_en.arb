@@ -220,6 +220,18 @@
   },
   "streakMessage": "Keep going! You're on the right track.",
   "streakStart": "Start your streak by reaching your daily step goal.",
+  "streakActiveDescription": "Days that are part of your current streak (consecutive days until today/yesterday)",
+  "streakBrokenDescription": "Days you've previously achieved but aren't part of your current streak",
+  "streakNotCompletedDescription": "Days when you didn't reach your step goal",
+  "streakDataUpdated": "Streak data updated",
+  "streakUpdateError": "Error updating streak: {error}",
+  "@streakUpdateError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
 
   "settingsDebugTitle": "Debug Settings",
   "settingsDebugMenu": "Debug Tools",
