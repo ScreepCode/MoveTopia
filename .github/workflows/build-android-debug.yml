@@ -53,6 +53,7 @@ jobs:
           echo "${{ secrets.DEPLOY_KEY_ACTIVITY_TRACKING }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan github.com >> ~/.ssh/known_hosts
+          ssh-add ~/.ssh/deploy_key
 
       - name: "Install Flutter dependencies"
         run: flutter pub get
