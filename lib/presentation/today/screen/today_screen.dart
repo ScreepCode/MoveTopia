@@ -8,6 +8,9 @@ import 'package:movetopia/presentation/today/view_model/last_activity_view_model
 import 'package:movetopia/presentation/today/view_model/stats_view_model.dart';
 import 'package:movetopia/presentation/today/widgets/last_activity_card.dart';
 import 'package:movetopia/presentation/today/widgets/today_overview.dart';
+import 'package:movetopia/presentation/today/widgets/tracking_active.dart';
+import 'package:movetopia/presentation/tracking/view_model/tracking_state.dart';
+import 'package:movetopia/presentation/tracking/view_model/tracking_view_model.dart';
 
 import '../../../core/health_authorized_view_model.dart';
 import '../../challenges/widgets/streak_card.dart';
@@ -23,12 +26,23 @@ class TodayScreen extends HookConsumerWidget {
     final lastActivityState = ref.watch(lastActivityViewModelProvider);
     final statsState = ref.watch(statsViewModelProvider);
     final authState = ref.watch(healthViewModelProvider);
+    final trackingState = ref.watch(trackingViewModelProvider);
 
     Future<void> fetchHealthData() async {
       await ref
           .read(lastActivityViewModelProvider.notifier)
           .fetchLastTraining();
       await ref.read(statsViewModelProvider.notifier).fetchStats();
+    }
+
+    Future<void> pauseTracking() async {
+      await ref.read(trackingViewModelProvider.notifier).pauseTracking();
+      context.push("/tracking");
+    }
+
+    Future<void> stopTracking() async {
+      await ref.read(trackingViewModelProvider.notifier).stopTracking();
+      context.push("/tracking");
     }
 
     useEffect(() {
@@ -40,49 +54,81 @@ class TodayScreen extends HookConsumerWidget {
     }, []);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-        title: Row(
-          children: [
-            const Image(
-                image: AssetImage(AppAssets.appIcon), width: 40, height: 40),
-            Text(AppLocalizations.of(context)!.app_name)
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        appBar: AppBar(
+          title: Row(
+            children: [
+              const Image(
+                  image: AssetImage(AppAssets.appIcon), width: 40, height: 40),
+              Text(AppLocalizations.of(context)!.app_name)
+            ],
+          ),
+          actions: [
+            IconButton(onPressed: () => (), icon: const Icon(Icons.settings))
           ],
         ),
-        actions: [
-          IconButton(onPressed: () => (), icon: const Icon(Icons.settings))
-        ],
-      ),
-      body: _buildBody(
-          context, ref, lastActivityState, statsState, fetchHealthData),
-        floatingActionButton: FloatingActionButton(child: Icon(Icons.add),onPressed: () {
-          context.push("/tracking");
-        })
-    );
+        body: _buildBody(context, ref, lastActivityState, statsState,
+            trackingState, fetchHealthData, stopTracking, pauseTracking),
+        floatingActionButton: trackingState?.isRecording == false
+            ? FloatingActionButton(
+                child: const Icon(Icons.add),
+                onPressed: () {
+                  context.push("/tracking");
+                })
+            : null);
   }
 }
 
 Widget _buildBody(
-    BuildContext context,
-    WidgetRef ref,
-    LastActivityState? lastActivityState,
-    StatsState statsState,
-    Future<void> Function() fetchHealthData) {
-  return RefreshIndicator(
-    color: Colors.white,
-    backgroundColor: Colors.blue,
-    onRefresh: fetchHealthData,
-    child: SafeArea(
-      minimum: const EdgeInsets.all(16.0),
-      child: ListView(
-        children: [
-          _buildTodayOverview(context, ref, statsState),
-          const StreakCard(isCompact: true),
-          if (lastActivityState != null)
-            _buildLastActivityCard(context, lastActivityState),
-        ],
+  BuildContext context,
+  WidgetRef ref,
+  LastActivityState? lastActivityState,
+  StatsState statsState,
+  TrackingState? trackingState,
+  Future<void> Function() fetchHealthData,
+  Future<void> Function() stopTracking,
+  Future<void> Function() pauseTracking,
+) {
+  return Stack(children: [
+    RefreshIndicator(
+      color: Colors.white,
+      backgroundColor: Colors.blue,
+      onRefresh: fetchHealthData,
+      child: SafeArea(
+        minimum: const EdgeInsets.all(16.0),
+        child: ListView(
+          children: [
+            _buildTodayOverview(context, ref, statsState),
+            const StreakCard(isCompact: true),
+            if (lastActivityState != null)
+              _buildLastActivityCard(context, lastActivityState),
+          ],
+        ),
       ),
     ),
+    if (trackingState != null && trackingState.isRecording)
+      _buildCurrentTracking(
+          context, ref, trackingState, stopTracking, pauseTracking),
+  ]);
+}
+
+void _onCardClick(BuildContext context) {
+  print("Card clicked");
+  context.push("/tracking");
+}
+
+Widget _buildCurrentTracking(
+    BuildContext context,
+    WidgetRef ref,
+    TrackingState state,
+    Future<void> Function() stopTracking,
+    Future<void> Function() pauseTracking) {
+  return ActiveTracking(
+    activity: state.activity,
+    duration: state.duration,
+    onCardClick: () => _onCardClick(context),
+    onPause: pauseTracking,
+    onStop: stopTracking,
   );
 }
 
