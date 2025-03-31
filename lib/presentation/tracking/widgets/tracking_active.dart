@@ -1,4 +1,5 @@
 import 'package:activity_tracking/model/activity.dart';
+import 'package:activity_tracking/model/activity_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -35,7 +36,8 @@ class TrackingRecording extends StatelessWidget {
               Icons.speed,
               AppLocalizations.of(context)!.activity_current_speed,
               "${activity!.locations!.isEmpty ? "--" : ((activity?.locations?.entries.last.value.speed ?? 0) * 10).roundToDouble() / 10} km/h"),
-        if (activity?.steps != null)
+        if (activity?.steps != null &&
+            activity?.activityType != ActivityType.biking)
           _buildDetailEntry(
               context,
               Icons.nordic_walking,
@@ -83,7 +85,7 @@ class TrackingRecording extends StatelessWidget {
           style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,
               shape: const CircleBorder(),
-              padding: EdgeInsets.all(24)),
+              padding: const EdgeInsets.all(24)),
           child: Icon(
             Icons.stop,
             size: 24,

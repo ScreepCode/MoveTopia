@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:activity_tracking/model/activity.dart' as tracking_activity;
+import 'package:activity_tracking/model/activity_type.dart';
 import 'package:health/health.dart';
 import 'package:logging/logging.dart';
 import 'package:movetopia/data/model/activity.dart';
@@ -267,7 +268,8 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
             type: HealthDataType.STEPS,
             startTime: startTime,
             endTime: endTime);
-      } else {
+      } else if (preview.activityType == ActivityType.walking ||
+          preview.activityType == ActivityType.running) {
         return null;
       }
       success = await Health().writeWorkoutData(
