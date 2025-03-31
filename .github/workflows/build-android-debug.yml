@@ -59,7 +59,7 @@ jobs:
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.DEPLOY_KEY_ACTIVITY_TRACKING }}
-          name: deploy_key # optional
+          #name: deploy_key # optional
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
       - name: "Install Flutter dependencies"
