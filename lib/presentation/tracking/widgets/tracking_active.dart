@@ -28,6 +28,12 @@ class TrackingRecording extends StatelessWidget {
         if (activity?.locations != null)
           _buildDetailEntry(context, Icons.speed, l10n.activity_current_speed,
               "${activity!.locations!.isEmpty ? "--" : ((activity?.locations?.entries.last.value.speed ?? 0) * 10).roundToDouble() / 10} km/h"),
+        if (activity?.locations != null)
+          _buildDetailEntry(
+              context,
+              Icons.directions_run,
+              l10n.activity_current_pace,
+              "${activity!.locations!.isEmpty ? "--" : ((activity?.locations?.entries.last.value.pace ?? 0) * 10).roundToDouble() / 10} min/km"),
         if (activity?.steps != null &&
             activity?.activityType != ActivityType.biking)
           _buildDetailEntry(
