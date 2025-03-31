@@ -18,6 +18,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
       await prefs.setDouble(key, value);
     } else if (value is String) {
       await prefs.setString(key, value);
+    } else if (value is DateTime) {
+      await prefs.setString(key, value.toIso8601String());
     } else {
       throw Exception('Unsupported type');
     }
@@ -38,17 +40,6 @@ class ProfileRepositoryImpl implements ProfileRepository {
   @override
   Future<void> saveStepGoal(int stepGoal) async {
     await saveSetting(stepGoalKey, stepGoal);
-  }
-
-  @override
-  Future<int> getCount() async {
-    final value = await loadSetting(countKey);
-    return value != null ? value as int : 0; // Default count
-  }
-
-  @override
-  Future<void> saveCount(int count) async {
-    await saveSetting(countKey, count);
   }
 
   @override
@@ -82,5 +73,51 @@ class ProfileRepositoryImpl implements ProfileRepository {
   @override
   Future<void> saveUserLevel(int level) async {
     await saveSetting(userLevelKey, level);
+  }
+
+  @override
+  Future<DateTime> getInstallationDate() async {
+    final value = await loadSetting(installationDateKey);
+    if (value != null) {
+      try {
+        return DateTime.parse(value as String);
+      } catch (e) {
+        logger.warning('Failed to parse installation date', e);
+      }
+    }
+    // Default: Heute
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    // Gleich speichern
+    await saveInstallationDate(today);
+    return today;
+  }
+
+  @override
+  Future<void> saveInstallationDate(DateTime date) async {
+    await saveSetting(installationDateKey, date);
+  }
+
+  @override
+  Future<DateTime> getLastUpdated() async {
+    final value = await loadSetting(lastUpdatedKey);
+    if (value != null) {
+      try {
+        return DateTime.parse(value as String);
+      } catch (e) {
+        logger.warning('Failed to parse last updated date', e);
+      }
+    }
+    // Default: Heute
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    // Gleich speichern
+    await saveLastUpdated(today);
+    return today;
+  }
+
+  @override
+  Future<void> saveLastUpdated(DateTime date) async {
+    await saveSetting(lastUpdatedKey, date);
   }
 }

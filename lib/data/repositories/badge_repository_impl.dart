@@ -4,13 +4,17 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:movetopia/data/model/badge.dart';
 import 'package:movetopia/domain/repositories/badge_repository.dart';
+import 'package:movetopia/domain/repositories/device_info_repository.dart';
+import 'package:movetopia/data/repositories/device_info_repository_impl.dart';
 import 'package:path/path.dart' as path;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 class BadgeRepositoryImpl implements BadgeRepository {
   static const String tableName = 'badges';
   static Database? _database;
+  final DeviceInfoRepository _deviceInfoRepository;
+
+  BadgeRepositoryImpl(this._deviceInfoRepository);
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -133,37 +137,30 @@ class BadgeRepositoryImpl implements BadgeRepository {
 
   @override
   Future<void> initializeAppDates() async {
-    final prefs = await SharedPreferences.getInstance();
-    final firstOpenDate = prefs.getString('firstOpenDate');
-
-    if (firstOpenDate == null) {
-      final now = DateTime.now();
-      await prefs.setString('firstOpenDate', now.toIso8601String());
-      await prefs.setString('lastCheckDate', now.toIso8601String());
-    }
+    // Beim Badge-Repository verwenden wir die gleichen Daten wie im DeviceInfoRepository
+    // Nichts tun, da die Initialisierung bereits im DeviceInfoRepository erfolgt
   }
 
   @override
   Future<DateTime> getFirstOpenDate() async {
-    final prefs = await SharedPreferences.getInstance();
-    final dateString = prefs.getString('firstOpenDate');
-    return DateTime.parse(dateString!);
+    // Verwende das Installations-Datum aus dem DeviceInfoRepository
+    return await _deviceInfoRepository.getInstallationDate();
   }
 
   @override
   Future<DateTime> getLastCheckDate() async {
-    final prefs = await SharedPreferences.getInstance();
-    final dateString = prefs.getString('lastCheckDate');
-    return DateTime.parse(dateString!);
+    // Verwende das LastOpened-Datum aus dem DeviceInfoRepository
+    return await _deviceInfoRepository.getLastOpenedDate();
   }
 
   @override
   Future<void> updateLastCheckDate(DateTime date) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('lastCheckDate', date.toIso8601String());
+    // Aktualisiere das LastOpened-Datum im DeviceInfoRepository
+    await _deviceInfoRepository.updateLastOpenedDate(date);
   }
 }
 
 final badgeRepositoryProvider = Provider<BadgeRepository>((ref) {
-  return BadgeRepositoryImpl();
+  final deviceInfoRepository = ref.watch(deviceInfoRepositoryProvider);
+  return BadgeRepositoryImpl(deviceInfoRepository);
 });

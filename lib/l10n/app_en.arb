@@ -35,12 +35,113 @@
   "common_health_data_distance_type": "km",
   "common_settings": "Settings",
   "common_dark_mode": "Dark Mode",
-  "common_counter": "Counter",
   "common_about": "About",
   "common_version": "Version",
   "common_error_version": "Error loading version",
   "common_error": "Error {error}",
   "common_unknown": "Unknown",
+  "date_installation": "Installation Date",
+  "date_last_updated": "Last Updated",
+  "date_select": "Select Date",
+  "@_ACTIVITY_TYPES": {},
+  "activity_type_archery": "Archery",
+  "activity_type_badminton": "Badminton",
+  "activity_type_baseball": "Baseball",
+  "activity_type_basketball": "Basketball",
+  "activity_type_biking": "Biking",
+  "activity_type_boxing": "Boxing",
+  "activity_type_cricket": "Cricket",
+  "activity_type_curling": "Curling",
+  "activity_type_elliptical": "Elliptical",
+  "activity_type_fencing": "Fencing",
+  "activity_type_american_football": "American football",
+  "activity_type_australian_football": "Australian football",
+  "activity_type_soccer": "Soccer",
+  "activity_type_golf": "Golf",
+  "activity_type_gymnastics": "Gymnastics",
+  "activity_type_handball": "Handball",
+  "activity_type_hiit": "High intensity interval training",
+  "activity_type_hiking": "Hiking",
+  "activity_type_hockey": "Hockey",
+  "activity_type_skating": "Skating",
+  "activity_type_jump_rope": "Jump rope",
+  "activity_type_kickboxing": "Kickboxing",
+  "activity_type_martial_arts": "Martial arts",
+  "activity_type_pilates": "Pilates",
+  "activity_type_racquetball": "Racquetball",
+  "activity_type_rowing": "Rowing",
+  "activity_type_rugby": "Rugby",
+  "activity_type_running": "Running",
+  "activity_type_sailing": "Sailing",
+  "activity_type_cross_country_skiing": "Cross country skiing",
+  "activity_type_downhill_skiing": "Downhill skiing",
+  "activity_type_snowboarding": "Snowboarding",
+  "activity_type_softball": "Softball",
+  "activity_type_squash": "Squash",
+  "activity_type_stair_climbing": "Stair climbing",
+  "activity_type_swimming": "Swimming",
+  "activity_type_table_tennis": "Table tennis",
+  "activity_type_tennis": "Tennis",
+  "activity_type_volleyball": "Volleyball",
+  "activity_type_walking": "Walking",
+  "activity_type_water_polo": "Water polo",
+  "activity_type_yoga": "Yoga",
+  "activity_type_bowling": "Bowling",
+  "activity_type_cross_training": "Cross training",
+  "activity_type_track_and_field": "Track and field",
+  "activity_type_disc_sports": "Disc sports",
+  "activity_type_lacrosse": "Lacrosse",
+  "activity_type_preparation_and_recovery": "Preparation and recovery",
+  "activity_type_flexibility": "Flexibility",
+  "activity_type_cooldown": "Cooldown",
+  "activity_type_wheelchair_walk_pace": "Wheelchair walk pace",
+  "activity_type_wheelchair_run_pace": "Wheelchair run pace",
+  "activity_type_hand_cycling": "Hand cycling",
+  "activity_type_core_training": "Core training",
+  "activity_type_functional_strength_training": "Functional strength training",
+  "activity_type_traditional_strength_training": "Traditional strength training",
+  "activity_type_mixed_cardio": "Mixed cardio",
+  "activity_type_stairs": "Stairs",
+  "activity_type_step_training": "Step training",
+  "activity_type_fitness_gaming": "Fitness gaming",
+  "activity_type_barre": "Barre",
+  "activity_type_cardio_dance": "Cardio dance",
+  "activity_type_social_dance": "Social dance",
+  "activity_type_mind_and_body": "Mind and body",
+  "activity_type_pickleball": "Pickleball",
+  "activity_type_climbing": "Climbing",
+  "activity_type_equestrian_sports": "Equestrian sports",
+  "activity_type_fishing": "Fishing",
+  "activity_type_hunting": "Hunting",
+  "activity_type_play": "Play",
+  "activity_type_snow_sports": "Snow sports",
+  "activity_type_paddle_sports": "Paddle sports",
+  "activity_type_water_fitness": "Water fitness",
+  "activity_type_water_sports": "Water sports",
+  "activity_type_tai_chi": "Tai chi",
+  "activity_type_wrestling": "Wrestling",
+  "activity_type_biking_stationary": "Biking stationary",
+  "activity_type_calisthenics": "Calisthenics",
+  "activity_type_dancing": "Dancing",
+  "activity_type_frisbee_disc": "Frisbee disc",
+  "activity_type_guided_breathing": "Guided breathing",
+  "activity_type_ice_skating": "Ice skating",
+  "activity_type_paragliding": "Paragliding",
+  "activity_type_rock_climbing": "Rock climbing",
+  "activity_type_rowing_machine": "Rowing machine",
+  "activity_type_running_treadmill": "Running treadmill",
+  "activity_type_scuba_diving": "Scuba diving",
+  "activity_type_skiing": "Skiing",
+  "activity_type_snowshoeing": "Snowshoeing",
+  "activity_type_stair_climbing_machine": "Stair climbing machine",
+  "activity_type_strength_training": "Strength training",
+  "activity_type_surfing": "Surfing",
+  "activity_type_swimming_open_water": "Swimming open water",
+  "activity_type_swimming_pool": "Swimming pool",
+  "activity_type_walking_treadmill": "Walking treadmill",
+  "activity_type_weightlifting": "Weightlifting",
+  "activity_type_wheelchair": "Wheelchair",
+  "activity_type_other": "Other",
   "@_GOAL": {},
   "goal_steps_title": "Step Goal",
   "goal_steps_set_goal": "Enter Step Goal",
@@ -83,6 +184,83 @@
   "challenges_see_all": "See all",
   "challenges_see_all_badges": "See all badges",
   "challenges_no_achieved_badges": "No badges achieved yet",
+  "streakTitle": "Streak",
+  "streakSubtitle": "Your daily streak",
+  "streakCount": "{count} days",
+  "@streakCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakDetails": "Streak Details",
+  "streakCalendar": "Calendar",
+  "streakNoData": "No streak data available",
+  "streakActive": "Active Streak",
+  "streakBroken": "Broken Streak",
+  "streakNotCompleted": "Not Completed",
+  "streakLegend": "Legend",
+  "streakStats": "Statistics",
+  "streakMonthlyAchievement": "You reached your goal on {days} days this month!",
+  "@streakMonthlyAchievement": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "streakTotalDays": "Total: {days} days",
+  "@streakTotalDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "streakMessage": "Keep going! You're on the right track.",
+  "streakStart": "Start your streak by reaching your daily step goal.",
+  "streakActiveDescription": "Days that are part of your current streak (consecutive days until today/yesterday)",
+  "streakBrokenDescription": "Days you've previously achieved but aren't part of your current streak",
+  "streakNotCompletedDescription": "Days when you didn't reach your step goal",
+  "streakDataUpdated": "Streak data updated",
+  "streakUpdateError": "Error updating streak: {error}",
+  "@streakUpdateError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "settingsDebugTitle": "Debug Settings",
+  "settingsDebugMenu": "Debug Tools",
+  "settingsDebugNotAvailable": "This screen is only available in debug builds",
+  "settingsDebugStreakTitle": "Debug Streak",
+  "settingsDebugStreakSimulate": "Simulate Streak",
+  "settingsDebugStreakReset": "Reset Streak Data",
+  "settingsDebugStreakDays": "Number of days",
+  "settingsDebugStreakDate": "Select date",
+  "settingsDebugStreakSimulatePast": "Simulate streak for past days",
+  "settingsDebugStreakSimulateDate": "Simulate streak for specific date",
+  "settingsDebugStreakMarkButton": "Mark Day",
+  "settingsDebugStreakDaysSimulated": "Streak simulated for {days} days!",
+  "@settingsDebugStreakDaysSimulated": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsDebugStreakDateMarked": "Day {date} marked as completed!",
+  "@settingsDebugStreakDateMarked": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsDebugStreakResetSuccess": "Streak has been reset!",
   "@_TRACKING": {},
   "tracking_title": "Fitness Tracking",
   "tracking_start_activity": "Start Activity",

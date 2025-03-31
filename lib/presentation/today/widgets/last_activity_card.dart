@@ -18,8 +18,7 @@ class LastActivityCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => context.push("/activities/details", extra: lastActivity),
       child: GenericCard(
-        title: getTranslatedActivityType(
-            Localizations.localeOf(context), lastActivity.activityType),
+        title: getTranslatedActivityType(context, lastActivity.activityType),
         subtitles: [(AppLocalizations.of(context)!.activity_last_activity)],
         iconData: getActivityIcon(lastActivity.activityType),
         color: Colors.lightGreen,

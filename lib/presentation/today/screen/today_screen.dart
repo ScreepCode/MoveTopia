@@ -10,6 +10,7 @@ import 'package:movetopia/presentation/today/widgets/last_activity_card.dart';
 import 'package:movetopia/presentation/today/widgets/today_overview.dart';
 
 import '../../../core/health_authorized_view_model.dart';
+import '../../challenges/widgets/streak_card.dart';
 import '../../profile/view_model/profile_view_model.dart';
 import '../view_model/last_activity_state.dart';
 import '../view_model/stats_state.dart';
@@ -76,6 +77,7 @@ Widget _buildBody(
       child: ListView(
         children: [
           _buildTodayOverview(context, ref, statsState),
+          const StreakCard(isCompact: true),
           if (lastActivityState != null)
             _buildLastActivityCard(context, lastActivityState),
         ],

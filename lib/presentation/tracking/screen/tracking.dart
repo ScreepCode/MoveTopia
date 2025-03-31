@@ -88,7 +88,7 @@ class TrackingScreen extends HookConsumerWidget {
             appBar: AppBar(
               title: trackingState!.isRecording
                   ? Text(getTranslatedActivityType(
-                      Localizations.localeOf(context),
+                      context,
                       HealthWorkoutActivityType.values.firstWhere((t) =>
                           t.name == trackingState.activity.activityType?.name)))
                   : Text(AppLocalizations.of(context)!.tracking_title),

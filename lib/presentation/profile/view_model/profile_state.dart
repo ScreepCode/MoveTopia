@@ -1,23 +1,28 @@
 class ProfileState {
   final int stepGoal;
-  final int count;
   final bool isDarkMode;
+  final DateTime installationDate;
+  final DateTime lastUpdated;
 
   ProfileState({
     this.stepGoal = 5000,
-    this.count = 0,
     this.isDarkMode = false,
-  });
+    DateTime? installationDate,
+    DateTime? lastUpdated,
+  })  : installationDate = installationDate ?? DateTime.now(),
+        lastUpdated = lastUpdated ?? DateTime.now();
 
   ProfileState copyWith({
     int? stepGoal,
-    int? count,
     bool? isDarkMode,
+    DateTime? installationDate,
+    DateTime? lastUpdated,
   }) {
     return ProfileState(
       stepGoal: stepGoal ?? this.stepGoal,
-      count: count ?? this.count,
       isDarkMode: isDarkMode ?? this.isDarkMode,
+      installationDate: installationDate ?? this.installationDate,
+      lastUpdated: lastUpdated ?? this.lastUpdated,
     );
   }
 }

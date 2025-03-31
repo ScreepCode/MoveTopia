@@ -91,7 +91,7 @@ class ActivityDetailsScreen extends HookConsumerWidget {
     return HeaderDetails(
       platformIcon: activityState.icon,
       title: getTranslatedActivityType(
-          Localizations.localeOf(context), activityState.activity.activityType),
+          context, activityState.activity.activityType),
       start: activityState.activity.start,
       end: activityState.activity.end,
       icon: getActivityIcon(activityPreview.activityType),
