@@ -1,0 +1,25 @@
+name: Test Deploy Key
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test-deploy-key:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure SSH for Deploy Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY_ACTIVITY_TRACKING }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Test SSH connection
+        run: |
+          GIT_SSH_COMMAND='ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no' git ls-remote git@github.com:Jozys/activity_tracking.git
