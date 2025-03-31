@@ -23,32 +23,42 @@ class TrackingScreen extends HookConsumerWidget {
       return null;
     }, [trackingState?.isRecording]);
 
-    return Scaffold(
-        appBar: AppBar(
-          title: trackingState!.isRecording
-              ? Text(getTranslatedActivityType(
-                  context,
-                  HealthWorkoutActivityType.values.firstWhere((t) =>
-                      t.name == trackingState.activity.activityType?.name)))
-              : Text(AppLocalizations.of(context)!.tracking_title),
-        ),
-        body: trackingState.activity.activityType == ActivityType.unknown
-            ? StartActivity(
-                onStart: (activityType) {
-                  ref
-                      .read(trackingViewModelProvider.notifier)
-                      .startTracking(activityType);
-                },
-              )
-            : CurrentActivity(
-                activity: trackingState.activity,
-                onStop: () {
-                  ref.read(trackingViewModelProvider.notifier).stopTracking();
-                },
-                startTimer:
-                    ref.read(trackingViewModelProvider.notifier).startTimer,
-                duration: trackingState.duration,
-                isRecording: trackingState!.isRecording,
-              ));
+    return PopScope(
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) {
+            if (trackingState.isRecording == false) {
+              ref.read(trackingViewModelProvider.notifier).clearState();
+            }
+          }
+        },
+        child: Scaffold(
+            appBar: AppBar(
+              title: trackingState!.isRecording
+                  ? Text(getTranslatedActivityType(
+                      context,
+                      HealthWorkoutActivityType.values.firstWhere((t) =>
+                          t.name == trackingState.activity.activityType?.name)))
+                  : Text(AppLocalizations.of(context)!.tracking_title),
+            ),
+            body: trackingState.activity.activityType == ActivityType.unknown
+                ? StartActivity(
+                    onStart: (activityType) {
+                      ref
+                          .read(trackingViewModelProvider.notifier)
+                          .startTracking(activityType);
+                    },
+                  )
+                : CurrentActivity(
+                    activity: trackingState.activity,
+                    onStop: () {
+                      ref
+                          .read(trackingViewModelProvider.notifier)
+                          .stopTracking();
+                    },
+                    startTimer:
+                        ref.read(trackingViewModelProvider.notifier).startTimer,
+                    duration: trackingState.duration,
+                    isRecording: trackingState!.isRecording,
+                  )));
   }
 }
