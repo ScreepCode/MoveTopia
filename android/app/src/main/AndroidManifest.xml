@@ -74,6 +74,19 @@
             android:name="de.buseslaar.tracking.activity_tracking.service.ForegroundService"
             android:exported="false"
             android:foregroundServiceType="location|health" />
+        <service
+            android:name="de.buseslaar.tracking.activity_tracking.service.WalkingForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="location|health" />
+        <service
+            android:name="de.buseslaar.tracking.activity_tracking.service.BikingForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="location|health" />
+        <service
+            android:name="de.buseslaar.tracking.activity_tracking.service.RunningForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="location|health" />
+
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
