@@ -50,6 +50,7 @@ jobs:
           subdirectory: android
         env:
           TAG_PREFIX: Release-
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY_ACTIVITY_TRACKING }}
 
       - name: "Upload Release APK"
         uses: actions/upload-artifact@v4

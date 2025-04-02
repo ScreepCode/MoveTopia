@@ -42,9 +42,42 @@ platform :android do
     { version_name: version_name, version_code: version_code }
   end
 
+  # Helper lane to setup SSH for private repos
+  lane :setup_ssh do
+    UI.message("Setting up SSH for private repositories")
+    
+    # Get SSH_PRIVATE_KEY from environment
+    ssh_key = ENV["SSH_PRIVATE_KEY"]
+    
+    if ssh_key
+      # Ensure SSH directory exists
+      sh("mkdir -p ~/.ssh")
+      
+      # Write SSH key to file
+      File.write("~/.ssh/id_rsa", ssh_key)
+      sh("chmod 600 ~/.ssh/id_rsa")
+      
+      # Add GitHub to known hosts
+      sh("ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts")
+      
+      # Configure git to use SSH
+      sh("git config --global url.\"git@github.com:\".insteadOf \"https://github.com/\"")
+      
+      UI.success("SSH configured successfully for private repositories")
+    else
+      UI.important("No SSH_PRIVATE_KEY provided, skipping SSH setup")
+    end
+  end
+
   desc "Build debug APK"
   lane :buildDebug do
     version_info = get_version_info
+    
+    # Setup SSH for private repositories
+    setup_ssh
+    
+    # Set GIT_SSH_COMMAND to point to our SSH key
+    ENV["GIT_SSH_COMMAND"] = "ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts"
 
     # Ensure Flutter dependencies are up-to-date
     sh("cd .. && flutter pub get")
@@ -69,6 +102,12 @@ platform :android do
   desc "Build release APK"
   lane :buildRelease do
     version_info = get_version_info
+    
+    # Setup SSH for private repositories
+    setup_ssh
+    
+    # Set GIT_SSH_COMMAND to point to our SSH key
+    ENV["GIT_SSH_COMMAND"] = "ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts"
 
     # Ensure Flutter dependencies are up-to-date
     sh("cd .. && flutter pub get")
