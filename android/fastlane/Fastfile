@@ -51,7 +51,7 @@ platform :android do
     UI.message("Setting up GitHub token authentication")
     
     github_token = ENV["GH_TOKEN"]
-    github_username = ENV["GITHUB_USERNAME"] || "x-access-token"
+    github_username = ENV["GITHUB_USERNAME"] || "Jozys"
     
     if github_token
       # Configure git to use HTTPS with token auth
