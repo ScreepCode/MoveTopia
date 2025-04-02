@@ -18,7 +18,7 @@ platform :android do
       sh("git fetch --tags")
 
       # Find next available tag
-      while sh("git ls-remote --tags origin | grep -q \"refs/tags/#{full_tag}\"")
+      while sh("git ls-remote --tags origin | grep -q \"refs/tags/#{full_tag}\"", error_callback: ->(result) { false })
         count += 1
         full_tag = "#{tag_prefix}#{base_tag}.#{count}"
       end
@@ -30,19 +30,8 @@ platform :android do
     return { version_name: version_name, version_code: version_code }
   end
 
-  # Helper lane to setup SSH for private repos
-  lane :setup_ssh do
-    if ENV["SSH_PRIVATE_KEY"]
-      sh("mkdir -p ~/.ssh")
-      sh("echo \"#{ENV['SSH_PRIVATE_KEY']}\" > ~/.ssh/deploy_key")
-      sh("chmod 600 ~/.ssh/deploy_key")
-      sh("ssh-keyscan github.com >> ~/.ssh/known_hosts")
-    end
-  end
-
   desc "Build debug APK"
   lane :buildDebug do
-    setup_ssh
     version_info = get_version_info
 
     # Ensure Flutter dependencies are up-to-date
@@ -67,7 +56,6 @@ platform :android do
 
   desc "Build release APK"
   lane :buildRelease do
-    setup_ssh
     version_info = get_version_info
 
     # Ensure Flutter dependencies are up-to-date
