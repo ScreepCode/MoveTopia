@@ -126,6 +126,14 @@ platform :android do
             # Create reference file
             sh("echo '#{git_hash} #{repo_url}' > #{git_cache_dir}/activity_tracking.git.info")
             
+            # Fix case sensitivity issues with the files
+            UI.message("Fixing case sensitivity issues...")
+            model_dir = "#{git_cache_dir}/activity_tracking-#{git_hash}/lib/model"
+            if File.exist?("#{model_dir}/Activity.dart") && !File.exist?("#{model_dir}/activity.dart")
+              UI.message("Creating case-insensitive symlink for Activity.dart...")
+              sh("ln -sf #{model_dir}/Activity.dart #{model_dir}/activity.dart")
+            end
+            
             UI.success("✅ Dependency set up successfully")
           rescue => e
             UI.error("Failed to set up dependency: #{e.message}")
