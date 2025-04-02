@@ -14,7 +14,6 @@ platform :android do
       count = 0
       full_tag = "#{tag_prefix}#{base_tag}.#{count}"
 
-      # Fetch tags from remote
       # Fetch tags from remote, ignore errors from rejected tags
       sh("git fetch --tags || true")
      
@@ -25,7 +24,6 @@ platform :android do
       # Use a safer approach to check if tag exists
       tag_exists = true
       while tag_exists
-        # Check if tag exists - store output to avoid exit code issues
         # Check if tag exists locally
         tag_exists = existing_tags.include?(full_tag)
         
@@ -50,40 +48,37 @@ platform :android do
   lane :setup_github_token do
     UI.message("Setting up GitHub token authentication")
     
-    github_username = "Jozys"
     github_token = ENV["GH_TOKEN"]
 
     if github_token
-      # Configure git to use HTTPS with token auth
-      encoded_token = github_token.gsub('@', '%40').gsub(':', '%3A')
-      sh("git config --global credential.helper store")
-+     sh("echo 'https://#{github_username}:#{github_token}@github.com' > ~/.git-credentials")
-+     sh("chmod 600 ~/.git-credentials")
-
-      # Configure Dart pub to use the token
+      UI.message("GitHub token found, configuring git...")
+      
+      # Configure git to replace URLs directly with token URL
+      sh("git config --global url.\"https://#{github_token}@github.com/\".insteadOf \"https://github.com/\"")
+      sh("git config --global url.\"https://#{github_token}@github.com/\".insteadOf \"git@github.com:\"")
+      
+      # Modify .gitconfig to always use https with the token
+      gitconfig_path = File.expand_path("~/.gitconfig")
+      if File.exist?(gitconfig_path)
+        UI.message("Verifying gitconfig...")
+        gitconfig = File.read(gitconfig_path)
+        UI.message("Git config successfully read")
+      end
+      
+      # Configure environment variables for Flutter/Dart
       ENV["PUB_HOSTED_URL"] = "https://pub.dartlang.org"
       ENV["FLUTTER_STORAGE_BASE_URL"] = "https://storage.googleapis.com"
-      ENV["GITHUB_TOKEN"] = github_token
-      ENV["GIT_ASKPASS"] = "echo"
       
-      # For Dart/Flutter private repos
-      dart_tool_dir = File.expand_path("../../.dart_tool", __dir__)
-      FileUtils.mkdir_p(dart_tool_dir)
-      
-      pub_credentials = {
-        "accessToken" => github_token,
-        "refreshToken" => "",
-        "tokenEndpoint" => "https://github.com/login/oauth/access_token",
-        "scopes" => ["repo", "read:packages"],
-        "expiration" => (Time.now + 60 * 60 * 24 * 30).to_i * 1000
-      }
-      
-      # Create Dart pub credentials file
-      File.write(File.join(dart_tool_dir, "pub-credentials.json"), JSON.generate(pub_credentials))
-      
-      UI.success("GitHub token authentication configured successfully")
+      # Test the configuration
+      UI.message("Testing GitHub token configuration...")
+      test_output = sh("git ls-remote https://#{github_token}@github.com/Jozys/activity_tracking HEAD", log: false)
+      if test_output.include?("refs/heads")
+        UI.success("GitHub token authentication successfully verified!")
+      else
+        UI.error("GitHub token authentication verification failed!")
+      end
     else
-      UI.important("No GITHUB_TOKEN provided, private repositories may not be accessible")
+      UI.important("No GH_TOKEN provided, private repositories may not be accessible")
     end
   end
 
@@ -94,8 +89,14 @@ platform :android do
     # Setup GitHub token for private repositories
     setup_github_token
     
-    # Ensure Flutter dependencies are up-to-date
-    sh("cd .. && flutter pub get")
+    # Ensure Flutter dependencies are up-to-date using the token directly
+    token = ENV["GH_TOKEN"]
+    if token
+      UI.message("Running Flutter pub get with token authentication...")
+      sh("cd .. && FLUTTER_GIT_URL=\"https://#{token}@github.com\" flutter pub get")
+    else
+      sh("cd .. && flutter pub get")
+    end
 
     # Build debug APK
     sh("cd .. && flutter build apk --debug")
@@ -121,8 +122,14 @@ platform :android do
     # Setup GitHub token for private repositories
     setup_github_token
     
-    # Ensure Flutter dependencies are up-to-date
-    sh("cd .. && flutter pub get")
+    # Ensure Flutter dependencies are up-to-date using the token directly
+    token = ENV["GH_TOKEN"]
+    if token
+      UI.message("Running Flutter pub get with token authentication...")
+      sh("cd .. && FLUTTER_GIT_URL=\"https://#{token}@github.com\" flutter pub get")
+    else
+      sh("cd .. && flutter pub get")
+    end
 
     # Build release APK
     sh("cd .. && flutter build apk --release")
