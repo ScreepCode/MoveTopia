@@ -38,7 +38,8 @@ platform :android do
       version_code = "#{base_tag}.#{count}"
     end
 
-    return { version_name: version_name, version_code: version_code }
+    # Don't use explicit return in Fastlane, just make this the last expression
+    { version_name: version_name, version_code: version_code }
   end
 
   desc "Build debug APK"
@@ -61,8 +62,8 @@ platform :android do
     UI.success("Debug APK built at: android/fastlane/build/outputs/movetopia-debug.apk (Package: de.movetopia.debug)")
     UI.success("Version: #{version_info[:version_name]} (#{version_info[:version_code]})")
     
-    # Return version info for GitHub Actions
-    return version_info
+    # Return version info for GitHub Actions - make this the last expression
+    version_info
   end
 
   desc "Build release APK"
@@ -85,8 +86,8 @@ platform :android do
     UI.success("Release APK built at: android/fastlane/build/outputs/movetopia-release.apk (Package: de.movetopia)")
     UI.success("Version: #{version_info[:version_name]} (#{version_info[:version_code]})")
     
-    # Return version info for GitHub Actions
-    return version_info
+    # Return version info for GitHub Actions - make this the last expression
+    version_info
   end
 
 #   desc "Build release APK and upload to Play Store beta track"
