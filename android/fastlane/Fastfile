@@ -48,7 +48,10 @@ platform :android do
   lane :setup_github_token do
     UI.message("Setting up GitHub token authentication")
     
-    github_token = ENV["GH_TOKEN"]
+    # Check for GitHub token in different environment variables
+    github_token = ENV["GH_TOKEN"] || ENV["GITHUB_TOKEN"]
+    
+    UI.message("Environment variables available: #{ENV.keys.join(', ')}")
 
     if github_token
       UI.message("GitHub token found, configuring git...")
@@ -78,7 +81,7 @@ platform :android do
         UI.error("GitHub token authentication verification failed!")
       end
     else
-      UI.important("No GH_TOKEN provided, private repositories may not be accessible")
+      UI.important("No GitHub token provided (checked GH_TOKEN and GITHUB_TOKEN), private repositories may not be accessible")
     end
   end
 
@@ -90,7 +93,7 @@ platform :android do
     setup_github_token
     
     # Ensure Flutter dependencies are up-to-date using the token directly
-    token = ENV["GH_TOKEN"]
+    token = ENV["GH_TOKEN"] || ENV["GITHUB_TOKEN"]
     if token
       UI.message("Running Flutter pub get with token authentication...")
       sh("cd .. && FLUTTER_GIT_URL=\"https://#{token}@github.com\" flutter pub get")
@@ -123,7 +126,7 @@ platform :android do
     setup_github_token
     
     # Ensure Flutter dependencies are up-to-date using the token directly
-    token = ENV["GH_TOKEN"]
+    token = ENV["GH_TOKEN"] || ENV["GITHUB_TOKEN"]
     if token
       UI.message("Running Flutter pub get with token authentication...")
       sh("cd .. && FLUTTER_GIT_URL=\"https://#{token}@github.com\" flutter pub get")
