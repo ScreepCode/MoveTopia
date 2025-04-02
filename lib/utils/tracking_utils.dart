@@ -64,3 +64,10 @@ String getDuration(int startMillis, int endMillis) {
 
   return duration;
 }
+
+String getPace(double pace) {
+  if (pace == 0) return "0:00 min/km";
+  var minutes = pace ~/ 60;
+  var seconds = (pace % 60).toInt();
+  return "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')} min/km";
+}

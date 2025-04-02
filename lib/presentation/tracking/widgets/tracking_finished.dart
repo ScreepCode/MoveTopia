@@ -40,12 +40,12 @@ class TrackingFinished extends StatelessWidget {
     return ((totalSpeed / activity.locations!.length) * 10.0).round() / 10.0;
   }
 
-  double getPace(Activity activity) {
+  String getAveragePace(Activity activity) {
     if (activity.locations == null) {
-      return 0.0;
+      return "-- min/km";
     }
     if (activity.locations!.isEmpty) {
-      return 0.0;
+      return "-- min/km";
     }
 
     double totalPace = 0.0;
@@ -53,7 +53,8 @@ class TrackingFinished extends StatelessWidget {
       totalPace += location.pace;
     });
 
-    return ((totalPace / activity.locations!.length) * 10.0).round() / 10.0;
+    return getPace(
+        (totalPace / activity.locations!.length) * 10.0.round() / 10.0);
   }
 
   Widget _buildHeaderDetails(BuildContext context, Activity activity) {
@@ -92,7 +93,7 @@ class TrackingFinished extends StatelessWidget {
               value: "${getAverageSpeed(activity)} km/h"),
           DetailStatsCardEntry(
               displayName: l10n.activity_avg_pace,
-              value: "${getPace(activity).toString()} min / km"),
+              value: getAveragePace(activity).toString()),
         ],
       ),
     );
