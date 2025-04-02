@@ -15,15 +15,19 @@ platform :android do
       full_tag = "#{tag_prefix}#{base_tag}.#{count}"
 
       # Fetch tags from remote
-      sh("git fetch --tags")
+      # Fetch tags from remote, ignore errors from rejected tags
+      sh("git fetch --tags || true")
+     
+      # Get list of existing tags
+      existing_tags = sh("git tag -l", log: false).split("\n")
 
       # Find next available tag
       # Use a safer approach to check if tag exists
       tag_exists = true
       while tag_exists
         # Check if tag exists - store output to avoid exit code issues
-        output = sh("git ls-remote --tags origin | grep \"refs/tags/#{full_tag}\" || true", log: true)
-        tag_exists = !output.empty?
+        # Check if tag exists locally
+        tag_exists = existing_tags.include?(full_tag)
         
         if tag_exists
           UI.message("Tag #{full_tag} already exists, trying next...")
@@ -42,30 +46,41 @@ platform :android do
     { version_name: version_name, version_code: version_code }
   end
 
-  # Helper lane to setup SSH for private repos
-  lane :setup_ssh do
-    UI.message("Setting up SSH for private repositories")
+  # Helper to configure GitHub access with token
+  lane :setup_github_token do
+    UI.message("Setting up GitHub token authentication")
     
-    # Get SSH_PRIVATE_KEY from environment
-    ssh_key = ENV["SSH_PRIVATE_KEY"]
+    github_token = ENV["GH_TOKEN"]
+    github_username = ENV["GITHUB_USERNAME"] || "x-access-token"
     
-    if ssh_key
-      # Ensure SSH directory exists
-      sh("mkdir -p ~/.ssh")
+    if github_token
+      # Configure git to use HTTPS with token auth
+      encoded_token = github_token.gsub('@', '%40').gsub(':', '%3A')
+      sh("git config --global url.\"https://#{github_username}:#{encoded_token}@github.com/\".insteadOf \"https://github.com/\"")
+      sh("git config --global url.\"https://#{github_username}:#{encoded_token}@github.com/\".insteadOf \"git@github.com:\"")
       
-      # Write SSH key to file
-      File.write("~/.ssh/id_rsa", ssh_key)
-      sh("chmod 600 ~/.ssh/id_rsa")
+      # Configure Dart pub to use the token
+      ENV["PUB_HOSTED_URL"] = "https://pub.dartlang.org"
+      ENV["FLUTTER_STORAGE_BASE_URL"] = "https://storage.googleapis.com"
       
-      # Add GitHub to known hosts
-      sh("ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts")
+      # For Dart/Flutter private repos
+      dart_tool_dir = File.expand_path("../../.dart_tool", __dir__)
+      FileUtils.mkdir_p(dart_tool_dir)
       
-      # Configure git to use SSH
-      sh("git config --global url.\"git@github.com:\".insteadOf \"https://github.com/\"")
+      pub_credentials = {
+        "accessToken" => github_token,
+        "refreshToken" => "",
+        "tokenEndpoint" => "https://github.com/login/oauth/access_token",
+        "scopes" => ["repo", "read:packages"],
+        "expiration" => (Time.now + 60 * 60 * 24 * 30).to_i * 1000
+      }
       
-      UI.success("SSH configured successfully for private repositories")
+      # Create Dart pub credentials file
+      File.write(File.join(dart_tool_dir, "pub-credentials.json"), JSON.generate(pub_credentials))
+      
+      UI.success("GitHub token authentication configured successfully")
     else
-      UI.important("No SSH_PRIVATE_KEY provided, skipping SSH setup")
+      UI.important("No GITHUB_TOKEN provided, private repositories may not be accessible")
     end
   end
 
@@ -73,12 +88,9 @@ platform :android do
   lane :buildDebug do
     version_info = get_version_info
     
-    # Setup SSH for private repositories
-    setup_ssh
+    # Setup GitHub token for private repositories
+    setup_github_token
     
-    # Set GIT_SSH_COMMAND to point to our SSH key
-    ENV["GIT_SSH_COMMAND"] = "ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts"
-
     # Ensure Flutter dependencies are up-to-date
     sh("cd .. && flutter pub get")
 
@@ -103,12 +115,9 @@ platform :android do
   lane :buildRelease do
     version_info = get_version_info
     
-    # Setup SSH for private repositories
-    setup_ssh
+    # Setup GitHub token for private repositories
+    setup_github_token
     
-    # Set GIT_SSH_COMMAND to point to our SSH key
-    ENV["GIT_SSH_COMMAND"] = "ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts"
-
     # Ensure Flutter dependencies are up-to-date
     sh("cd .. && flutter pub get")
 
