@@ -177,13 +177,14 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
       }
 
       return Activity(
-          caloriesBurnt: preview.caloriesBurnt,
-          distance: preview.distance,
-          end: preview.end,
-          start: preview.start,
-          activityType: preview.activityType,
-          heartRates: heartRates,
-          sourceId: preview.sourceId);
+        caloriesBurnt: preview.caloriesBurnt,
+        distance: preview.distance,
+        end: preview.end,
+        start: preview.start,
+        activityType: preview.activityType,
+        heartRates: heartRates,
+        sourceId: preview.sourceId,
+      );
     } catch (e) {
       log.info(e);
       return null;

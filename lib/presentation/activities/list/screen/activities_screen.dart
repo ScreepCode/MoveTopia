@@ -83,17 +83,25 @@ Widget _buildActivityList(
 
 Widget _buildActivityItem(BuildContext context, ActivityPreview activity) {
   return ListTile(
-    onTap: () {
-      context.push("/activities/details", extra: activity);
-    },
-    isThreeLine: true,
-    title: Text(getTranslatedActivityType(context, activity.activityType)),
-    subtitle: Text(AppLocalizations.of(context)!.activity_details(
-        activity.distance, activity.end.difference(activity.start).inMinutes)),
-    trailing: CircleAvatar(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      child: Icon(getActivityIcon(activity.activityType),
-          color: Theme.of(context).colorScheme.onPrimary),
-    ),
-  );
+      onTap: () {
+        context.push("/activities/details", extra: activity);
+      },
+      isThreeLine: true,
+      title: Text(getTranslatedActivityType(context, activity.activityType)),
+      subtitle: Text(AppLocalizations.of(context)!.activity_details(
+          activity.distance,
+          activity.end.difference(activity.start).inMinutes)),
+      trailing: CircleAvatar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        child: Badge(
+            alignment: Alignment.bottomRight,
+            backgroundColor: Colors.transparent,
+            label: activity.icon != null && activity.icon!.isNotEmpty
+                ? Image.memory(activity.icon!, width: 24, height: 24)
+                : null,
+            child: Icon(
+              getActivityIcon(activity.activityType),
+              color: Theme.of(context).colorScheme.onPrimary,
+            )),
+      ));
 }

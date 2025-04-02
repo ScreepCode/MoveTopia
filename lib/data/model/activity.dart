@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:health/health.dart';
 
 interface class Data<T> {
@@ -12,7 +14,7 @@ interface class Activity extends ActivityPreview {
   final List<Data<int>>? heartRates;
   final List<Data<double>>? speed;
 
-  const Activity({
+  Activity({
     required super.distance,
     required super.activityType,
     required super.caloriesBurnt,
@@ -31,14 +33,17 @@ interface class ActivityPreview {
   final DateTime start;
   final DateTime end;
   final String sourceId;
+  Uint8List? icon;
 
-  const ActivityPreview(
-      {required this.activityType,
-      required this.caloriesBurnt,
-      required this.distance,
-      required this.start,
-      required this.end,
-      required this.sourceId});
+  ActivityPreview({
+    required this.activityType,
+    required this.caloriesBurnt,
+    required this.distance,
+    required this.start,
+    required this.end,
+    required this.sourceId,
+    Uint8List? icon,
+  });
 
   int getDuration() {
     return start.difference(end).inSeconds.abs();
