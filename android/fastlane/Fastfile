@@ -51,13 +51,12 @@ platform :android do
     UI.message("Setting up GitHub token authentication")
     
     github_token = ENV["GH_TOKEN"]
-    github_username = ENV["GITHUB_USERNAME"] || "Jozys"
-    
+
     if github_token
       # Configure git to use HTTPS with token auth
       encoded_token = github_token.gsub('@', '%40').gsub(':', '%3A')
-      sh("git config --global url.\"https://#{github_username}:#{encoded_token}@github.com/\".insteadOf \"https://github.com/\"")
-      sh("git config --global url.\"https://#{github_username}:#{encoded_token}@github.com/\".insteadOf \"git@github.com:\"")
+      sh("git config --global url.\"https://#{encoded_token}@github.com/\".insteadOf \"https://github.com/\"")
+      sh("git config --global url.\"https://#{encoded_token}@github.com/\".insteadOf \"git@github.com:\"")
       
       # Configure Dart pub to use the token
       ENV["PUB_HOSTED_URL"] = "https://pub.dartlang.org"
