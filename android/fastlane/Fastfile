@@ -49,9 +49,7 @@ platform :android do
     UI.message("Setting up GitHub token authentication")
     
     # Check for GitHub token in different environment variables
-    github_token = ENV["GH_TOKEN"] || ENV["GITHUB_TOKEN"]
-    
-    UI.message("Environment variables available: #{ENV.keys.join(', ')}")
+    github_token = ENV["GH_TOKEN"]
 
     if github_token
       UI.message("GitHub token found, configuring git...")
