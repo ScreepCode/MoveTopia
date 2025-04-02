@@ -49,6 +49,9 @@ platform :android do
     UI.message("Setting up GitHub token authentication")
     
     github_token = ENV["GH_TOKEN"]
+    proj_root = File.expand_path("../..", Dir.pwd)
+    
+    UI.message("Project root directory: #{proj_root}")
 
     if github_token
       UI.message("GitHub token found, length: #{github_token.length}")
@@ -57,75 +60,82 @@ platform :android do
       sh("echo 'machine github.com login #{github_token} password x-oauth-basic' > ~/.netrc")
       sh("chmod 600 ~/.netrc")
       
-      # Show pubspec.yaml for debugging
-      UI.message("Current pubspec.yaml:")
-      sh("cat ../pubspec.yaml | grep activity_tracking || echo 'Not found'")
-      
-      # Check if the dependency is a git reference
-      dependency_pattern = sh("cat ../pubspec.yaml | grep -A 5 'activity_tracking:' || echo 'Not found'", log: false)
-      UI.message("Dependency pattern: #{dependency_pattern}")
-      
-      # Get pubspec.lock to find the exact commit hash
-      UI.message("Looking for exact commit hash in pubspec.lock...")
-      pubspec_lock = sh("cat ../pubspec.lock", log: false)
-      
-      # Extract commit hash from pubspec.lock if possible
-      commit_hash = nil
-      if pubspec_lock.include?("activity_tracking")
-        match = pubspec_lock.match(/activity_tracking:.*?hash: ([a-f0-9]+)/)
-        commit_hash = match[1] if match
-      end
-      
-      UI.message("Found commit hash: #{commit_hash || 'None'}")
-      
-      # Directly set up the dependency using Git with token
-      UI.message("Setting up direct Git access for Flutter private dependency...")
-      
-      # Clean previous clones
-      sh("rm -rf /tmp/activity_tracking")
-      
-      # Clone the repository
-      sh("git clone https://#{github_token}@github.com/Jozys/activity_tracking.git /tmp/activity_tracking")
-      
-      # If we have a commit hash, checkout that specific commit
-      if commit_hash
-        sh("cd /tmp/activity_tracking && git checkout #{commit_hash}")
-      end
-      
-      # Prepare pub cache directory
-      pub_cache_dir = ENV["PUB_CACHE"] || "#{Dir.home}/.pub-cache"
-      git_cache_dir = "#{pub_cache_dir}/git"
-      sh("mkdir -p #{git_cache_dir}")
-      
-      # Create the correct directory structure
-      git_hash_dir = commit_hash || sh("cd /tmp/activity_tracking && git rev-parse HEAD", log: false).strip
-      dependency_cache_dir = "#{git_cache_dir}/activity_tracking-#{git_hash_dir}"
-      
-      UI.message("Setting up dependency at: #{dependency_cache_dir}")
-      sh("rm -rf '#{dependency_cache_dir}' && mkdir -p '#{dependency_cache_dir}'")
-      sh("cp -R /tmp/activity_tracking/. '#{dependency_cache_dir}'")
-      
-      # Create a reference file for Flutter
-      UI.message("Creating Flutter reference file...")
-      reference_file = "#{git_cache_dir}/cached_git_ref.info"
-      reference_content = "#{git_hash_dir} https://github.com/Jozys/activity_tracking.git"
-      sh("echo '#{reference_content}' > '#{reference_file}'")
-      
-      # Set environment variables for Flutter
-      ENV["PUB_CACHE"] = pub_cache_dir
+      # Set environment variables to help Flutter find private repos
       ENV["FLUTTER_GIT_URL"] = "https://#{github_token}@github.com/"
       
-      # Test access to GitHub API
-      UI.message("Testing token validity with GitHub API...")
-      test_result = sh("curl -s -o /dev/null -w '%{http_code}' -H 'Authorization: token #{github_token}' https://api.github.com/user", log: false)
-      
-      if test_result == "200"
-        UI.success("✅ GitHub token is valid!")
-      else
-        UI.error("❌ GitHub token failed authorization test! HTTP status: #{test_result}")
+      # Simple test to verify the token works
+      begin
+        UI.message("Testing token access...")
+        status_code = sh("curl -s -o /dev/null -w '%{http_code}' -H 'Authorization: token #{github_token}' https://api.github.com/user", log: false)
+        
+        if status_code == "200"
+          UI.success("✅ GitHub token is valid!")
+        else
+          UI.error("❌ GitHub token authentication failed! Status code: #{status_code}")
+        end
+      rescue => e
+        UI.error("❌ Token verification failed: #{e.message}")
       end
       
-      UI.success("Private repository dependency setup complete!")
+      # Check for pubspec.yaml and pubspec.lock
+      pubspec_yaml_path = "#{proj_root}/pubspec.yaml"
+      pubspec_lock_path = "#{proj_root}/pubspec.lock"
+      
+      UI.message("Checking for Flutter files:")
+      UI.message("pubspec.yaml path: #{pubspec_yaml_path}")
+      UI.message("pubspec.lock path: #{pubspec_lock_path}")
+      
+      # Show directory structure for debugging
+      UI.message("Directory structure:")
+      sh("ls -la #{proj_root}")
+      
+      # Check if activity_tracking dependency exists in pubspec.yaml
+      if File.exist?(pubspec_yaml_path)
+        UI.success("✅ pubspec.yaml found")
+        pubspec_content = File.read(pubspec_yaml_path)
+        
+        if pubspec_content.include?("activity_tracking")
+          UI.message("Activity tracking dependency found in pubspec.yaml")
+          
+          # Extract the repository URL if possible
+          repo_url_match = pubspec_content.match(/activity_tracking:.*url:\s*['"]([^'"]+)['"]/)
+          repo_url = repo_url_match ? repo_url_match[1] : "https://github.com/Jozys/activity_tracking.git"
+          UI.message("Repository URL: #{repo_url}")
+          
+          # Clone the repository directly
+          begin
+            sh("rm -rf /tmp/activity_tracking")
+            sh("git clone https://#{github_token}@github.com/Jozys/activity_tracking.git /tmp/activity_tracking")
+            UI.success("✅ Repository cloned successfully")
+            
+            # Set up the Flutter pub cache for the dependency
+            pub_cache_dir = ENV["PUB_CACHE"] || "#{Dir.home}/.pub-cache"
+            git_cache_dir = "#{pub_cache_dir}/git"
+            UI.message("Setting up dependency in #{git_cache_dir}")
+            
+            # Create directories
+            sh("mkdir -p #{git_cache_dir}")
+            
+            # Get the HEAD commit hash
+            git_hash = sh("cd /tmp/activity_tracking && git rev-parse HEAD", log: false).strip
+            
+            # Setup dependency with correct paths
+            sh("mkdir -p #{git_cache_dir}/activity_tracking-#{git_hash}")
+            sh("cp -R /tmp/activity_tracking/. #{git_cache_dir}/activity_tracking-#{git_hash}/")
+            
+            # Create reference file
+            sh("echo '#{git_hash} #{repo_url}' > #{git_cache_dir}/activity_tracking.git.info")
+            
+            UI.success("✅ Dependency set up successfully")
+          rescue => e
+            UI.error("Failed to set up dependency: #{e.message}")
+          end
+        else
+          UI.message("No activity_tracking dependency found in pubspec.yaml")
+        end
+      else
+        UI.important("⚠️ pubspec.yaml not found!")
+      end
     else
       UI.important("No GitHub token provided, private repositories may not be accessible")
     end
@@ -138,25 +148,29 @@ platform :android do
     # Setup GitHub token for private repositories
     setup_github_token
     
-    # Ensure Flutter dependencies are up-to-date with extra debugging
-    UI.message("Running Flutter pub get with verbose output...")
+    # Navigate to project root for Flutter commands
+    proj_root = File.expand_path("../..", Dir.pwd)
+    
+    # Ensure Flutter dependencies are up-to-date
+    UI.message("Running Flutter pub get in #{proj_root}...")
     begin
-      sh("cd .. && flutter pub get --verbose")
+      sh("cd #{proj_root} && flutter pub get")
     rescue => e
       UI.error("Flutter pub get failed: #{e.message}")
-      UI.message("Checking dependency state...")
-      sh("cd .. && flutter pub cache clean")
-      sh("cd .. && flutter pub get --verbose")
+      UI.message("Trying with fallback...")
+      sh("cd #{proj_root} && flutter pub cache clean")
+      sh("cd #{proj_root} && flutter pub get")
     end
 
     # Build debug APK
-    sh("cd .. && flutter build apk --debug")
+    UI.message("Building Debug APK...")
+    sh("cd #{proj_root} && flutter build apk --debug")
 
     # Create output directory
     sh("mkdir -p build/outputs")
 
     # Copy the APK using the correct path
-    sh("cp ../../build/app/outputs/apk/debug/movetopia-debug.apk build/outputs/movetopia-debug.apk")
+    sh("cp #{proj_root}/build/app/outputs/apk/debug/app-debug.apk build/outputs/movetopia-debug.apk || cp #{proj_root}/build/app/outputs/flutter-apk/app-debug.apk build/outputs/movetopia-debug.apk")
 
     # Output the path to the debug APK
     UI.success("Debug APK built at: android/fastlane/build/outputs/movetopia-debug.apk (Package: de.movetopia.debug)")
@@ -173,25 +187,29 @@ platform :android do
     # Setup GitHub token for private repositories
     setup_github_token
     
-    # Ensure Flutter dependencies are up-to-date with extra debugging
-    UI.message("Running Flutter pub get with verbose output...")
+    # Navigate to project root for Flutter commands
+    proj_root = File.expand_path("../..", Dir.pwd)
+    
+    # Ensure Flutter dependencies are up-to-date
+    UI.message("Running Flutter pub get in #{proj_root}...")
     begin
-      sh("cd .. && flutter pub get --verbose")
+      sh("cd #{proj_root} && flutter pub get")
     rescue => e
       UI.error("Flutter pub get failed: #{e.message}")
-      UI.message("Checking dependency state...")
-      sh("cd .. && flutter pub cache clean")
-      sh("cd .. && flutter pub get --verbose")
+      UI.message("Trying with fallback...")
+      sh("cd #{proj_root} && flutter pub cache clean")
+      sh("cd #{proj_root} && flutter pub get")
     end
 
     # Build release APK
-    sh("cd .. && flutter build apk --release")
+    UI.message("Building Release APK...")
+    sh("cd #{proj_root} && flutter build apk --release")
 
     # Create output directory
     sh("mkdir -p build/outputs")
 
     # Copy the APK using the correct path
-    sh("cp ../../build/app/outputs/apk/release/movetopia-release.apk build/outputs/movetopia-release.apk")
+    sh("cp #{proj_root}/build/app/outputs/apk/release/app-release.apk build/outputs/movetopia-release.apk || cp #{proj_root}/build/app/outputs/flutter-apk/app-release.apk build/outputs/movetopia-release.apk")
 
     # Output the path to the release APK
     UI.success("Release APK built at: android/fastlane/build/outputs/movetopia-release.apk (Package: de.movetopia)")
