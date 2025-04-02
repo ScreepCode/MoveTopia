@@ -46,106 +46,41 @@ platform :android do
 
   # Helper to configure GitHub access with token
   lane :setup_github_token do
-    UI.message("Setting up GitHub token authentication")
-    
-    github_token = ENV["GH_TOKEN"]
-    proj_root = File.expand_path("../..", Dir.pwd)
-    
-    UI.message("Project root directory: #{proj_root}")
-
-    if github_token
-      UI.message("GitHub token found, length: #{github_token.length}")
+    if ENV["CI"]
+      UI.message("CI environment detected, setting up GitHub token authentication")
       
-      # Create a simple .netrc file for Git authentication
-      sh("echo 'machine github.com login #{github_token} password x-oauth-basic' > ~/.netrc")
-      sh("chmod 600 ~/.netrc")
+      github_token = ENV["GH_TOKEN"]
       
-      # Set environment variables to help Flutter find private repos
-      ENV["FLUTTER_GIT_URL"] = "https://#{github_token}@github.com/"
-      
-      # Simple test to verify the token works
-      begin
-        UI.message("Testing token access...")
-        status_code = sh("curl -s -o /dev/null -w '%{http_code}' -H 'Authorization: token #{github_token}' https://api.github.com/user", log: false)
+      if github_token
+        UI.message("GitHub token found, length: #{github_token.length}")
         
-        if status_code == "200"
-          UI.success("✅ GitHub token is valid!")
-        else
-          UI.error("❌ GitHub token authentication failed! Status code: #{status_code}")
-        end
-      rescue => e
-        UI.error("❌ Token verification failed: #{e.message}")
-      end
-      
-      # Check for pubspec.yaml and pubspec.lock
-      pubspec_yaml_path = "#{proj_root}/pubspec.yaml"
-      pubspec_lock_path = "#{proj_root}/pubspec.lock"
-      
-      UI.message("Checking for Flutter files:")
-      UI.message("pubspec.yaml path: #{pubspec_yaml_path}")
-      UI.message("pubspec.lock path: #{pubspec_lock_path}")
-      
-      # Show directory structure for debugging
-      UI.message("Directory structure:")
-      sh("ls -la #{proj_root}")
-      
-      # Check if activity_tracking dependency exists in pubspec.yaml
-      if File.exist?(pubspec_yaml_path)
-        UI.success("✅ pubspec.yaml found")
-        pubspec_content = File.read(pubspec_yaml_path)
+        # Create a .netrc file for Git authentication
+        sh("echo 'machine github.com login #{github_token} password x-oauth-basic' > ~/.netrc")
+        sh("chmod 600 ~/.netrc")
         
-        if pubspec_content.include?("activity_tracking")
-          UI.message("Activity tracking dependency found in pubspec.yaml")
+        # Configure git to use https instead of git protocol (local config only)
+        sh("git config url.https://github.com/.insteadOf git://github.com/")
+        
+        # Test the configuration with a simple API call
+        begin
+          UI.message("Testing token access...")
+          status_code = sh("curl -s -o /dev/null -w '%{http_code}' -H 'Authorization: token #{github_token}' https://api.github.com/user", log: false)
           
-          # Extract the repository URL if possible
-          repo_url_match = pubspec_content.match(/activity_tracking:.*url:\s*['"]([^'"]+)['"]/)
-          repo_url = repo_url_match ? repo_url_match[1] : "https://github.com/Jozys/activity_tracking.git"
-          UI.message("Repository URL: #{repo_url}")
-          
-          # Clone the repository directly
-          begin
-            sh("rm -rf /tmp/activity_tracking")
-            sh("git clone https://#{github_token}@github.com/Jozys/activity_tracking.git /tmp/activity_tracking")
-            UI.success("✅ Repository cloned successfully")
-            
-            # Set up the Flutter pub cache for the dependency
-            pub_cache_dir = ENV["PUB_CACHE"] || "#{Dir.home}/.pub-cache"
-            git_cache_dir = "#{pub_cache_dir}/git"
-            UI.message("Setting up dependency in #{git_cache_dir}")
-            
-            # Create directories
-            sh("mkdir -p #{git_cache_dir}")
-            
-            # Get the HEAD commit hash
-            git_hash = sh("cd /tmp/activity_tracking && git rev-parse HEAD", log: false).strip
-            
-            # Setup dependency with correct paths
-            sh("mkdir -p #{git_cache_dir}/activity_tracking-#{git_hash}")
-            sh("cp -R /tmp/activity_tracking/. #{git_cache_dir}/activity_tracking-#{git_hash}/")
-            
-            # Create reference file
-            sh("echo '#{git_hash} #{repo_url}' > #{git_cache_dir}/activity_tracking.git.info")
-            
-            # Fix case sensitivity issues with the files
-            UI.message("Fixing case sensitivity issues...")
-            model_dir = "#{git_cache_dir}/activity_tracking-#{git_hash}/lib/model"
-            if File.exist?("#{model_dir}/Activity.dart") && !File.exist?("#{model_dir}/activity.dart")
-              UI.message("Creating case-insensitive symlink for Activity.dart...")
-              sh("ln -sf #{model_dir}/Activity.dart #{model_dir}/activity.dart")
-            end
-            
-            UI.success("✅ Dependency set up successfully")
-          rescue => e
-            UI.error("Failed to set up dependency: #{e.message}")
+          if status_code == "200"
+            UI.success("✅ GitHub token is valid!")
+          else
+            UI.error("❌ GitHub token authentication failed! Status code: #{status_code}")
           end
-        else
-          UI.message("No activity_tracking dependency found in pubspec.yaml")
+        rescue => e
+          UI.error("❌ Token verification failed: #{e.message}")
         end
+        
+        UI.success("GitHub authentication set up. Flutter pub get will now be able to access private repositories.")
       else
-        UI.important("⚠️ pubspec.yaml not found!")
+        UI.important("No GitHub token provided, private repositories may not be accessible")
       end
     else
-      UI.important("No GitHub token provided, private repositories may not be accessible")
+      UI.message("Not running in CI environment, skipping GitHub token setup")
     end
   end
 
@@ -154,7 +89,9 @@ platform :android do
     version_info = get_version_info
     
     # Setup GitHub token for private repositories
-    setup_github_token
+    if ENV["CI"]
+      setup_github_token
+    end
     
     # Navigate to project root for Flutter commands
     proj_root = File.expand_path("../..", Dir.pwd)
@@ -193,7 +130,9 @@ platform :android do
     version_info = get_version_info
     
     # Setup GitHub token for private repositories
-    setup_github_token
+    if ENV["CI"]
+      setup_github_token
+    end
     
     # Navigate to project root for Flutter commands
     proj_root = File.expand_path("../..", Dir.pwd)
