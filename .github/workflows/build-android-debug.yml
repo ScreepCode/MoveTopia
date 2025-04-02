@@ -13,32 +13,16 @@ jobs:
       - name: "Checkout repository"
         uses: actions/checkout@v4
 
-      # Caching strategies
-      - name: "Flutter cache"
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.pub-cache
-            .dart_tool/
-            build/
-          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: ${{ runner.os }}-flutter-
-
-      - name: "Java cache"
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: ${{ runner.os }}-gradle-
-
       - name: "Set up Java"
         uses: actions/setup-java@v4
         with:
           distribution: "oracle"
           java-version: "22"
-          cache: "gradle"
+
+      - name: "Set up Gradle"
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: wrapper
 
       - name: "Set up Flutter"
         uses: subosito/flutter-action@v2
@@ -47,24 +31,6 @@ jobs:
           flutter-version-file: pubspec.yaml
           cache: true
 
-      - name: "Configure SSH for private repository"
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.DEPLOY_KEY_ACTIVITY_TRACKING }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          eval "$(ssh-agent -s)"
-          ssh-add ~/.ssh/id_ed25519
-      # - name: Install SSH key
-      #   uses: shimataro/ssh-key-action@v2
-      #   with:
-      #     key: ${{ secrets.DEPLOY_KEY_ACTIVITY_TRACKING }}
-      #     #name: deploy_key # optional
-      #     known_hosts: ${{ secrets.KNOWN_HOSTS }}
-
-      - name: "Install Flutter dependencies"
-        run: flutter pub get
-
       - name: "Setup Ruby"
         uses: ruby/setup-ruby@v1
         with:
@@ -72,29 +38,15 @@ jobs:
           working-directory: 'android'
           bundler-cache: true
 
-      - name: "Find next release tag"
-        id: find_tag
-        run: |
-          TAG_DATE=$(date +'%Y.%m.%d')
-          TAG_PREFIX="Debug-"
-          BASE_TAG="$TAG_DATE"
-          COUNT=0
-          FULL_TAG="${TAG_PREFIX}${BASE_TAG}.${COUNT}"
-
-          git fetch --tags
-
-          while git ls-remote --tags origin | grep -q "refs/tags/$FULL_TAG"; do
-            COUNT=$((COUNT + 1))
-            FULL_TAG="${TAG_PREFIX}${BASE_TAG}.${COUNT}"
-          done
-
-          echo "Next tag: $FULL_TAG"
-          echo "VERSION_NAME=$FULL_TAG" >> $GITHUB_ENV
-          echo "VERSION_CODE=$BASE_TAG.$COUNT" >> $GITHUB_ENV
-
       - name: "Run Fastlane Debug Build"
-        working-directory: android
-        run: bundle exec fastlane buildDebug
+        id: fastlane
+        uses: maierj/fastlane-action@v3.1.0
+        with:
+          lane: buildDebug
+          subdirectory: android
+          env: |
+            SSH_PRIVATE_KEY=${{ secrets.DEPLOY_KEY_ACTIVITY_TRACKING }}
+            TAG_PREFIX=Debug-
 
       - name: "Upload Debug APK"
         uses: actions/upload-artifact@v4
@@ -107,7 +59,7 @@ jobs:
         with:
           generateReleaseNotes: true
           prerelease: true
-          tag: ${{ env.VERSION_NAME }}
-          name: ${{ env.VERSION_NAME }}
+          tag: ${{ steps.fastlane.outputs.version_name }}
+          name: ${{ steps.fastlane.outputs.version_name }}
           artifacts: "android/fastlane/build/outputs/movetopia-debug.apk"
 

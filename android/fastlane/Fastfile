@@ -1,8 +1,50 @@
 default_platform(:android)
 
 platform :android do
+  # Helper lane to get version information
+  lane :get_version_info do
+    version_name = ENV["VERSION_NAME"]
+    version_code = ENV["VERSION_CODE"]
+
+    unless version_name && version_code
+      # Generate version info if not provided
+      tag_date = Time.now.strftime("%Y.%m.%d")
+      tag_prefix = ENV["TAG_PREFIX"] || "Debug-"
+      base_tag = tag_date
+      count = 0
+      full_tag = "#{tag_prefix}#{base_tag}.#{count}"
+
+      # Fetch tags from remote
+      sh("git fetch --tags")
+
+      # Find next available tag
+      while sh("git ls-remote --tags origin | grep -q \"refs/tags/#{full_tag}\"")
+        count += 1
+        full_tag = "#{tag_prefix}#{base_tag}.#{count}"
+      end
+
+      version_name = full_tag
+      version_code = "#{base_tag}.#{count}"
+    end
+
+    return { version_name: version_name, version_code: version_code }
+  end
+
+  # Helper lane to setup SSH for private repos
+  lane :setup_ssh do
+    if ENV["SSH_PRIVATE_KEY"]
+      sh("mkdir -p ~/.ssh")
+      sh("echo \"#{ENV['SSH_PRIVATE_KEY']}\" > ~/.ssh/deploy_key")
+      sh("chmod 600 ~/.ssh/deploy_key")
+      sh("ssh-keyscan github.com >> ~/.ssh/known_hosts")
+    end
+  end
+
   desc "Build debug APK"
   lane :buildDebug do
+    setup_ssh
+    version_info = get_version_info
+
     # Ensure Flutter dependencies are up-to-date
     sh("cd .. && flutter pub get")
 
@@ -17,10 +59,17 @@ platform :android do
 
     # Output the path to the debug APK
     UI.success("Debug APK built at: android/fastlane/build/outputs/movetopia-debug.apk (Package: de.movetopia.debug)")
+    UI.success("Version: #{version_info[:version_name]} (#{version_info[:version_code]})")
+    
+    # Return version info for GitHub Actions
+    return version_info
   end
 
   desc "Build release APK"
   lane :buildRelease do
+    setup_ssh
+    version_info = get_version_info
+
     # Ensure Flutter dependencies are up-to-date
     sh("cd .. && flutter pub get")
 
@@ -35,6 +84,10 @@ platform :android do
 
     # Output the path to the release APK
     UI.success("Release APK built at: android/fastlane/build/outputs/movetopia-release.apk (Package: de.movetopia)")
+    UI.success("Version: #{version_info[:version_name]} (#{version_info[:version_code]})")
+    
+    # Return version info for GitHub Actions
+    return version_info
   end
 
 #   desc "Build release APK and upload to Play Store beta track"
