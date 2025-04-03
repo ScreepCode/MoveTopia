@@ -136,11 +136,9 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
       for (var i = 0; i < rawWorkouts!.length; i++) {
         var current = rawWorkouts[i];
         WorkoutHealthValue healthValue = current.value as WorkoutHealthValue;
-        var calories =
-            await getCaloriesBurnedInInterval(current.dateFrom, current.dateTo);
         ActivityPreview preview = ActivityPreview(
             activityType: healthValue.workoutActivityType,
-            caloriesBurnt: calories,
+            caloriesBurnt: 0,
             start: current.dateFrom,
             end: current.dateTo,
             distance: healthValue.totalDistance != null
