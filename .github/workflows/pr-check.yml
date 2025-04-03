@@ -1,13 +1,14 @@
-name: "Debug Build APK"
+name: "PR Check - Build Only"
 on:
-  push:
+  pull_request:
     branches:
       - main
+      - development
   workflow_dispatch:
 
 jobs:
-  build-debug:
-    name: "Build Debug APK"
+  build-check:
+    name: "Build Check"
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout repository"
@@ -42,23 +43,10 @@ jobs:
         id: fastlane
         uses: maierj/fastlane-action@v3.1.0
         with:
-          lane: build_debug_with_release
+          lane: build_debug
           subdirectory: android
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      - name: "Upload Debug APK"
-        uses: actions/upload-artifact@v4
-        with:
-          name: movetopia-debug
-          path: android/fastlane/build/outputs/movetopia-debug.apk
-
-      - name: "Create release tag"
-        uses: ncipollo/release-action@v1
-        with:
-          generateReleaseNotes: true
-          prerelease: true
-          tag: ${{ env.VERSION_NAME }}
-          name: ${{ env.VERSION_NAME }}
-          artifacts: "android/fastlane/build/outputs/movetopia-debug.apk"
-
+      - name: "Build Status"
+        run: echo "Debug build completed - PR check passed!" 
