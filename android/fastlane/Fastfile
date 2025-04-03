@@ -181,7 +181,7 @@ platform :android do
     # Navigate to project root for Flutter commands
     proj_root = File.expand_path("../..", Dir.pwd)
     
-    # Update the local.properties file with only version info
+    # Update the local.properties file with version info
     local_properties_path = "#{proj_root}/android/local.properties"
     UI.message("Writing version to #{local_properties_path}")
     
@@ -205,6 +205,21 @@ platform :android do
       sh("cd #{proj_root} && flutter build apk --debug --build-name=#{android_version_name} --build-number=#{android_version_code}")
     else
       sh("cd #{proj_root} && flutter build apk --release --build-name=#{android_version_name} --build-number=#{android_version_code}")
+    end
+    
+    # Check if the build used the correct version
+    UI.message("Checking built APK for version information")
+    if ENV["CI"]
+      # In CI environment, use aapt to extract version info from APK
+      sh("cd #{proj_root} && pwd && ls -l build/app/outputs/apk/#{build_type}/")
+      begin
+        apk_path = "#{proj_root}/build/app/outputs/apk/#{build_type}/app-#{build_type}.apk"
+        sh("which aapt2 || echo 'aapt2 not found'")
+        output = sh("cd #{proj_root} && aapt2 dump badging build/app/outputs/apk/#{build_type}/app-#{build_type}.apk | grep versionName || echo 'Version info not found'")
+        UI.message("APK version info: #{output}")
+      rescue => e
+        UI.important("Failed to check APK version: #{e.message}")
+      end
     end
     
     # Create output directory
