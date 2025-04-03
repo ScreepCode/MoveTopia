@@ -181,32 +181,14 @@ platform :android do
     # Navigate to project root for Flutter commands
     proj_root = File.expand_path("../..", Dir.pwd)
     
-    # Update the local.properties file with the version info instead of global.properties
+    # Update the local.properties file with only version info
     local_properties_path = "#{proj_root}/android/local.properties"
-    UI.message("Updating version in #{local_properties_path}")
+    UI.message("Writing version to #{local_properties_path}")
     
-    # Read existing local.properties
-    props = {}
-    if File.exist?(local_properties_path)
-      File.readlines(local_properties_path).each do |line|
-        next if line.strip.empty? || line.strip.start_with?('#')
-        key, value = line.strip.split('=', 2)
-        props[key] = value if key && value
-      end
-    end
-    
-    # Update version properties
-    props['flutter.versionName'] = android_version_name
-    props['flutter.versionCode'] = android_version_code.to_s
-    
-    # Ensure we keep the existing SDK paths and other important properties
-    # Update with version properties but preserve other existing properties
-    
-    # Write back to local.properties
+    # Just write the version information directly to local.properties
     File.open(local_properties_path, 'w') do |file|
-      props.each do |key, value|
-        file.puts "#{key}=#{value}"
-      end
+      file.puts "flutter.versionName=#{android_version_name}"
+      file.puts "flutter.versionCode=#{android_version_code}"
     end
     
     # Ensure Flutter dependencies are up-to-date
@@ -218,8 +200,12 @@ platform :android do
     UI.message("  App version: #{version_name} (#{build_number})")
     UI.message("  Android version: #{android_version_name} (#{android_version_code})")
     
-    # Build without specifying version parameters, will use local.properties
-    sh("cd #{proj_root} && flutter build apk --#{build_type}")
+    # Build with the correct flag format
+    if build_type == "debug"
+      sh("cd #{proj_root} && flutter build apk --debug --build-name=#{android_version_name} --build-number=#{android_version_code}")
+    else
+      sh("cd #{proj_root} && flutter build apk --release --build-name=#{android_version_name} --build-number=#{android_version_code}")
+    end
     
     # Create output directory
     sh("mkdir -p build/outputs")
@@ -375,18 +361,5 @@ DART
     
     # Return version info for GitHub Actions
     version_info
-  end
-  
-  # Legacy lanes for backward compatibility
-  desc "[DEPRECATED] Use build_debug or build_debug_with_release instead"
-  lane :buildDebug do
-    UI.important("This lane is deprecated. Please use build_debug or build_debug_with_release instead.")
-    build_debug_with_release
-  end
-  
-  desc "[DEPRECATED] Use build_release or build_release_with_release instead"
-  lane :buildRelease do
-    UI.important("This lane is deprecated. Please use build_release or build_release_with_release instead.")
-    build_release_with_release
   end
 end

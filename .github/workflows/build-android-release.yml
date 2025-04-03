@@ -39,7 +39,7 @@ jobs:
         id: fastlane
         uses: maierj/fastlane-action@v3.1.0
         with:
-          lane: buildRelease
+          lane: build_release_with_release
           subdirectory: android
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}

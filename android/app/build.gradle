@@ -21,14 +21,16 @@ if (localPropertiesFile.exists()) {
     }
 }
 
+// Check for version code in both global and local properties
 def flutterVersionCode = localProperties.getProperty("flutter.versionCode")
 if (flutterVersionCode == null) {
     flutterVersionCode = "1"
 }
 
+// Check for version name in both global and local properties
 def flutterVersionName = localProperties.getProperty("flutter.versionName")
 if (flutterVersionName == null) {
-    flutterVersionName = "1.0"
+    flutterVersionName = "1.0.0"
 }
 
 
