@@ -50,6 +50,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
+      - name: "Debug output"
+        run: |
+          echo "Generated version: ${{ env.VERSION_NAME }}"
+          echo "Environment variables:"
+          env | grep -E '(VERSION|BUILD)'
+
       - name: "Upload Debug APK"
         uses: actions/upload-artifact@v4
         with:

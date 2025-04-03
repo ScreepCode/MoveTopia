@@ -65,6 +65,13 @@ platform :android do
       sh("echo \"build_number=#{build_number}\" >> $GITHUB_OUTPUT")
       sh("echo \"android_version_name=#{android_version_name}\" >> $GITHUB_OUTPUT")
       sh("echo \"android_version_code=#{android_version_code}\" >> $GITHUB_OUTPUT")
+
+      # Ensure the environment variables are also visible to the GitHub runner directly
+      # This adds the variables to the environment for subsequent steps
+      sh("echo \"VERSION_NAME=#{version_name}\" >> $GITHUB_ENV")
+      sh("echo \"BUILD_NUMBER=#{build_number}\" >> $GITHUB_ENV")
+      sh("echo \"ANDROID_VERSION_NAME=#{android_version_name}\" >> $GITHUB_ENV")
+      sh("echo \"ANDROID_VERSION_CODE=#{android_version_code}\" >> $GITHUB_ENV")
     end
     
     UI.success("Generated version: #{version_name} (build_number: #{build_number})")
