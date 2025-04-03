@@ -42,7 +42,6 @@ jobs:
           lane: buildRelease
           subdirectory: android
         env:
-          TAG_PREFIX: Release-
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: "Upload Release APK"
@@ -56,6 +55,6 @@ jobs:
         with:
           generateReleaseNotes: true
           prerelease: false
-          tag: ${{ steps.fastlane.outputs.version_name }}
-          name: ${{ steps.fastlane.outputs.version_name }}
+          tag: ${{ env.VERSION_NAME }}
+          name: ${{ env.VERSION_NAME }}
           artifacts: "android/fastlane/build/outputs/movetopia-release.apk"

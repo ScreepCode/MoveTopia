@@ -1,47 +1,81 @@
 default_platform(:android)
 
 platform :android do
-  # Helper lane to get version information
+  # Helper lane to get version information based on date
   lane :get_version_info do
-    version_name = ENV["VERSION_NAME"]
-    version_code = ENV["VERSION_CODE"]
-
-    unless version_name && version_code
-      # Generate version info if not provided
-      tag_date = Time.now.strftime("%Y.%m.%d")
-      tag_prefix = ENV["TAG_PREFIX"] || "Debug-"
-      base_tag = tag_date
-      count = 0
-      full_tag = "#{tag_prefix}#{base_tag}.#{count}"
-
-      # Fetch tags from remote, ignore errors from rejected tags
-      sh("git fetch --tags || true")
-     
-      # Get list of existing tags
-      existing_tags = sh("git tag -l", log: false).split("\n")
-
-      # Find next available tag
-      # Use a safer approach to check if tag exists
-      tag_exists = true
-      while tag_exists
-        # Check if tag exists locally
-        tag_exists = existing_tags.include?(full_tag)
-        
-        if tag_exists
-          UI.message("Tag #{full_tag} already exists, trying next...")
-          count += 1
-          full_tag = "#{tag_prefix}#{base_tag}.#{count}"
-        else
-          UI.success("Found available tag: #{full_tag}")
-        end
+    # Generate version info if not provided
+    date = Time.now.strftime("%Y.%m.%d")
+    
+    # Fetch tags from remote, ignore errors from rejected tags
+    sh("git fetch --tags || true")
+   
+    # Get repository configuration for remote name
+    repo_config = get_repo_config
+    remote_name = repo_config["remote_name"] || "origin"
+    
+    # Find the highest hotfix number for today's date
+    hotfix = 0
+    version_pattern = /^#{date}\+(\d+)$/
+    
+    # Get all tags from the project and check if there's one for today
+    UI.message("Checking for existing tags with pattern: #{version_pattern}")
+    
+    # Loop through potential tag names with increasing hotfix numbers
+    # until we find one that doesn't exist yet
+    tag_exists = true
+    while tag_exists
+      test_tag = "#{date}+#{hotfix}"
+      UI.message("Checking if tag exists: #{test_tag}")
+      
+      # Use git_tag_exists to check remote for the tag
+      tag_exists = git_tag_exists(
+        tag: test_tag,
+        remote: true,
+        remote_name: remote_name
+      )
+      
+      if tag_exists
+        UI.message("Tag #{test_tag} already exists, incrementing hotfix number...")
+        hotfix += 1
+      else
+        UI.success("Found available tag: #{test_tag}")
       end
-
-      version_name = full_tag
-      version_code = "#{base_tag}.#{count}"
     end
-
+    
+    # Format versions
+    version_name = "#{date}+#{hotfix}"
+    build_number = (Time.now.strftime("%Y%m%d").to_i * 100) + hotfix
+    
+    # Create Android-compatible versions
+    # Android doesn't like the "+" in version names
+    android_version_name = "#{date}.#{hotfix}"
+    android_version_code = build_number
+    
+    # Export environment variables for GitHub Actions
+    ENV["VERSION_NAME"] = version_name
+    ENV["BUILD_NUMBER"] = build_number.to_s
+    ENV["ANDROID_VERSION_NAME"] = android_version_name
+    ENV["ANDROID_VERSION_CODE"] = android_version_code.to_s
+    UI.message("Exporting environment variables: VERSION_NAME=#{version_name}, BUILD_NUMBER=#{build_number}")
+    UI.message("Android versions: VERSION_NAME=#{android_version_name}, VERSION_CODE=#{android_version_code}")
+    
+    # Set output for GitHub Actions
+    if ENV["GITHUB_OUTPUT"]
+      sh("echo \"version_name=#{version_name}\" >> $GITHUB_OUTPUT") 
+      sh("echo \"build_number=#{build_number}\" >> $GITHUB_OUTPUT")
+      sh("echo \"android_version_name=#{android_version_name}\" >> $GITHUB_OUTPUT")
+      sh("echo \"android_version_code=#{android_version_code}\" >> $GITHUB_OUTPUT")
+    end
+    
+    UI.success("Generated version: #{version_name} (build_number: #{build_number})")
+    
     # Don't use explicit return in Fastlane, just make this the last expression
-    { version_name: version_name, version_code: version_code }
+    { 
+      version_name: version_name, 
+      build_number: build_number,
+      android_version_name: android_version_name,
+      android_version_code: android_version_code
+    }
   end
 
   # Helper to configure GitHub access with token
@@ -84,105 +118,268 @@ platform :android do
     end
   end
 
-  desc "Build debug APK"
+  # Load repository configuration from file or environment
+  lane :get_repo_config do
+    repo_config_file = File.expand_path("../repo_config.json", Dir.pwd)
+    repo_config = {}
+    
+    # Load from config file if it exists
+    if File.exist?(repo_config_file)
+      begin
+        repo_config = JSON.parse(File.read(repo_config_file))
+        UI.message("Loaded repository configuration from file")
+      rescue => e
+        UI.error("Failed to parse repo_config.json: #{e.message}")
+      end
+    else
+      UI.message("No repo_config.json found, will use defaults or environment variables")
+    end
+    
+    # Set default values if not specified in config
+    repo_config["repository"] ||= ENV["GITHUB_REPOSITORY"]
+    # Use release token explicitly, not the same as the GH_TOKEN used for repo access
+    repo_config["remote_name"] ||= "origin"
+    
+    UI.message("Using repository: #{repo_config['repository']}, remote: #{repo_config['remote_name']}")
+    repo_config
+  end
+  
+  # Core lane to build APK
+  private_lane :build_apk do |options|
+    build_type = options[:build_type]
+    version_info = options[:version_info]
+    
+    unless build_type == "debug" || build_type == "release"
+      UI.user_error!("Build type must be 'debug' or 'release'")
+    end
+    
+    unless version_info
+      UI.user_error!("Version information is required")
+    end
+    
+    # Extract version information
+    version_name = version_info[:version_name]
+    build_number = version_info[:build_number]
+    android_version_name = version_info[:android_version_name]
+    android_version_code = version_info[:android_version_code]
+    
+    # Setup GitHub token for private repositories if in CI
+    if ENV["CI"]
+      UI.message("Setting up GitHub token for private repository access")
+      setup_github_token
+    else
+      UI.message("Running in local mode, assuming git is already configured")
+    end
+    
+    # Navigate to project root for Flutter commands
+    proj_root = File.expand_path("../..", Dir.pwd)
+    
+    # Update the local.properties file with the version info instead of global.properties
+    local_properties_path = "#{proj_root}/android/local.properties"
+    UI.message("Updating version in #{local_properties_path}")
+    
+    # Read existing local.properties
+    props = {}
+    if File.exist?(local_properties_path)
+      File.readlines(local_properties_path).each do |line|
+        next if line.strip.empty? || line.strip.start_with?('#')
+        key, value = line.strip.split('=', 2)
+        props[key] = value if key && value
+      end
+    end
+    
+    # Update version properties
+    props['flutter.versionName'] = android_version_name
+    props['flutter.versionCode'] = android_version_code.to_s
+    
+    # Ensure we keep the existing SDK paths and other important properties
+    # Update with version properties but preserve other existing properties
+    
+    # Write back to local.properties
+    File.open(local_properties_path, 'w') do |file|
+      props.each do |key, value|
+        file.puts "#{key}=#{value}"
+      end
+    end
+    
+    # Ensure Flutter dependencies are up-to-date
+    UI.message("Running Flutter pub get to fetch dependencies...")
+    sh("cd #{proj_root} && flutter pub get")
+    
+    # Build APK - no need to specify version as it's in local.properties now
+    UI.message("Building #{build_type} APK with versions:")
+    UI.message("  App version: #{version_name} (#{build_number})")
+    UI.message("  Android version: #{android_version_name} (#{android_version_code})")
+    
+    # Build without specifying version parameters, will use local.properties
+    sh("cd #{proj_root} && flutter build apk --#{build_type}")
+    
+    # Create output directory
+    sh("mkdir -p build/outputs")
+    
+    # Copy the APK using the correct path
+    apk_path = "build/outputs/movetopia-#{build_type}.apk"
+    sh("cp #{proj_root}/build/app/outputs/apk/#{build_type}/app-#{build_type}.apk #{apk_path} || cp #{proj_root}/build/app/outputs/flutter-apk/app-#{build_type}.apk #{apk_path}")
+    
+    # Return the APK path
+    UI.success("#{build_type.capitalize} APK built at: android/fastlane/#{apk_path}")
+    apk_path
+  end
+
+  # Helper to update version.dart file
+  private_lane :update_version_dart do |options|
+    version_info = options[:version_info]
+    
+    unless version_info
+      UI.user_error!("Version information is required")
+    end
+    
+    # Extract version information
+    version_name = version_info[:version_name]
+    build_number = version_info[:build_number]
+    
+    # Navigate to project root for Flutter commands
+    proj_root = File.expand_path("../..", Dir.pwd)
+    
+    # Create version.dart file for the app
+    version_file_path = "#{proj_root}/lib/version.dart"
+    
+    # Extract version parts
+    version_parts = version_name.split('+')
+    semantic_version = version_parts[0]
+    hotfix = version_parts[1] || "0"
+    
+    version_file_content = <<-DART
+// Generated file - do not modify manually
+class AppVersion {
+  static const String version = '#{semantic_version}';
+  static const String hotfix = '#{hotfix}';
+  static const String fullVersion = '#{version_name}';
+  static const int buildNumber = #{build_number};
+  static const String buildDate = '#{Time.now.strftime("%Y-%m-%d %H:%M:%S")}';
+}
+DART
+    
+    UI.message("Writing version information to #{version_file_path}")
+    File.write(version_file_path, version_file_content)
+  end
+  
+  # 1. Basic debug build - just build APK without version, tag or release
+  desc "Build debug APK without creating a release or tag"
+  lane :build_debug do
+    UI.message("Starting basic debug build")
+    
+    # Get version information
+    version_info = get_version_info
+    
+    # Update version.dart file
+    update_version_dart(version_info: version_info)
+    
+    # Build the APK
+    apk_path = build_apk(
+      build_type: "debug",
+      version_info: version_info
+    )
+    
+    UI.success("Debug APK built successfully")
+    UI.important("Version information: name=#{version_info[:version_name]}, build=#{version_info[:build_number]}")
+    
+    # Return version info for GitHub Actions
+    version_info
+  end
+  
+  # 2. Debug build with versioning
+  desc "Build debug APK with versioning"
+  lane :build_debug_with_release do
+    UI.message("Starting debug build with versioning")
+    
+    # Get version information
+    UI.message("Generating version information...")
+    version_info = get_version_info
+    version_name = version_info[:version_name]
+    build_number = version_info[:build_number]
+    UI.message("Using version: #{version_name} (#{build_number})")
+    
+    # Update version.dart file
+    update_version_dart(version_info: version_info)
+    
+    # Build the APK
+    UI.message("Building debug APK...")
+    apk_path = build_apk(
+      build_type: "debug",
+      version_info: version_info
+    )
+    
+    UI.success("Debug APK built successfully with version #{version_name}")
+    UI.important("Version information: name=#{version_name}, build=#{build_number}")
+    
+    # Return version info for GitHub Actions
+    version_info
+  end
+  
+  # 3. Basic release build - just build APK without version, tag or release
+  desc "Build release APK without creating a release or tag"
+  lane :build_release do
+    UI.message("Starting basic release build")
+    
+    # Get version information
+    version_info = get_version_info
+    
+    # Update version.dart file
+    update_version_dart(version_info: version_info)
+ 
+    # Build the APK
+    apk_path = build_apk(
+      build_type: "release",
+      version_info: version_info
+    )
+    
+    UI.success("Release APK built successfully")
+    UI.important("Version information: name=#{version_info[:version_name]}, build=#{version_info[:build_number]}")
+    
+    # Return version info for GitHub Actions
+    version_info
+  end
+  
+  # 4. Release build with versioning
+  desc "Build release APK with versioning"
+  lane :build_release_with_release do
+    UI.message("Starting release build with versioning")
+    
+    # Get version information
+    UI.message("Generating version information...")
+    version_info = get_version_info
+    version_name = version_info[:version_name]
+    build_number = version_info[:build_number]
+    UI.message("Using version: #{version_name} (#{build_number})")
+    
+    # Update version.dart file
+    update_version_dart(version_info: version_info)
+    
+    # Build the APK
+    UI.message("Building release APK...")
+    apk_path = build_apk(
+      build_type: "release",
+      version_info: version_info
+    )
+    
+    UI.success("Release APK built successfully with version #{version_name}")
+    UI.important("Version information: name=#{version_name}, build=#{build_number}")
+    
+    # Return version info for GitHub Actions
+    version_info
+  end
+  
+  # Legacy lanes for backward compatibility
+  desc "[DEPRECATED] Use build_debug or build_debug_with_release instead"
   lane :buildDebug do
-    version_info = get_version_info
-    
-    # Setup GitHub token for private repositories
-    if ENV["CI"]
-      setup_github_token
-    end
-    
-    # Navigate to project root for Flutter commands
-    proj_root = File.expand_path("../..", Dir.pwd)
-    
-    # Ensure Flutter dependencies are up-to-date
-    UI.message("Running Flutter pub get in #{proj_root}...")
-    begin
-      sh("cd #{proj_root} && flutter pub get")
-    rescue => e
-      UI.error("Flutter pub get failed: #{e.message}")
-      UI.message("Trying with fallback...")
-      sh("cd #{proj_root} && flutter pub cache clean")
-      sh("cd #{proj_root} && flutter pub get")
-    end
-
-    # Build debug APK
-    UI.message("Building Debug APK...")
-    sh("cd #{proj_root} && flutter build apk --debug")
-
-    # Create output directory
-    sh("mkdir -p build/outputs")
-
-    # Copy the APK using the correct path
-    sh("cp #{proj_root}/build/app/outputs/apk/debug/app-debug.apk build/outputs/movetopia-debug.apk || cp #{proj_root}/build/app/outputs/flutter-apk/app-debug.apk build/outputs/movetopia-debug.apk")
-
-    # Output the path to the debug APK
-    UI.success("Debug APK built at: android/fastlane/build/outputs/movetopia-debug.apk (Package: de.movetopia.debug)")
-    UI.success("Version: #{version_info[:version_name]} (#{version_info[:version_code]})")
-    
-    # Return version info for GitHub Actions - make this the last expression
-    version_info
+    UI.important("This lane is deprecated. Please use build_debug or build_debug_with_release instead.")
+    build_debug_with_release
   end
-
-  desc "Build release APK"
+  
+  desc "[DEPRECATED] Use build_release or build_release_with_release instead"
   lane :buildRelease do
-    version_info = get_version_info
-    
-    # Setup GitHub token for private repositories
-    if ENV["CI"]
-      setup_github_token
-    end
-    
-    # Navigate to project root for Flutter commands
-    proj_root = File.expand_path("../..", Dir.pwd)
-    
-    # Ensure Flutter dependencies are up-to-date
-    UI.message("Running Flutter pub get in #{proj_root}...")
-    begin
-      sh("cd #{proj_root} && flutter pub get")
-    rescue => e
-      UI.error("Flutter pub get failed: #{e.message}")
-      UI.message("Trying with fallback...")
-      sh("cd #{proj_root} && flutter pub cache clean")
-      sh("cd #{proj_root} && flutter pub get")
-    end
-
-    # Build release APK
-    UI.message("Building Release APK...")
-    sh("cd #{proj_root} && flutter build apk --release")
-
-    # Create output directory
-    sh("mkdir -p build/outputs")
-
-    # Copy the APK using the correct path
-    sh("cp #{proj_root}/build/app/outputs/apk/release/app-release.apk build/outputs/movetopia-release.apk || cp #{proj_root}/build/app/outputs/flutter-apk/app-release.apk build/outputs/movetopia-release.apk")
-
-    # Output the path to the release APK
-    UI.success("Release APK built at: android/fastlane/build/outputs/movetopia-release.apk (Package: de.movetopia)")
-    UI.success("Version: #{version_info[:version_name]} (#{version_info[:version_code]})")
-    
-    # Return version info for GitHub Actions - make this the last expression
-    version_info
+    UI.important("This lane is deprecated. Please use build_release or build_release_with_release instead.")
+    build_release_with_release
   end
-
-#   desc "Build release APK and upload to Play Store beta track"
-#   lane :buildAndPublishBeta do
-#     # Ensure Flutter dependencies are up-to-date
-#     sh("cd .. && flutter pub get")
-#
-#     # Build release App Bundle
-#     sh("cd .. && flutter build appbundle --release")
-#
-#     # Upload to Play Store beta track
-#     upload_to_play_store(
-#       track: 'beta',
-#       aab: "../../build/app/outputs/bundle/release/app-release.aab",
-#       skip_upload_metadata: true,
-#       skip_upload_images: true,
-#       skip_upload_screenshots: true,
-#     )
-#
-#     UI.success("App Bundle uploaded to Play Store beta track (Package: de.movetopia)")
-#   end
 end

@@ -48,7 +48,6 @@ jobs:
           lane: buildDebug
           subdirectory: android
         env:
-          TAG_PREFIX: Debug-
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: "Upload Debug APK"
@@ -62,7 +61,7 @@ jobs:
         with:
           generateReleaseNotes: true
           prerelease: true
-          tag: ${{ steps.fastlane.outputs.version_name }}
-          name: ${{ steps.fastlane.outputs.version_name }}
+          tag: ${{ env.VERSION_NAME }}
+          name: ${{ env.VERSION_NAME }}
           artifacts: "android/fastlane/build/outputs/movetopia-debug.apk"
 
