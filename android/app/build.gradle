@@ -13,14 +13,40 @@ if (globalPropertiesFile.exists()) {
     }
 }
 
-def flutterVersionCode = globalProperties.getProperty("flutter.versionCode")
-if (flutterVersionCode == null) {
-    flutterVersionCode = "1"
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader("UTF-8") { reader ->
+        localProperties.load(reader)
+    }
 }
 
-def flutterVersionName = globalProperties.getProperty("flutter.versionName")
+def flutterVersionCode = localProperties.getProperty("flutter.versionCode")
+if (flutterVersionCode == null) {
+    // Try getting from environment variable
+    flutterVersionCode = System.getenv("ANDROID_VERSION_CODE")
+    if (flutterVersionCode == null) {
+        flutterVersionCode = "1"
+        println "Warning: flutter.versionCode not found in local.properties or ENV, using default: ${flutterVersionCode}"
+    } else {
+        println "Using flutter.versionCode from ENV: ${flutterVersionCode}"
+    }
+} else {
+    println "Using flutter.versionCode from local.properties: ${flutterVersionCode}"
+}
+
+def flutterVersionName = localProperties.getProperty("flutter.versionName")
 if (flutterVersionName == null) {
-    flutterVersionName = "1.0"
+    // Try getting from environment variable
+    flutterVersionName = System.getenv("ANDROID_VERSION_NAME")
+    if (flutterVersionName == null) {
+        flutterVersionName = "1.0.0"
+        println "Warning: flutter.versionName not found in local.properties or ENV, using default: ${flutterVersionName}"
+    } else {
+        println "Using flutter.versionName from ENV: ${flutterVersionName}"
+    }
+} else {
+    println "Using flutter.versionName from local.properties: ${flutterVersionName}"
 }
 
 
