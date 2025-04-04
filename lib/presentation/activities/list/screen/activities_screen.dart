@@ -21,6 +21,7 @@ class ActivitiesScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final activities = ref.watch(activitiesViewModelProvider);
     HealthAuthViewModelState authState = ref.read(healthViewModelProvider);
+    var scrollController = useScrollController();
 
     Future<void> fetchHealthData() async {
       await ref.read(activitiesViewModelProvider.notifier).fetchActivities();
@@ -30,6 +31,16 @@ class ActivitiesScreen extends HookConsumerWidget {
       Future(() async {
         if (authState == HealthAuthViewModelState.authorized) {
           await fetchHealthData();
+
+          scrollController.addListener(() {
+            if (scrollController.position.pixels ==
+                scrollController.position.maxScrollExtent) {
+              var lastDate = activities.groupedActivities?.keys.last;
+              ref
+                  .read(activitiesViewModelProvider.notifier)
+                  .fetchActivities(endOfData: lastDate);
+            }
+          });
         }
       });
       return null;
@@ -41,9 +52,9 @@ class ActivitiesScreen extends HookConsumerWidget {
       ),
       body: activities.isLoading && activities.activities.isEmpty
           ? const Center(child: CircularProgressIndicator())
-          : _buildBody(context, activities, fetchHealthData),
+          : _buildBody(context, activities, fetchHealthData, scrollController),
       floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
           onPressed: () {
             context.push("/tracking");
           }),
@@ -51,18 +62,21 @@ class ActivitiesScreen extends HookConsumerWidget {
   }
 }
 
-Widget _buildBody(BuildContext context, ActivitiesState activities,
-    Future<void> Function() fetchHealthData) {
+Widget _buildBody(
+    BuildContext context,
+    ActivitiesState activities,
+    Future<void> Function() fetchHealthData,
+    ScrollController scrollController) {
   return RefreshIndicator(
-    color: Colors.white,
-    backgroundColor: Colors.blue,
     onRefresh: fetchHealthData,
     child: activities.groupedActivities != null &&
             activities.groupedActivities!.isNotEmpty
         ? _buildGroupedActivities(
             context,
-            activities
-                .groupedActivities!) //_buildActivityList(context, activities.activities)
+            activities.groupedActivities!,
+            activities.isLoading,
+            scrollController,
+          ) //_buildActivityList(context, activities.activities)
         : activities.isLoading
             ? const Center(child: CircularProgressIndicator())
             : Center(
@@ -72,8 +86,13 @@ Widget _buildBody(BuildContext context, ActivitiesState activities,
 }
 
 Widget _buildGroupedActivities(
-    BuildContext context, Map<DateTime, List<ActivityPreview>>? activities) {
+    BuildContext context,
+    Map<DateTime, List<ActivityPreview>>? activities,
+    bool isLoading,
+    ScrollController scrollController) {
   return ListView.builder(
+    controller: scrollController,
+    physics: const ScrollPhysics(),
     itemCount: activities?.length ?? 0,
     itemBuilder: (context, index) {
       final date = activities?.keys.elementAt(index);
@@ -83,34 +102,33 @@ Widget _buildGroupedActivities(
         children: [
           if (date != null && activityList.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
                 DateFormat("dd. MMMM yyyy").format(date),
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
-          Divider(color: Theme.of(context).colorScheme.outline),
+          const Divider(),
           ...activityList.map(
             (activity) => Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: _buildActivityItem(context, activity),
             ),
           ),
+          // Add a loading indicator at the end of the list,
+          if (index == activities!.length - 1 && isLoading)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Center(child: CircularProgressIndicator()),
+            ) // Show loading
+          // Show no more entries text if end is reached
+          else if (index == activities.length - 1 && !isLoading)
+            const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Center(
+                  child: Text("No more entries"),
+                )),
         ],
-      );
-    },
-  );
-}
-
-Widget _buildActivityList(
-    BuildContext context, List<ActivityPreview> activities) {
-  return ListView.builder(
-    itemCount: activities.length,
-    itemBuilder: (context, index) {
-      final activity = activities[index];
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: _buildActivityItem(context, activity),
       );
     },
   );
@@ -126,7 +144,7 @@ Widget _buildActivityItem(BuildContext context, ActivityPreview activity) {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-              "${activity.activityType.name} - ${DateFormat("HH:mm").format(activity.start)}",
+              "${DateFormat("HH:mm").format(activity.start)} - ${DateFormat("HH:mm").format(activity.end)}",
               style: const TextStyle(fontSize: 12, color: Colors.black45)),
           Text(getTranslatedActivityType(context, activity.activityType))
         ],

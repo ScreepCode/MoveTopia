@@ -32,6 +32,9 @@ class ActivitiesViewModel extends StateNotifier<ActivitiesState> {
       return;
     }
     Map<DateTime, List<ActivityPreview>> workoutsByDay = {};
+    // Sort the workouts by start date, starting with the highest date
+    workouts.sort((a, b) => b.start.compareTo(a.start));
+
     for (int i = 0; i < workouts.length; i++) {
       ActivityPreview workout = workouts[i];
       Uint8List? icon = await getWorkoutIcon(
@@ -58,6 +61,5 @@ class ActivitiesViewModel extends StateNotifier<ActivitiesState> {
         activities: workouts,
         isLoading: false,
         newGroupedActivities: state.groupedActivities);
-    print("Activities: ${state.activities}");
   }
 }
