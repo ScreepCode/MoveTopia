@@ -7,7 +7,8 @@ Future<Uint8List?> getInstalledAppIcon(String sourceId) async {
   final log = Logger("InstalledAppIcon");
   if (sourceId.isNotEmpty) {
     try {
-      var appIcon = (await InstalledApps.getAppInfo(sourceId.toString()))?.icon;
+      var appIcon =
+          (await InstalledApps.getAppInfo(sourceId.toString(), null))?.icon;
       if (appIcon != null && appIcon.isNotEmpty) {
         return appIcon;
       }

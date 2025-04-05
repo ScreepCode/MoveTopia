@@ -13,8 +13,6 @@
     <uses-permission android:name="android.permission.health.READ_EXERCISE" />
     <uses-permission android:name="android.permission.health.WRITE_EXERCISE" />
     <uses-permission android:name="android.permission.health.READ_HEART_RATE" />
-    <uses-permission android:name="android.permission.health.READ_SPEED" />
-    <uses-permission android:name="android.permission.health.WRITE_SPEED" />
     <uses-permission android:name="android.permission.health.READ_DISTANCE" />
     <uses-permission android:name="android.permission.health.WRITE_DISTANCE" />
     <uses-permission android:name="androidx.health.permission.Distance.READ" />
@@ -22,6 +20,7 @@
     <uses-permission android:name="android.permission.health.READ_TOTAL_CALORIES_BURNED" />
     <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
     <uses-permission android:name="android.permission.health.READ_HEALTH_DATA_HISTORY" />
+    <uses-permission android:name="android.permission.MANAGE_HEALTH_DATA" />
 
     <application
         android:name="${applicationName}"
@@ -52,6 +51,11 @@
             <!-- Intention to show Permissions screen for Health Connect API -->
             <intent-filter>
                 <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+            </intent-filter>
+            <!-- Intention to request historical health data permissions -->
+            <intent-filter>
+                <action android:name="android.health.action.REQUEST_HEALTH_PERMISSIONS" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity-alias

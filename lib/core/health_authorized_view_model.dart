@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:health/health.dart';
+import 'package:logging/logging.dart';
 import 'package:riverpod/riverpod.dart';
 
 final healthViewModelProvider =
@@ -12,37 +12,86 @@ final healthViewModelProvider =
 class HealthAuthViewModel extends StateNotifier<HealthAuthViewModelState> {
   final Ref ref;
   final _health = Health();
-  final neededPermissions = [
+  final log = Logger('HealthAuthViewModel');
+
+  final requiredReadPermissions = [
     HealthDataType.STEPS,
     HealthDataType.DISTANCE_DELTA,
     HealthDataType.SLEEP_ASLEEP,
     HealthDataType.WORKOUT,
-    HealthDataType.HEART_RATE
+    HealthDataType.HEART_RATE,
+    HealthDataType.ACTIVE_ENERGY_BURNED,
+    HealthDataType.TOTAL_CALORIES_BURNED
+  ];
+
+  final optionalWritePermissions = [
+    HealthDataType.STEPS,
+    HealthDataType.DISTANCE_DELTA,
+    HealthDataType.WORKOUT
   ];
 
   HealthAuthViewModel(this.ref)
       : super(HealthAuthViewModelState.notAuthorized) {
-    _health.configure();
+    try {
+      _health.configure();
+    } catch (e) {
+      log.severe('Failed to configure health package: $e');
+    }
+  }
+
+  /// Request REQUIRED READ-Permissions
+  Future<void> authorizeReadAccess() async {
+    try {
+      bool? hasPermissions =
+          await _health.hasPermissions(requiredReadPermissions);
+
+      if (hasPermissions == null || !hasPermissions) {
+        try {
+          List<HealthDataAccess> accessPermissions = List.filled(
+              requiredReadPermissions.length, HealthDataAccess.READ);
+
+          bool authorized = await _health.requestAuthorization(
+              requiredReadPermissions,
+              permissions: accessPermissions);
+
+          if (authorized) {
+            state = HealthAuthViewModelState.authorized;
+          } else {
+            state = HealthAuthViewModelState.authorizationNotGranted;
+          }
+        } catch (error) {
+          state = HealthAuthViewModelState.error;
+        }
+      } else {
+        state = HealthAuthViewModelState.authorized;
+      }
+    } catch (error) {
+      state = HealthAuthViewModelState.error;
+    }
+  }
+
+  /// Request OPTIONAL WRITE-Permissions
+  /// You can only request WRITE when READ is already granted
+  Future<bool> authorizeWriteAccess() async {
+    if (state != HealthAuthViewModelState.authorized) {
+      return false;
+    }
+
+    try {
+      List<HealthDataAccess> accessPermissions =
+          List.filled(optionalWritePermissions.length, HealthDataAccess.WRITE);
+
+      bool authorized = await _health.requestAuthorization(
+          optionalWritePermissions,
+          permissions: accessPermissions);
+      return authorized;
+    } catch (error) {
+      return false;
+    } finally {}
   }
 
   Future<void> authorize() async {
-    bool? hasPermissions = await _health.hasPermissions(neededPermissions);
-    if (hasPermissions == null || !hasPermissions) {
-      try {
-        bool authorized = await _health.requestAuthorization(neededPermissions,
-            permissions: [HealthDataAccess.READ_WRITE]);
-        if (authorized) {
-          state = HealthAuthViewModelState.authorized;
-        } else {
-          state = HealthAuthViewModelState.authorizationNotGranted;
-        }
-      } catch (error) {
-        debugPrint("Exception in authorize: $error");
-        state = HealthAuthViewModelState.error;
-      }
-    } else {
-      state = HealthAuthViewModelState.authorized;
-    }
+    await authorizeReadAccess();
   }
 }
 

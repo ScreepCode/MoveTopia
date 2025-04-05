@@ -7,18 +7,60 @@ import 'package:movetopia/core/authorizationWrapper.dart';
 import 'package:movetopia/core/navigation_host.dart';
 import 'package:movetopia/domain/service/app_startup_service.dart';
 import 'package:movetopia/presentation/common/theme.dart';
+import 'package:movetopia/presentation/onboarding/providers/onboarding_provider.dart';
 import 'package:movetopia/presentation/profile/view_model/profile_view_model.dart';
 
 import 'core/health_authorized_view_model.dart';
 import 'data/repositories/device_info_repository_impl.dart';
 
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
+  _setupLogging();
+
   runApp(
-    const ProviderScope(child: MoveTopiaApp()),
+    const ProviderScope(
+      child: MoveTopiaApp(),
+    ),
   );
 }
+
+void _setupLogging() {
+  Logger.root.level = Level.ALL;
+
+  Logger.root.onRecord.listen((record) {
+    String emoji = '📃';
+    if (record.level == Level.CONFIG) emoji = '⚙️';
+    if (record.level == Level.INFO) emoji = 'ℹ️';
+    if (record.level == Level.WARNING) emoji = '⚠️';
+    if (record.level == Level.SEVERE) emoji = '🔥';
+
+    print(
+        '$emoji ${record.time}: [${record.loggerName}] ${record.level.name}: ${record.message}');
+
+    if (record.error != null) {
+      print('Error: ${record.error}');
+    }
+    if (record.stackTrace != null) {
+      print('StackTrace: ${record.stackTrace}');
+    }
+  });
+
+  final log = Logger('main');
+  log.info('Logging initialized');
+}
+
+final appInitProvider = Provider((ref) {
+  final hasCompletedOnboarding = ref.watch(hasCompletedOnboardingProvider);
+
+  hasCompletedOnboarding.whenData((isCompleted) {
+    if (isCompleted) {
+      ref.read(myAppProvider).init();
+    }
+  });
+
+  return hasCompletedOnboarding;
+});
 
 final myAppProvider = Provider((ref) {
   return MoveTopiaAppViewModel(ref);
@@ -37,11 +79,6 @@ interface class MoveTopiaAppViewModel {
     }
     _isInitialized = true;
 
-    Logger.root.level = Level.ALL;
-    Logger.root.onRecord.listen((record) {
-      print('${record.level.name}: ${record.message}');
-    });
-
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       systemNavigationBarContrastEnforced: false,
@@ -52,21 +89,17 @@ interface class MoveTopiaAppViewModel {
 
     await _initializeAppDates();
     await _initializeStreaks();
-    _checkAuthorization();
+    await _checkAuthorization();
   }
 
   Future<void> _initializeAppDates() async {
     final deviceInfoRepository = ref.read(deviceInfoRepositoryProvider);
     await deviceInfoRepository.initializeAppDates();
-    log.info('App dates initialized successfully.');
   }
 
   Future<void> _initializeStreaks() async {
-    log.info('Initializing streaks from installation date...');
     try {
-      // Erst lesen und dann die Future überwachen, um die Initialisierung zu starten
       ref.read(appInitializationProvider);
-      log.info('Streak initialization request sent.');
     } catch (e) {
       log.severe('Error during streak initialization: $e');
     }
@@ -95,27 +128,35 @@ interface class MoveTopiaAppViewModel {
 class MoveTopiaApp extends HookConsumerWidget {
   const MoveTopiaApp({super.key});
 
-  MaterialApp buildMaterialApp(ThemeData theme) {
-    return MaterialApp.router(
-      routerConfig: navigationRoutes,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      theme: theme,
-    );
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final provider = ref.read(myAppProvider);
     var isDarkMode = ref.watch(profileProvider).isDarkMode;
     var theme = isDarkMode ? darkTheme : lightTheme;
-    provider.init();
 
-    // Überwache den Initialisierungsstatus (kann später für Anzeige verwendet werden)
-    ref.watch(appInitializationProvider);
+    final onboardingStatus = ref.watch(appInitProvider);
+
+    if (onboardingStatus is AsyncLoading) {
+      return MaterialApp(
+        theme: theme,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+    }
+
+    final router = ref.watch(navigationRoutesProvider);
 
     return AuthorizationWrapper(
-      child: buildMaterialApp(theme),
+      child: MaterialApp.router(
+        routerConfig: router,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: theme,
+      ),
     );
   }
 }

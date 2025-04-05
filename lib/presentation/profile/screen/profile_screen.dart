@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../provider/debug_provider.dart';
+import '../routes.dart';
 import '../view_model/profile_view_model.dart';
-import 'debug_settings_screen.dart';
 
 final logger = Logger('ProfileScreen');
 
@@ -114,6 +115,17 @@ class ProfileScreen extends HookConsumerWidget {
           },
         ),
 
+        // App permissions
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.security),
+          title: Text(l10n.permission_settings_title),
+          subtitle: Text(l10n.permission_settings_subtitle),
+          onTap: () {
+            context.go('$profilePath/$profilePermissionsPath');
+          },
+        ),
+
         // Debug-Einstellungen Link, nur im Debug-Build zeigen
         isDebugBuild.when(
           data: (isDebug) {
@@ -127,12 +139,7 @@ class ProfileScreen extends HookConsumerWidget {
                 style: const TextStyle(color: Colors.red),
               ),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const DebugSettingsScreen(),
-                  ),
-                );
+                context.go('$profilePath/$profileDebugPath');
               },
             );
           },
