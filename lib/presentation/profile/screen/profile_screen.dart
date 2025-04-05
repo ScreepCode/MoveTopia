@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
+import 'package:movetopia/domain/repositories/profile_repository.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../provider/debug_provider.dart';
+import '../routes.dart';
 import '../view_model/profile_view_model.dart';
-import 'debug_settings_screen.dart';
 
 final logger = Logger('ProfileScreen');
 
@@ -89,7 +91,9 @@ class ProfileScreen extends HookConsumerWidget {
   Widget _buildSettings(
       BuildContext context, WidgetRef ref, AsyncValue<bool> isDebugBuild) {
     final l10n = AppLocalizations.of(context)!;
-    final isDarkMode = ref.read(profileProvider).isDarkMode;
+    final currentThemeMode = ref.watch(profileProvider).themeMode;
+    final themeMenuKey = GlobalKey();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -104,13 +108,125 @@ class ProfileScreen extends HookConsumerWidget {
             ],
           ),
         ),
-        SwitchListTile(
-          title: Text(l10n.common_dark_mode),
+
+        // Theme Mode Dropdown
+        ListTile(
+          key: themeMenuKey,
           contentPadding: EdgeInsets.zero,
-          value: isDarkMode,
-          onChanged: (value) {
-            ref.read(profileProvider.notifier).setIsDarkMode(value);
-            logger.info('Change in Dropdown');
+          leading: const Icon(Icons.palette_outlined),
+          title: Text(l10n.common_theme_mode),
+          subtitle: Text(_getThemeModeLabel(l10n, currentThemeMode)),
+          trailing: const Icon(Icons.arrow_drop_down),
+          onTap: () {
+            final RenderBox itemBox =
+                themeMenuKey.currentContext!.findRenderObject() as RenderBox;
+            final itemPosition = itemBox.localToGlobal(Offset.zero);
+
+            showMenu<AppThemeMode>(
+              context: context,
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
+              position: RelativeRect.fromLTRB(
+                itemPosition.dx,
+                itemPosition.dy + itemBox.size.height,
+                itemPosition.dx + itemBox.size.width,
+                itemPosition.dy,
+              ),
+              items: [
+                PopupMenuItem<AppThemeMode>(
+                  value: AppThemeMode.system,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.settings_suggest_outlined,
+                        color: currentThemeMode == AppThemeMode.system
+                            ? Theme.of(context).colorScheme.primary
+                            : null,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(l10n.common_theme_system),
+                      if (currentThemeMode == AppThemeMode.system)
+                        const Spacer()
+                      else
+                        const SizedBox.shrink(),
+                      if (currentThemeMode == AppThemeMode.system)
+                        Icon(Icons.check,
+                            color: Theme.of(context).colorScheme.primary)
+                      else
+                        const SizedBox.shrink(),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<AppThemeMode>(
+                  value: AppThemeMode.light,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.light_mode_outlined,
+                        color: currentThemeMode == AppThemeMode.light
+                            ? Theme.of(context).colorScheme.primary
+                            : null,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(l10n.common_theme_light),
+                      if (currentThemeMode == AppThemeMode.light)
+                        const Spacer()
+                      else
+                        const SizedBox.shrink(),
+                      if (currentThemeMode == AppThemeMode.light)
+                        Icon(Icons.check,
+                            color: Theme.of(context).colorScheme.primary)
+                      else
+                        const SizedBox.shrink(),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<AppThemeMode>(
+                  value: AppThemeMode.dark,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.dark_mode_outlined,
+                        color: currentThemeMode == AppThemeMode.dark
+                            ? Theme.of(context).colorScheme.primary
+                            : null,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(l10n.common_theme_dark),
+                      if (currentThemeMode == AppThemeMode.dark)
+                        const Spacer()
+                      else
+                        const SizedBox.shrink(),
+                      if (currentThemeMode == AppThemeMode.dark)
+                        Icon(Icons.check,
+                            color: Theme.of(context).colorScheme.primary)
+                      else
+                        const SizedBox.shrink(),
+                    ],
+                  ),
+                ),
+              ],
+            ).then((value) {
+              if (value != null) {
+                ref.read(profileProvider.notifier).setThemeMode(value);
+                logger.info('Theme mode changed to $value');
+              }
+            });
+          },
+        ),
+
+        // App permissions
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.security),
+          title: Text(l10n.permission_settings_title),
+          subtitle: Text(l10n.permission_settings_subtitle),
+          onTap: () {
+            context.go('$profilePath/$profilePermissionsPath');
           },
         ),
 
@@ -127,12 +243,7 @@ class ProfileScreen extends HookConsumerWidget {
                 style: const TextStyle(color: Colors.red),
               ),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const DebugSettingsScreen(),
-                  ),
-                );
+                context.go('$profilePath/$profileDebugPath');
               },
             );
           },
@@ -172,5 +283,16 @@ class ProfileScreen extends HookConsumerWidget {
         }
       },
     );
+  }
+
+  String _getThemeModeLabel(AppLocalizations l10n, AppThemeMode mode) {
+    switch (mode) {
+      case AppThemeMode.system:
+        return l10n.common_theme_system;
+      case AppThemeMode.light:
+        return l10n.common_theme_light;
+      case AppThemeMode.dark:
+        return l10n.common_theme_dark;
+    }
   }
 }
