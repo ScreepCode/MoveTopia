@@ -11,6 +11,7 @@
   "activity_details": "{distance}km in {minutes} Minuten",
   "activity_distance": "Distanz",
   "activity_duration": "Dauer",
+  "activity_duration_text": "{minutes} Min. {seconds} Sek.",
   "activity_steps": "Schritte",
   "activity_current_speed": "Geschwindigkeit",
   "activity_current_pace": "Tempo",

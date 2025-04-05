@@ -15,6 +15,7 @@
   "activity_distance": "Distance",
   "activity_steps": "Steps",
   "activity_duration": "Duration",
+  "activity_duration_text": "{minutes} min. {seconds} sec.",
   "activity_current_speed": "Speed",
   "activity_current_pace": "Pace",
   "activity_avg_speed": "Average Speed",
