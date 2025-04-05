@@ -1,9 +1,15 @@
 const stepGoalKey = 'stepGoal';
-const isDarkModeKey = 'isDarkMode';
+const themeModeKey = 'themeMode';
 const userEPKey = 'userEP';
 const userLevelKey = 'userLevel';
 const installationDateKey = 'installationDate';
 const lastUpdatedKey = 'lastUpdated';
+
+enum AppThemeMode {
+  system,
+  light,
+  dark,
+}
 
 abstract class ProfileRepository {
   Future<void> saveSetting(String key, dynamic value);
@@ -15,9 +21,9 @@ abstract class ProfileRepository {
 
   Future<void> saveStepGoal(int stepGoal);
 
-  Future<bool> getIsDarkMode();
+  Future<AppThemeMode> getThemeMode();
 
-  Future<void> saveIsDarkMode(bool isDarkMode);
+  Future<void> saveThemeMode(AppThemeMode themeMode);
 
   Future<int> getUserEP();
 

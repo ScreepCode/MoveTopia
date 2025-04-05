@@ -20,6 +20,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
       await prefs.setString(key, value);
     } else if (value is DateTime) {
       await prefs.setString(key, value.toIso8601String());
+    } else if (value is AppThemeMode) {
+      await prefs.setInt(key, value.index);
     } else {
       throw Exception('Unsupported type');
     }
@@ -43,14 +45,21 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
-  Future<bool> getIsDarkMode() async {
-    final value = await loadSetting(isDarkModeKey);
-    return value != null ? value as bool : false; // Default mode
+  Future<AppThemeMode> getThemeMode() async {
+    final value = await loadSetting(themeModeKey);
+    if (value != null) {
+      final index = value as int;
+      // Stelle sicher, dass der Index gültig ist
+      if (index >= 0 && index < AppThemeMode.values.length) {
+        return AppThemeMode.values[index];
+      }
+    }
+    return AppThemeMode.system; // Standardeinstellung
   }
 
   @override
-  Future<void> saveIsDarkMode(bool isDarkMode) async {
-    await saveSetting(isDarkModeKey, isDarkMode);
+  Future<void> saveThemeMode(AppThemeMode themeMode) async {
+    await saveSetting(themeModeKey, themeMode);
   }
 
   @override

@@ -9,9 +9,11 @@ import 'package:movetopia/domain/service/app_startup_service.dart';
 import 'package:movetopia/presentation/common/theme.dart';
 import 'package:movetopia/presentation/onboarding/providers/onboarding_provider.dart';
 import 'package:movetopia/presentation/profile/view_model/profile_view_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/health_authorized_view_model.dart';
 import 'data/repositories/device_info_repository_impl.dart';
+import 'domain/repositories/profile_repository.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -130,10 +132,30 @@ class MoveTopiaApp extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var isDarkMode = ref.watch(profileProvider).isDarkMode;
-    var theme = isDarkMode ? darkTheme : lightTheme;
-
+    final themeMode = ref.watch(profileProvider).themeMode;
     final onboardingStatus = ref.watch(appInitProvider);
+
+    // Aktuelles Theme basierend auf der Einstellung bestimmen
+    ThemeData theme;
+    bool useDarkTheme;
+
+    switch (themeMode) {
+      case AppThemeMode.light:
+        useDarkTheme = false;
+        break;
+      case AppThemeMode.dark:
+        useDarkTheme = true;
+        break;
+      case AppThemeMode.system:
+      default:
+        // System-Theme verwenden
+        final Brightness platformBrightness =
+            WidgetsBinding.instance.platformDispatcher.platformBrightness;
+        useDarkTheme = platformBrightness == Brightness.dark;
+        break;
+    }
+
+    theme = useDarkTheme ? darkTheme : lightTheme;
 
     if (onboardingStatus is AsyncLoading) {
       return MaterialApp(

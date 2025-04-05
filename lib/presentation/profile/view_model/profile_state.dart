@@ -1,12 +1,14 @@
+import 'package:movetopia/domain/repositories/profile_repository.dart';
+
 class ProfileState {
   final int stepGoal;
-  final bool isDarkMode;
+  final AppThemeMode themeMode;
   final DateTime installationDate;
   final DateTime lastUpdated;
 
   ProfileState({
     this.stepGoal = 5000,
-    this.isDarkMode = false,
+    this.themeMode = AppThemeMode.system,
     DateTime? installationDate,
     DateTime? lastUpdated,
   })  : installationDate = installationDate ?? DateTime.now(),
@@ -14,13 +16,13 @@ class ProfileState {
 
   ProfileState copyWith({
     int? stepGoal,
-    bool? isDarkMode,
+    AppThemeMode? themeMode,
     DateTime? installationDate,
     DateTime? lastUpdated,
   }) {
     return ProfileState(
       stepGoal: stepGoal ?? this.stepGoal,
-      isDarkMode: isDarkMode ?? this.isDarkMode,
+      themeMode: themeMode ?? this.themeMode,
       installationDate: installationDate ?? this.installationDate,
       lastUpdated: lastUpdated ?? this.lastUpdated,
     );
