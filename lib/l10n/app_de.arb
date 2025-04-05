@@ -11,6 +11,8 @@
   "activity_details": "{distance}km in {minutes} Minuten",
   "activity_details_minutes": "{minutes} Minuten",
   "activity_distance": "Distanz",
+  "activity_duration": "Dauer",
+  "activity_duration_text": "{minutes} Min. {seconds} Sek.",
   "activity_steps": "Schritte",
   "activity_duration": "Dauer",
   "activity_current_speed": "Geschwindigkeit",
@@ -351,7 +353,7 @@
   "health_write_granted": "Schreib-Zugriff erteilt",
   "health_write_denied": "Schreib-Zugriff nicht erteilt",
   "requesting_health_write_permissions": "Schreibrechte werden angefordert...",
-  
+
   "logs_title": "App-Protokolle",
   "logs_clear_tooltip": "Logs löschen",
   "logs_copy_tooltip": "Logs in Zwischenablage kopieren",

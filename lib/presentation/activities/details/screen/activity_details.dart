@@ -84,6 +84,7 @@ class ActivityDetailsScreen extends HookConsumerWidget {
       averageHeartBeat: activityState.getAverageHeartBeat(),
       duration: activityPreview.getDuration(),
       caloriesBurnt: activityPreview.caloriesBurnt,
+      steps: 0, // TODO: Add steps from workout
     );
   }
 }
