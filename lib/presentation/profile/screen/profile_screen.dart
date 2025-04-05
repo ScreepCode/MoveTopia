@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -33,7 +34,7 @@ class ProfileScreen extends HookConsumerWidget {
             children: <Widget>[
               _buildActivityGoals(context, ref),
               _buildSettings(context, ref, isDebugBuild),
-              _buildAboutSection(context, packageInfoFuture),
+              _buildAboutSection(context, ref, packageInfoFuture),
             ],
           ),
         ),
@@ -254,15 +255,19 @@ class ProfileScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _buildAboutSection(
-      BuildContext context, Future<PackageInfo> packageInfoFuture) {
+  Widget _buildAboutSection(BuildContext context, WidgetRef ref,
+      Future<PackageInfo> packageInfoFuture) {
+    final l10n = AppLocalizations.of(context)!;
+    final hiddenLogAccess = ref.watch(hiddenLogAccessProvider);
+    final hiddenLogAccessNotifier = ref.watch(hiddenLogAccessProvider.notifier);
+
     return FutureBuilder<PackageInfo>(
       future: packageInfoFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          return Text(AppLocalizations.of(context)!.common_error_version);
+          return Text(l10n.common_error_version);
         } else {
           final packageInfo = snapshot.data!;
           return Padding(
@@ -270,12 +275,29 @@ class ProfileScreen extends HookConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(AppLocalizations.of(context)!.common_about,
+                Text(l10n.common_about,
                     style: Theme.of(context).textTheme.titleMedium),
                 const Divider(),
-                Text(
-                  "${AppLocalizations.of(context)!.common_version}: ${packageInfo.version}",
-                  style: Theme.of(context).textTheme.bodyMedium,
+                InkWell(
+                  onTap: () {
+                    hiddenLogAccessNotifier.incrementClickCount();
+                    if (hiddenLogAccessNotifier.isLogAccessEnabled) {
+                      hiddenLogAccessNotifier.resetClickCount();
+
+                      // Vibrate as feedback
+                      HapticFeedback.mediumImpact();
+
+                      context.go('$profilePath/$profileLoggingPath');
+                    }
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      "${l10n.common_version}: ${packageInfo.version}",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
                 ),
               ],
             ),

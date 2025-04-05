@@ -16,6 +16,41 @@ import '../../../domain/service/badge_service.dart';
 import '../../challenges/badgeLists/viewmodel/badge_lists_view_model.dart';
 import '../../challenges/provider/streak_provider.dart';
 
+// Provider für versteckten Logs-Zugriff im Release-Build
+class HiddenLogAccessNotifier extends StateNotifier<int> {
+  HiddenLogAccessNotifier() : super(0);
+
+  static const int requiredClicks = 5;
+  static const int resetTimeInMilliseconds = 2000; // 2 Sekunden
+
+  DateTime? _lastClickTime;
+
+  void incrementClickCount() {
+    final now = DateTime.now();
+
+    // Zurücksetzen des Zählers, wenn zu viel Zeit seit dem letzten Klick vergangen ist
+    if (_lastClickTime != null &&
+        now.difference(_lastClickTime!).inMilliseconds >
+            resetTimeInMilliseconds) {
+      state = 0;
+    }
+
+    _lastClickTime = now;
+    state = state + 1;
+  }
+
+  void resetClickCount() {
+    state = 0;
+  }
+
+  bool get isLogAccessEnabled => state >= requiredClicks;
+}
+
+final hiddenLogAccessProvider =
+    StateNotifierProvider<HiddenLogAccessNotifier, int>(
+  (ref) => HiddenLogAccessNotifier(),
+);
+
 /// Ein StateNotifier für das Sammeln und Filtern von LogRecords
 class AppLogNotifier extends StateNotifier<List<LogRecord>> {
   final _logger = AppLogger.getLogger('AppLogNotifier');

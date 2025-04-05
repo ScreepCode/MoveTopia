@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../provider/debug_provider.dart';
+import '../routes.dart';
 import '../widgets/debug_section.dart';
-import 'log_screen.dart';
 
 class DebugSettingsScreen extends ConsumerWidget {
   const DebugSettingsScreen({super.key});
@@ -22,11 +23,7 @@ class DebugSettingsScreen extends ConsumerWidget {
             icon: const Icon(Icons.list_alt),
             tooltip: 'App Logs',
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const LogScreen(),
-                ),
-              );
+              context.go('/$profilePath/$profileLoggingPath');
             },
           ),
         ],
@@ -54,11 +51,7 @@ class DebugSettingsScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 16),
 
-                // Debug-Sektionen
                 const DebugSection(),
-
-                // Hier könnten weitere Debug-Sektionen hinzugefügt werden
-                // z.B. für Badge-Debugging
               ],
             ),
           );
