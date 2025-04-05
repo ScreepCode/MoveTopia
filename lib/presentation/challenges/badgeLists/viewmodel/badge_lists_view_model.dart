@@ -11,29 +11,25 @@ class BadgeListViewModel
   BadgeListViewModel({required BadgeService badgeService})
       : _badgeService = badgeService,
         super(const AsyncValue.loading()) {
-    loadBadges();
-  }
-
-  Future<void> loadBadges() async {
-    try {
-      state = const AsyncValue.loading();
-      // Load all badges
-      final badges = await _badgeService.getAllBadges();
-
-      // Check and update badges, then reload
-      await _badgeService.checkAndUpdateBadges();
-      final updatedBadges = await _badgeService.getAllBadges();
-
-      state = AsyncValue.data(updatedBadges.cast<AchievementBadge>());
-      log.info('Loaded ${updatedBadges.length} badges');
-    } catch (error, stackTrace) {
-      state = AsyncValue.error(error, stackTrace);
-      log.severe('Failed to load badges', error, stackTrace);
-    }
+    refreshBadges();
   }
 
   Future<void> refreshBadges() async {
-    await loadBadges();
+    try {
+      state = const AsyncValue.loading();
+
+      // Check and update badges
+      await _badgeService.checkAndUpdateBadges();
+
+      // Reload badges after update
+      final updatedBadges = await _badgeService.getAllBadges();
+
+      state = AsyncValue.data(updatedBadges);
+      log.info('Refreshed and loaded ${updatedBadges.length} badges');
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+      log.severe('Failed to refresh badges', error, stackTrace);
+    }
   }
 
   List<AchievementBadge> getBadgesByCategory(
