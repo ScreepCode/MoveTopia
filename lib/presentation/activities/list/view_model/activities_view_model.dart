@@ -37,13 +37,16 @@ class ActivitiesViewModel extends StateNotifier<ActivitiesState> {
 
     for (int i = 0; i < workouts.length; i++) {
       ActivityPreview workout = workouts[i];
-      Uint8List? icon = await getWorkoutIcon(
-        workouts[i].sourceId ?? "",
-      );
-      if (icon != null) {
-        workouts[i].icon = icon;
+      state.icons ??= {};
+      if(state.icons!.containsKey(workout.sourceId)) {
+        workouts[i].icon = state.icons?[workout.sourceId];
+      } else {
+        workouts[i].icon = await getWorkoutIcon(
+          workout.sourceId ?? "",
+        );
+        state.icons![workout.sourceId!] = workouts[i].icon;
+        state = state.copyWith(newIcons: state.icons);
       }
-
       DateTime day =
           DateTime(workout.start.year, workout.start.month, workout.start.day);
       if (workoutsByDay[day] == null) {

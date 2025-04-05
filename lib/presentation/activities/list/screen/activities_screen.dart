@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:movetopia/core/health_authorized_view_model.dart';
 import 'package:movetopia/data/model/activity.dart';
+import 'package:movetopia/presentation/activities/routes.dart';
+import 'package:movetopia/presentation/tracking/routes.dart';
 import 'package:movetopia/utils/health_utils.dart';
 
 import '../view_model/activities_state.dart';
@@ -56,7 +58,7 @@ class ActivitiesScreen extends HookConsumerWidget {
       floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add),
           onPressed: () {
-            context.push("/tracking");
+            context.push(trackingPath);
           }),
     );
   }
@@ -90,12 +92,12 @@ Widget _buildGroupedActivities(
     Map<DateTime, List<ActivityPreview>>? activities,
     bool isLoading,
     ScrollController scrollController) {
-  int getStepsForDay(List<ActivityPreview> activityList) {
-    int steps = 0;
+  int getActivityMinutes(List<ActivityPreview> activityList) {
+    int seconds = 0;
     for (var activity in activityList) {
-      steps += activity.steps;
+      seconds += activity.getDuration();
     }
-    return steps;
+    return seconds ~/ 60;
   }
 
   return ListView.builder(
@@ -110,7 +112,8 @@ Widget _buildGroupedActivities(
         children: [
           if (date != null && activityList.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding:
+                  const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -119,17 +122,14 @@ Widget _buildGroupedActivities(
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      " ${getStepsForDay(activityList)} ${AppLocalizations.of(context)!.activity_steps}",
+                      " ${AppLocalizations.of(context)!.activity_details_minutes(getActivityMinutes(activityList))}",
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ]),
             ),
           const Divider(),
           ...activityList.map(
-            (activity) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: _buildActivityItem(context, activity),
-            ),
+            (activity) => _buildActivityItem(context, activity),
           ),
           // Add a loading indicator at the end of the list,
           if (index == activities!.length - 1 && isLoading)
@@ -153,7 +153,7 @@ Widget _buildGroupedActivities(
 Widget _buildActivityItem(BuildContext context, ActivityPreview activity) {
   return ListTile(
       onTap: () {
-        context.push("/activities/details", extra: activity);
+        context.push(activitiesDetailsFullPath, extra: activity);
       },
       isThreeLine: true,
       title: Column(

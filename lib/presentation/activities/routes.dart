@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movetopia/data/model/activity.dart';
-import 'list/screen/activities_screen.dart';
+
 import 'details/screen/activity_details.dart';
+import 'list/screen/activities_screen.dart';
 
 const activitiesListPath = '/activities';
 const activitiesDetailsPath = 'details';
-
+const activitiesDetailsFullPath = '$activitiesListPath/$activitiesDetailsPath';
 
 class ActivitiesRoutes {
   static final navigatorKey = GlobalKey<NavigatorState>();
@@ -22,7 +23,6 @@ class ActivitiesRoutes {
               activityPreview: state.extra as ActivityPreview,
             ),
           )
-        ]
-    )
+        ])
   ];
 }

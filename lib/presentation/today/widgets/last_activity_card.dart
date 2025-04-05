@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movetopia/data/model/activity.dart';
+import 'package:movetopia/presentation/activities/routes.dart';
 import 'package:movetopia/presentation/common/widgets/generic_card.dart';
 import 'package:movetopia/utils/health_utils.dart';
 
@@ -16,7 +17,7 @@ class LastActivityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.push("/activities/details", extra: lastActivity),
+      onTap: () => context.push(activitiesDetailsFullPath, extra: lastActivity),
       child: GenericCard(
         title: getTranslatedActivityType(context, lastActivity.activityType),
         subtitles: [(AppLocalizations.of(context)!.activity_last_activity)],
