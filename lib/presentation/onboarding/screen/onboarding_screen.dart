@@ -26,28 +26,23 @@ class OnboardingScreen extends HookConsumerWidget {
         permissionsState.hasRequiredPermissions;
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        leading: onboardingState.currentPage > 0
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  controller.previousPage(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut);
+                },
+              )
+            : null,
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            if (onboardingState.currentPage > 0)
-              Align(
-                alignment: Alignment.topLeft,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 16.0, top: 8.0),
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: () {
-                      controller.previousPage(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut);
-                    },
-                  ),
-                ),
-              )
-            else
-              const SizedBox(height: 56),
-
             Expanded(
               child: PageView(
                 controller: controller,
