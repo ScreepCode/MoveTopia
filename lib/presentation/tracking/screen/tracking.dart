@@ -55,10 +55,16 @@ class TrackingScreen extends HookConsumerWidget {
                           .read(trackingViewModelProvider.notifier)
                           .stopTracking();
                     },
+                    onPause: () {
+                      ref
+                          .read(trackingViewModelProvider.notifier)
+                          .togglePauseTracking();
+                    },
                     startTimer:
                         ref.read(trackingViewModelProvider.notifier).startTimer,
-                    duration: trackingState.duration,
+                    durationMillis: trackingState.durationMillis,
                     isRecording: trackingState!.isRecording,
+                    isPaused: trackingState.isPaused,
                   )));
   }
 }

@@ -47,7 +47,7 @@ class TodayScreen extends HookConsumerWidget {
     }
 
     Future<void> pauseTracking() async {
-      await ref.read(trackingViewModelProvider.notifier).pauseTracking();
+      await ref.read(trackingViewModelProvider.notifier).togglePauseTracking();
       context.push("/tracking");
     }
 
@@ -165,14 +165,16 @@ void _onCardClick(BuildContext context) {
 }
 
 Widget _buildCurrentTracking(
-    BuildContext context,
-    WidgetRef ref,
-    TrackingState state,
-    Future<void> Function() stopTracking,
-    Future<void> Function() pauseTracking) {
+  BuildContext context,
+  WidgetRef ref,
+  TrackingState state,
+  Future<void> Function() stopTracking,
+  Future<void> Function() pauseTracking,
+) {
   return ActiveTracking(
     activity: state.activity,
-    duration: state.duration,
+    durationMillis: state.durationMillis,
+    paused: state.isPaused,
     onCardClick: () => _onCardClick(context),
     onPause: pauseTracking,
     onStop: stopTracking,

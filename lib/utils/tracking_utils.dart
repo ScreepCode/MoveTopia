@@ -45,9 +45,9 @@ Icon getIcon(ActivityType activityType,
   }
 }
 
-String getDuration(int startMillis, int endMillis) {
-  DateTime startTime = DateTime.fromMillisecondsSinceEpoch(startMillis);
-  DateTime endTime = DateTime.fromMillisecondsSinceEpoch(endMillis);
+String getDuration(int startMillis) {
+  DateTime startTime = DateTime.now();
+  DateTime endTime = startTime.add(Duration(milliseconds: startMillis));
 
   int hours = endTime.difference(startTime).inHours;
   int minutes = endTime.difference(startTime).inMinutes.remainder(60);

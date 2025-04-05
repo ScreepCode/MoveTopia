@@ -6,18 +6,21 @@ import 'package:logging/logging.dart';
 class TrackingState {
   Activity activity;
   bool isRecording = false;
-  String duration = "--";
+  bool isPaused = false;
+  int durationMillis = 0;
   final log = Logger('trackingState');
 
   TrackingState(
       {required this.activity,
       required this.isRecording,
-      required this.duration});
+      required this.isPaused,
+      required this.durationMillis});
 
   factory TrackingState.initial() {
     return TrackingState(
         isRecording: false,
-        duration: "--",
+        isPaused: false,
+        durationMillis: 0,
         activity: Activity(
             activityType: ActivityType.unknown,
             distance: 0.0,
@@ -26,10 +29,15 @@ class TrackingState {
   }
 
   TrackingState copyWith(
-      {Activity? newActivity, bool? newIsRecording, String? newDuration}) {
+      {Activity? newActivity,
+      bool? newIsRecording,
+      bool? newIsPaused,
+      int? newDurationMillis}) {
     return TrackingState(
-        isRecording: newIsRecording ?? isRecording,
-        duration: newDuration ?? duration,
-        activity: newActivity ?? activity);
+      isRecording: newIsRecording ?? isRecording,
+      activity: newActivity ?? activity,
+      isPaused: newIsPaused ?? isPaused,
+      durationMillis: newDurationMillis ?? durationMillis,
+    );
   }
 }

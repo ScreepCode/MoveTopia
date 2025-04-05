@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:activity_tracking/activity_tracking.dart';
 import 'package:activity_tracking/model/activity.dart';
 import 'package:activity_tracking/model/activity_type.dart';
+import 'package:activity_tracking/model/event.dart';
 import 'package:activity_tracking/model/message.dart';
 import 'package:logging/logging.dart';
 import 'package:movetopia/data/repositories/local_health_impl.dart';
@@ -33,19 +34,33 @@ class TrackingViewModel extends StateNotifier<TrackingState?> {
         await activityTrackingPlugin.startActivity(activityType);
     state = state?.copyWith(newActivity: startedActivity, newIsRecording: true);
     activityStreamSubscription =
-        activityTrackingPlugin.getNativeEvents().listen(_onActivityUpdate);
+        activityTrackingPlugin.getNativeEvents().listen((e) {
+      _onActivityUpdate(e);
+    });
   }
 
-  pauseTracking() async {
-    print("pauseTracking");
+  togglePauseTracking() async {
+    if (state!.isRecording) {
+      // result indicates whether the toggle was successful or not
+      var result = await activityTrackingPlugin.togglePauseActivity();
+      if (result != null && result) {
+        state = state?.copyWith(newIsPaused: !state!.isPaused);
+
+        log.info("Activity paused: ${state?.isPaused}");
+        if (state?.isPaused == false) {
+          startTimer();
+        }
+      } else {
+        log.warning("Failed to pause activity");
+      }
+    }
   }
 
   stopTracking() async {
     await activityStreamSubscription.cancel();
     var finalResult = await activityTrackingPlugin.stopCurrentActivity();
     if (finalResult != null) {
-      state = state?.copyWith(
-          newActivity: finalResult, newIsRecording: false, newDuration: "");
+      state = state?.copyWith(newActivity: finalResult, newIsRecording: false);
 
       await ref
           .read(localHealthRepositoryProvider)
@@ -55,10 +70,10 @@ class TrackingViewModel extends StateNotifier<TrackingState?> {
 
   void startTimer() {
     Future.delayed(const Duration(seconds: 1), () {
-      ref.read(trackingViewModelProvider.notifier).updateDuration(getDuration(
-          state?.activity.startDateTime ?? 0,
-          DateTime.now().millisecondsSinceEpoch));
-      if (state?.isRecording == true) {
+      ref
+          .read(trackingViewModelProvider.notifier)
+          .updateDuration(state!.durationMillis + 1000);
+      if (state?.isRecording == true && state?.isPaused == false) {
         startTimer();
       } else {
         return;
@@ -66,8 +81,8 @@ class TrackingViewModel extends StateNotifier<TrackingState?> {
     });
   }
 
-  updateDuration(String duration) {
-    state = state?.copyWith(newDuration: duration);
+  updateDuration(int durationMillis) {
+    state = state?.copyWith(newDurationMillis: durationMillis);
   }
 
   clearState() {
@@ -77,24 +92,43 @@ class TrackingViewModel extends StateNotifier<TrackingState?> {
   _onActivityUpdate(dynamic e) {
     var eventMessage = Message.fromJson(jsonDecode(e));
     switch (eventMessage.type) {
-      case "step":
+      case Event.step:
         state?.activity.steps =
             ((state?.activity.steps ?? 0) + (eventMessage.data ?? 0)) as int?;
         state =
             state?.copyWith(newActivity: state?.activity, newIsRecording: true);
-      case "location":
+      case Event.location:
         if (eventMessage.data != null) {
           state?.activity.locations?.addAll(eventMessage.data);
           state = state?.copyWith(
               newActivity: state?.activity, newIsRecording: true);
         }
 
-      case "distance":
+      case Event.distance:
         if (eventMessage.data != null && eventMessage.data != 0) {
           state?.activity.distance = eventMessage.data;
           state = state?.copyWith(
               newActivity: state?.activity, newIsRecording: true);
         }
+      case Event.pause:
+        if (eventMessage.data != null) {
+          state = state?.copyWith(
+              newActivity: eventMessage.data as Activity, newIsPaused: false);
+        }
+      case Event.resume:
+        if (eventMessage.data != null) {
+          state = state?.copyWith(
+              newActivity: eventMessage.data as Activity, newIsPaused: true);
+          startTimer();
+        }
+      case Event.stop:
+        if (eventMessage.data != null) {
+          state = state?.copyWith(
+              newActivity: eventMessage.data as Activity,
+              newIsRecording: false);
+        }
+      case null:
+        log.info("Event is null");
     }
   }
 }

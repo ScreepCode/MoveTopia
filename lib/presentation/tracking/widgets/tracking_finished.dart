@@ -11,8 +11,11 @@ import 'package:movetopia/utils/tracking_utils.dart';
 
 class TrackingFinished extends StatelessWidget {
   final Activity? activity;
+  final int durationMillis;
 
-  const TrackingFinished({Key? key, required this.activity}) : super(key: key);
+  const TrackingFinished(
+      {Key? key, required this.activity, required this.durationMillis})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +23,7 @@ class TrackingFinished extends StatelessWidget {
         minimum: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         child: ListView(children: [
           _buildHeaderDetails(context, activity!),
-          _buildActivityDetails(context, activity!)
+          _buildActivityDetails(context, activity!, durationMillis)
         ]));
   }
 
@@ -47,7 +50,6 @@ class TrackingFinished extends StatelessWidget {
     if (activity.locations!.isEmpty) {
       return "-- min/km";
     }
-
     double totalPace = 0.0;
     activity.locations!.forEach((datetime, location) {
       totalPace += location.pace;
@@ -70,7 +72,8 @@ class TrackingFinished extends StatelessWidget {
     );
   }
 
-  Widget _buildActivityDetails(BuildContext context, Activity activity) {
+  Widget _buildActivityDetails(
+      BuildContext context, Activity activity, int duration) {
     final l10n = AppLocalizations.of(context)!;
     return GenericCard(
       title: l10n.activity_details_title,
@@ -85,9 +88,9 @@ class TrackingFinished extends StatelessWidget {
               displayName: l10n.activity_distance,
               value: "${activity.distance} km"),
           DetailStatsCardEntry(
-              displayName: l10n.activity_duration,
-              value: getDuration(
-                  activity.startDateTime ?? 0, activity.endDateTime ?? 0)),
+            displayName: l10n.activity_duration,
+            value: getDuration(duration),
+          ),
           DetailStatsCardEntry(
               displayName: l10n.activity_avg_speed,
               value: "${getAverageSpeed(activity)} km/h"),
