@@ -9,7 +9,6 @@ import 'package:movetopia/domain/service/app_startup_service.dart';
 import 'package:movetopia/presentation/common/theme.dart';
 import 'package:movetopia/presentation/onboarding/providers/onboarding_provider.dart';
 import 'package:movetopia/presentation/profile/view_model/profile_view_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/health_authorized_view_model.dart';
 import 'data/repositories/device_info_repository_impl.dart';
@@ -135,7 +134,6 @@ class MoveTopiaApp extends HookConsumerWidget {
     final themeMode = ref.watch(profileProvider).themeMode;
     final onboardingStatus = ref.watch(appInitProvider);
 
-    // Aktuelles Theme basierend auf der Einstellung bestimmen
     ThemeData theme;
     bool useDarkTheme;
 
@@ -147,7 +145,6 @@ class MoveTopiaApp extends HookConsumerWidget {
         useDarkTheme = true;
         break;
       case AppThemeMode.system:
-      default:
         // System-Theme verwenden
         final Brightness platformBrightness =
             WidgetsBinding.instance.platformDispatcher.platformBrightness;

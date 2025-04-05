@@ -45,7 +45,7 @@ class PermissionCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -91,7 +91,8 @@ class PermissionCard extends StatelessWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withOpacity(0.1),
+                              color: theme.colorScheme.primary
+                                  .withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
                                 color: theme.colorScheme.primary,
@@ -126,7 +127,7 @@ class PermissionCard extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.1),
+                  color: statusColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: statusColor),
                 ),
@@ -168,7 +169,8 @@ class PermissionCard extends StatelessWidget {
                       icon: const Icon(Icons.settings),
                       tooltip: 'Systemeinstellungen öffnen',
                       style: IconButton.styleFrom(
-                        backgroundColor: theme.colorScheme.surfaceVariant,
+                        backgroundColor:
+                            theme.colorScheme.surfaceContainerHighest,
                       ),
                     ),
                   ],

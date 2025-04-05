@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:movetopia/core/health_authorized_view_model.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:movetopia/presentation/common/widgets/permission_card.dart';
 import 'package:movetopia/presentation/common/widgets/section_header.dart';
 import 'package:movetopia/presentation/onboarding/providers/permissions_provider.dart';
