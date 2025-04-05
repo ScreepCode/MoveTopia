@@ -12,6 +12,7 @@
   "activity_no_activities_found": "No activities found",
   "activity_last_activity": "Last Activity",
   "activity_details": "{distance}km in {minutes} minutes",
+  "activity_details_minutes": "{minutes} minutes",
   "activity_distance": "Distance",
   "activity_steps": "Steps",
   "activity_duration": "Duration",

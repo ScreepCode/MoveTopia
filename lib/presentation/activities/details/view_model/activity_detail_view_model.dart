@@ -1,8 +1,7 @@
-import 'dart:typed_data';
-
 import 'package:logging/logging.dart';
 import 'package:movetopia/data/model/activity.dart';
 import 'package:movetopia/data/repositories/local_health_impl.dart';
+import 'package:movetopia/utils/system_utils.dart';
 import 'package:riverpod/riverpod.dart';
 
 import 'activity_detail_state.dart';
@@ -24,24 +23,27 @@ class ActivityDetailedViewModel extends StateNotifier<ActivityDetailState> {
         .read(localHealthRepositoryProvider)
         .getActivityDetailed(preview);
     if (activityDetailed != null) {
+      var activity = Activity(
+          distance: activityDetailed.distance,
+          steps: activityDetailed.steps,
+          activityType: activityDetailed.activityType,
+          caloriesBurnt: activityDetailed.caloriesBurnt,
+          start: activityDetailed.start,
+          end: activityDetailed.end,
+          heartRates: activityDetailed.heartRates,
+          speed: activityDetailed.speed,
+          // icon: preview.icon,
+          sourceId: activityDetailed.sourceId);
+      activity.icon = preview.icon != null && preview.icon!.isNotEmpty
+          ? preview.icon
+          : await getInstalledAppIcon(preview.sourceId);
       state = state.copyWith(
-          newActivity: Activity(
-              distance: activityDetailed.distance,
-              activityType: activityDetailed.activityType,
-              caloriesBurnt: activityDetailed.caloriesBurnt,
-              start: activityDetailed.start,
-              end: activityDetailed.end,
-              heartRates: activityDetailed.heartRates,
-              speed: activityDetailed.speed,
-              sourceId: activityDetailed.sourceId));
+        newActivity: activity,
+      );
     }
   }
 
   void setLoading(bool loading) {
     state = state.copyWith(loading: loading);
-  }
-
-  void setIcon(Uint8List? icon) {
-    state = state.copyWith(newIcon: icon);
   }
 }
