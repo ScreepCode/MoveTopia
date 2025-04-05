@@ -1,6 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:movetopia/data/model/activity.dart';
-import 'package:movetopia/data/repositories/local_health_impl.dart';
+import 'package:movetopia/data/service/health_service_impl.dart';
 import 'package:movetopia/utils/system_utils.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -20,9 +20,12 @@ class ActivitiesViewModel extends StateNotifier<ActivitiesState> {
 
   Future<void> fetchActivities({DateTime? endOfData}) async {
     endOfData ??= DateTime.now();
+    // Set endOfData to the end of the day
+    endOfData = DateTime(
+        endOfData.year, endOfData.month, endOfData.day, 23, 59, 59, 999);
     state = state.copyWith(isLoading: true);
     List<ActivityPreview>? workouts = await ref
-        .read(localHealthRepositoryProvider)
+        .read(healthService)
         .getActivities(endOfData.subtract(const Duration(days: 7)), endOfData);
 
     if (workouts == null || workouts.isEmpty) {

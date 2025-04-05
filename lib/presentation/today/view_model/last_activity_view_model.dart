@@ -1,6 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:movetopia/data/model/activity.dart';
-import 'package:movetopia/data/repositories/local_health_impl.dart';
+import 'package:movetopia/data/service/health_service_impl.dart';
 import 'package:riverpod/riverpod.dart';
 
 import 'last_activity_state.dart';
@@ -19,7 +19,7 @@ class LastTrainingViewModel extends StateNotifier<LastActivityState?> {
   Future<void> fetchLastTraining() async {
     // This should fetch the last training.
     ActivityPreview? healthValue =
-        await ref.read(localHealthRepositoryProvider).getLastActivity();
+        await ref.read(healthService).getLastActivity();
     if (healthValue != null) {
       state = LastActivityState(
           activityPreview: ActivityPreview(

@@ -3,22 +3,21 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:movetopia/data/model/badge.dart';
 import 'package:movetopia/data/repositories/badge_repository_impl.dart';
 import 'package:movetopia/data/repositories/device_info_repository_impl.dart';
+import 'package:movetopia/data/service/health_service_impl.dart';
 import 'package:movetopia/domain/repositories/badge_repository.dart';
 import 'package:movetopia/domain/repositories/device_info_repository.dart';
-import 'package:movetopia/domain/repositories/local_health.dart';
 
-import '../../data/repositories/local_health_impl.dart';
 import 'level_service.dart';
 
 class BadgeService {
   final BadgeRepository badgeRepository;
-  final LocalHealthRepository localHealthRepository;
+  final HealthServiceImpl healthService;
   final DeviceInfoRepository deviceInfoRepository;
   final LevelService levelService;
 
   BadgeService({
     required this.badgeRepository,
-    required this.localHealthRepository,
+    required this.healthService,
     required this.deviceInfoRepository,
     required this.levelService,
   });
@@ -78,7 +77,7 @@ class BadgeService {
   Future<void> _checkTotalStepsBadges(
       DateTime installationDate, DateTime end) async {
     final totalSteps =
-        await localHealthRepository.getStepsInInterval(installationDate, end);
+        (await healthService.getStepsInInterval(installationDate, end))[0];
     final badges = await badgeRepository
         .getBadgesByCategory(AchievementBadgeCategory.totalSteps);
 
@@ -89,9 +88,8 @@ class BadgeService {
 
   Future<void> _checkTotalCyclingBadges(
       DateTime installationDate, DateTime end) async {
-    final totalCyclingKm = await localHealthRepository
-            .getDistanceOfWorkoutsInInterval(
-                installationDate, end, [HealthWorkoutActivityType.BIKING]) /
+    final totalCyclingKm = await healthService.getDistanceOfWorkoutsInInterval(
+            installationDate, end, [HealthWorkoutActivityType.BIKING]) /
         1000; // Convert to km
     final badges = await badgeRepository
         .getBadgesByCategory(AchievementBadgeCategory.totalCyclingDistance);
@@ -119,7 +117,7 @@ class BadgeService {
           startOfDay.add(const Duration(hours: 23, minutes: 59, seconds: 59));
 
       final steps =
-          await localHealthRepository.getStepsInInterval(startOfDay, endOfDay);
+          (await healthService.getStepsInInterval(startOfDay, endOfDay))[0];
 
       for (var badge in badges) {
         final currentBadge = await badgeRepository.getBadgeById(badge.id);
@@ -141,7 +139,7 @@ class BadgeService {
 final badgeServiceProvider = Provider<BadgeService>((ref) {
   return BadgeService(
     badgeRepository: ref.watch(badgeRepositoryProvider),
-    localHealthRepository: ref.watch(localHealthRepositoryProvider),
+    healthService: ref.watch(healthService),
     deviceInfoRepository: ref.watch(deviceInfoRepositoryProvider),
     levelService: ref.watch(levelServiceProvider),
   );

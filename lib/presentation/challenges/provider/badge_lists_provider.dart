@@ -9,10 +9,10 @@ final todayStepsProvider = FutureProvider<double>((ref) async {
   final startOfDay = DateTime(now.year, now.month, now.day);
   final endOfDay =
       startOfDay.add(const Duration(hours: 23, minutes: 59, seconds: 59));
-  final todaySteps = await service.localHealthRepository.getStepsInInterval(
+  final todaySteps = (await service.healthService.getStepsInInterval(
     startOfDay,
     endOfDay,
-  );
+  ))[0];
   return todaySteps.toDouble();
 });
 
@@ -21,10 +21,10 @@ final totalStepsProvider = FutureProvider<double>((ref) async {
   final service = ref.read(badgeServiceProvider);
   final installationDate =
       await service.deviceInfoRepository.getInstallationDate();
-  final totalSteps = await service.localHealthRepository.getStepsInInterval(
+  final totalSteps = (await service.healthService.getStepsInInterval(
     installationDate,
     DateTime.now(),
-  );
+  ))[0];
   return totalSteps.toDouble();
 });
 
@@ -34,7 +34,7 @@ final totalCyclingProvider = FutureProvider<double>((ref) async {
   final installationDate =
       await service.deviceInfoRepository.getInstallationDate();
   final totalCyclingKilometer =
-      await service.localHealthRepository.getDistanceOfWorkoutsInInterval(
+      await service.healthService.getDistanceOfWorkoutsInInterval(
     installationDate,
     DateTime.now(),
     [HealthWorkoutActivityType.BIKING],

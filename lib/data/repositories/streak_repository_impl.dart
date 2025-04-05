@@ -2,9 +2,8 @@ import 'dart:convert';
 
 import 'package:logging/logging.dart';
 import 'package:movetopia/data/repositories/device_info_repository_impl.dart';
-import 'package:movetopia/data/repositories/local_health_impl.dart';
+import 'package:movetopia/data/service/health_service_impl.dart';
 import 'package:movetopia/domain/repositories/device_info_repository.dart';
-import 'package:movetopia/domain/repositories/local_health.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,10 +17,9 @@ class StreakRepositoryImpl implements StreakRepository {
   final logger = Logger('StreakRepositoryImpl');
   late Future<SharedPreferences> _prefsInstance;
   final DeviceInfoRepository _deviceInfoRepository;
-  final LocalHealthRepository _localHealthRepository;
+  final HealthServiceImpl _healthService;
 
-  StreakRepositoryImpl(
-      this._deviceInfoRepository, this._localHealthRepository) {
+  StreakRepositoryImpl(this._deviceInfoRepository, this._healthService) {
     _prefsInstance = SharedPreferences.getInstance();
   }
 
@@ -135,7 +133,7 @@ class StreakRepositoryImpl implements StreakRepository {
     logger.info(
         'Checking streaks since installation date: $installationDate with goal: $currentGoal');
 
-    final localHealthRepository = _localHealthRepository;
+    final localHealthRepository = _healthService;
 
     // Hole die Liste der bereits abgeschlossenen Tage
     final allCompletedDays = await getCompletedDays() ?? [];
@@ -160,8 +158,8 @@ class StreakRepositoryImpl implements StreakRepository {
         final endOfDay = DateTime(normalizedDay.year, normalizedDay.month,
             normalizedDay.day, 23, 59, 59);
 
-        final steps = await localHealthRepository.getStepsInInterval(
-            startOfDay, endOfDay);
+        final steps = (await localHealthRepository.getStepsInInterval(
+            startOfDay, endOfDay))[0];
         logger
             .info('Tag: $normalizedDay, Schritte: $steps, Ziel: $currentGoal');
 
@@ -252,6 +250,6 @@ class StreakRepositoryImpl implements StreakRepository {
 
 final streakRepositoryProvider = Provider<StreakRepository>((ref) {
   final deviceInfoRepository = ref.watch(deviceInfoRepositoryProvider);
-  final localHealthRepository = ref.watch(localHealthRepositoryProvider);
-  return StreakRepositoryImpl(deviceInfoRepository, localHealthRepository);
+  final healthServiceImpl = ref.watch(healthService);
+  return StreakRepositoryImpl(deviceInfoRepository, healthServiceImpl);
 });

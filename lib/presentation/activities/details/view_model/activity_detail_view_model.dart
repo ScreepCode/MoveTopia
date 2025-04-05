@@ -1,6 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:movetopia/data/model/activity.dart';
-import 'package:movetopia/data/repositories/local_health_impl.dart';
+import 'package:movetopia/data/service/health_service_impl.dart';
 import 'package:movetopia/utils/system_utils.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -19,9 +19,8 @@ class ActivityDetailedViewModel extends StateNotifier<ActivityDetailState> {
 
   Future<void> fetchActivityDetailed(ActivityPreview preview) async {
     // This should fetch the detailed
-    Activity? activityDetailed = await ref
-        .read(localHealthRepositoryProvider)
-        .getActivityDetailed(preview);
+    Activity? activityDetailed =
+        await ref.read(healthService).getActivityDetailed(preview);
     if (activityDetailed != null) {
       var activity = Activity(
           distance: activityDetailed.distance,

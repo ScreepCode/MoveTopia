@@ -1,4 +1,4 @@
-import 'package:movetopia/data/repositories/local_health_impl.dart';
+import 'package:movetopia/data/service/health_service_impl.dart';
 import 'package:movetopia/presentation/challenges/provider/streak_provider.dart';
 import 'package:movetopia/presentation/profile/view_model/profile_view_model.dart';
 import 'package:riverpod/riverpod.dart';
@@ -19,16 +19,16 @@ class StatsViewModel extends StateNotifier<StatsState> {
     DateTime now = DateTime.now();
     final startOfDay = DateTime(now.year, now.month, now.day);
     final endOfDay =
-    startOfDay.add(const Duration(hours: 23, minutes: 59, seconds: 59));
-    int steps = await ref
-        .read(localHealthRepositoryProvider)
-        .getStepsInInterval(startOfDay, endOfDay);
+        startOfDay.add(const Duration(hours: 23, minutes: 59, seconds: 59));
+    int steps = (await ref
+        .read(healthService)
+        .getStepsInInterval(startOfDay, endOfDay))[0];
     double distance = await ref
-        .read(localHealthRepositoryProvider)
-        .getDistanceInInterval(
-            startOfDay, endOfDay) / 1000;
+            .read(healthService)
+            .getDistanceInInterval(startOfDay, endOfDay) /
+        1000;
     int sleep = await ref
-        .read(localHealthRepositoryProvider)
+        .read(healthService)
         .getSleepFromDate(now.subtract(const Duration(days: 1)));
     state = state.copyWith(steps: steps, distance: distance, sleep: sleep);
 
