@@ -63,7 +63,7 @@ class TrackingScreen extends HookConsumerWidget {
                     startTimer:
                         ref.read(trackingViewModelProvider.notifier).startTimer,
                     durationMillis: trackingState.durationMillis,
-                    isRecording: trackingState!.isRecording,
+                    isRecording: trackingState.isRecording,
                     isPaused: trackingState.isPaused,
                   )));
   }
