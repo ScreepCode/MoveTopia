@@ -9,6 +9,7 @@
   "activity_no_activities_found": "Keine Aktivitäten gefunden",
   "activity_last_activity": "Letzte Aktivität",
   "activity_details": "{distance}km in {minutes} Minuten",
+  "activity_details_minutes": "{minutes} Minuten",
   "activity_distance": "Distanz",
   "activity_duration": "Dauer",
   "activity_duration_text": "{minutes} Min. {seconds} Sek.",

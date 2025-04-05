@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:installed_apps/installed_apps.dart';
 import 'package:logging/logging.dart';
 import 'package:movetopia/core/health_authorized_view_model.dart';
 import 'package:movetopia/data/model/activity.dart';
@@ -30,23 +29,6 @@ class ActivityDetailsScreen extends HookConsumerWidget {
           .fetchActivityDetailed(activityPreview);
     }
 
-    Future<void> setIcon() async {
-      if (activityPreview.sourceId.isNotEmpty) {
-        try {
-          var appIcon = (await InstalledApps.getAppInfo(
-                  activityPreview.sourceId.toString()))
-              ?.icon;
-          if (appIcon != null && appIcon.isNotEmpty) {
-            ref
-                .read(activityDetailedViewModelProvider.notifier)
-                .setIcon(appIcon);
-          }
-        } catch (_) {
-          log.info("App icon fetching failed");
-        }
-      }
-    }
-
     useEffect(() {
       Future(
         () async {
@@ -56,7 +38,6 @@ class ActivityDetailsScreen extends HookConsumerWidget {
           if (authState == HealthAuthViewModelState.authorized) {
             await fetchDetailedActivity();
           }
-          await setIcon();
 
           activityDetailNotifier.setLoading(false);
           return null;
@@ -89,7 +70,7 @@ class ActivityDetailsScreen extends HookConsumerWidget {
   Widget _buildHeaderDetails(
       BuildContext context, ActivityDetailState activityState) {
     return HeaderDetails(
-      platformIcon: activityState.icon,
+      platformIcon: activityState.activity.icon,
       title: getTranslatedActivityType(
           context, activityState.activity.activityType),
       start: activityState.activity.start,

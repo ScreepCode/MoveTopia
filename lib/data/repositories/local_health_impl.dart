@@ -50,7 +50,7 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
   /// Get the total distance covered in the given interval
   @override
   Future<double> getDistanceInInterval(DateTime start, DateTime end) async {
-    var distanceTypes;
+    List<HealthDataType> distanceTypes;
     if (Platform.isAndroid) {
       distanceTypes = [HealthDataType.DISTANCE_DELTA];
     } else if (Platform.isIOS) {
@@ -136,16 +136,19 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
       for (var i = 0; i < rawWorkouts!.length; i++) {
         var current = rawWorkouts[i];
         WorkoutHealthValue healthValue = current.value as WorkoutHealthValue;
-        var calories =
-            await getCaloriesBurnedInInterval(current.dateFrom, current.dateTo);
+
+        var kilometres = healthValue.totalDistance != null
+            ? (healthValue.totalDistance! / 1000)
+            : 0.0;
+        // Round kilometres to 2 decimal places
+        kilometres = (((kilometres * 100).toInt()) / 100).toDouble();
+
         ActivityPreview preview = ActivityPreview(
             activityType: healthValue.workoutActivityType,
-            caloriesBurnt: calories,
+            caloriesBurnt: healthValue.totalEnergyBurned ?? 0,
             start: current.dateFrom,
             end: current.dateTo,
-            distance: healthValue.totalDistance != null
-                ? (healthValue.totalDistance! / 1000).toDouble()
-                : 0.0,
+            distance: kilometres,
             sourceId: current.sourceName);
         parsedWorkouts.add(preview);
       }
@@ -159,9 +162,6 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
   @override
   Future<Activity?> getActivityDetailed(ActivityPreview preview) async {
     try {
-      List<HealthDataPoint>? data = await getHealthDataInInterval(
-          preview.start, preview.end, [HealthDataType.WORKOUT]);
-
       List<HealthDataPoint>? heartFrequency = await getHealthDataInInterval(
           preview.start, preview.end, [HealthDataType.HEART_RATE]);
       if (heartFrequency == null) {
@@ -177,13 +177,15 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
       }
 
       return Activity(
-          caloriesBurnt: preview.caloriesBurnt,
-          distance: preview.distance,
-          end: preview.end,
-          start: preview.start,
-          activityType: preview.activityType,
-          heartRates: heartRates,
-          sourceId: preview.sourceId);
+        caloriesBurnt: preview.caloriesBurnt,
+        distance: preview.distance,
+        steps: await getStepsInInterval(preview.start, preview.end),
+        end: preview.end,
+        start: preview.start,
+        activityType: preview.activityType,
+        heartRates: heartRates,
+        sourceId: preview.sourceId,
+      );
     } catch (e) {
       log.info(e);
       return null;
