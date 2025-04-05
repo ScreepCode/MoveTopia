@@ -86,7 +86,7 @@ class OnboardingScreen extends HookConsumerWidget {
                       child: Text(l10n.onboarding_skip),
                     )
                   else
-                    const SizedBox(width: 80),
+                    const SizedBox(width: 120),
 
                   // Dot indicators
                   Center(
@@ -109,7 +109,7 @@ class OnboardingScreen extends HookConsumerWidget {
                   ),
 
                   SizedBox(
-                    width: 80,
+                    width: 120,
                     child: !isLastPage
                         ? FilledButton(
                             onPressed: () {
