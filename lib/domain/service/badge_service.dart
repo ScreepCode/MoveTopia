@@ -136,6 +136,10 @@ class BadgeService {
   Future<List<AchievementBadge>> getAllBadges() async {
     return await badgeRepository.getAllBadges();
   }
+
+  Future<void> validateAllBadges() async {
+    await badgeRepository.validateAllBadges();
+  }
 }
 
 final badgeServiceProvider = Provider<BadgeService>((ref) {
