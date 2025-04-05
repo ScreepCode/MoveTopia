@@ -12,7 +12,7 @@ class DeviceInfoRepositoryImpl implements DeviceInfoRepository {
     final installationDate = prefs.getString(installationDateKey);
 
     if (installationDate == null) {
-      final now = DateTime.now().subtract(const Duration(days: 30));
+      final now = DateTime.now();
       await prefs.setString(installationDateKey, now.toIso8601String());
       await prefs.setString(
           lastOpenedDateKey, now.toIso8601String()); // Renamed key
@@ -30,9 +30,7 @@ class DeviceInfoRepositoryImpl implements DeviceInfoRepository {
   Future<DateTime> getLastOpenedDate() async {
     final prefs = await SharedPreferences.getInstance();
     final dateString = prefs.getString(lastOpenedDateKey);
-    return dateString != null
-        ? DateTime.parse(dateString)
-        : DateTime.now().subtract(Duration(days: 30));
+    return dateString != null ? DateTime.parse(dateString) : DateTime.now();
   }
 
   @override
