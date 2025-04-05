@@ -2,6 +2,7 @@ import 'package:activity_tracking/model/activity.dart';
 import 'package:activity_tracking/model/activity_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:movetopia/utils/tracking_utils.dart';
 
 class TrackingRecording extends StatelessWidget {
   final Activity? activity;
@@ -17,6 +18,7 @@ class TrackingRecording extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -28,6 +30,14 @@ class TrackingRecording extends StatelessWidget {
         if (activity?.locations != null)
           _buildDetailEntry(context, Icons.speed, l10n.activity_current_speed,
               "${activity!.locations!.isEmpty ? "--" : ((activity?.locations?.entries.last.value.speed ?? 0) * 10).roundToDouble() / 10} km/h"),
+        if (activity?.locations != null)
+          _buildDetailEntry(
+              context,
+              Icons.directions_run,
+              l10n.activity_current_pace,
+              activity!.locations!.isEmpty
+                  ? "-- min/km"
+                  : getPace(activity?.locations?.entries.last.value.pace ?? 0)),
         if (activity?.steps != null &&
             activity?.activityType != ActivityType.biking)
           _buildDetailEntry(

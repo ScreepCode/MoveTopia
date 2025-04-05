@@ -1,4 +1,5 @@
 import 'package:activity_tracking/model/activity.dart';
+import 'package:activity_tracking/model/activity_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:health/health.dart';
@@ -39,6 +40,23 @@ class TrackingFinished extends StatelessWidget {
     return ((totalSpeed / activity.locations!.length) * 10.0).round() / 10.0;
   }
 
+  String getAveragePace(Activity activity) {
+    if (activity.locations == null) {
+      return "-- min/km";
+    }
+    if (activity.locations!.isEmpty) {
+      return "-- min/km";
+    }
+
+    double totalPace = 0.0;
+    activity.locations!.forEach((datetime, location) {
+      totalPace += location.pace;
+    });
+
+    return getPace(
+        (totalPace / activity.locations!.length) * 10.0.round() / 10.0);
+  }
+
   Widget _buildHeaderDetails(BuildContext context, Activity activity) {
     return HeaderDetails(
       title: getTranslatedActivityType(
@@ -60,8 +78,9 @@ class TrackingFinished extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DetailStatsCardEntry(
-              displayName: l10n.activity_steps, value: "${activity.steps}"),
+          if (activity.activityType != ActivityType.biking)
+            DetailStatsCardEntry(
+                displayName: l10n.activity_steps, value: "${activity.steps}"),
           DetailStatsCardEntry(
               displayName: l10n.activity_distance,
               value: "${activity.distance} km"),
@@ -71,7 +90,10 @@ class TrackingFinished extends StatelessWidget {
                   activity.startDateTime ?? 0, activity.endDateTime ?? 0)),
           DetailStatsCardEntry(
               displayName: l10n.activity_avg_speed,
-              value: "${getAverageSpeed(activity)} km/h")
+              value: "${getAverageSpeed(activity)} km/h"),
+          DetailStatsCardEntry(
+              displayName: l10n.activity_avg_pace,
+              value: getAveragePace(activity).toString()),
         ],
       ),
     );

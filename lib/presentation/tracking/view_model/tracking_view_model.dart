@@ -36,8 +36,12 @@ class TrackingViewModel extends StateNotifier<TrackingState?> {
         activityTrackingPlugin.getNativeEvents().listen(_onActivityUpdate);
   }
 
+  pauseTracking() async {
+    print("pauseTracking");
+  }
+
   stopTracking() async {
-    activityStreamSubscription.cancel();
+    await activityStreamSubscription.cancel();
     var finalResult = await activityTrackingPlugin.stopCurrentActivity();
     if (finalResult != null) {
       state = state?.copyWith(
@@ -49,8 +53,25 @@ class TrackingViewModel extends StateNotifier<TrackingState?> {
     }
   }
 
+  void startTimer() {
+    Future.delayed(const Duration(seconds: 1), () {
+      ref.read(trackingViewModelProvider.notifier).updateDuration(getDuration(
+          state?.activity.startDateTime ?? 0,
+          DateTime.now().millisecondsSinceEpoch));
+      if (state?.isRecording == true) {
+        startTimer();
+      } else {
+        return;
+      }
+    });
+  }
+
   updateDuration(String duration) {
     state = state?.copyWith(newDuration: duration);
+  }
+
+  clearState() {
+    state = TrackingState.initial();
   }
 
   _onActivityUpdate(dynamic e) {
