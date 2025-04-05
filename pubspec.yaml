@@ -15,7 +15,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   riverpod: ^2.5.1
   hooks_riverpod: ^2.5.1
-  health: ^11.1.0
+  health: ^12.1.0
   intl: any
   flutter_localizations:
     sdk: flutter
@@ -35,6 +35,8 @@ dependencies:
       url: https://github.com/Jozys/activity_tracking.git
       ref: main
   permission_handler: ^11.4.0
+  smooth_page_indicator: ^1.1.0
+  app_settings: ^6.1.1
 
 dev_dependencies:
   flutter_test:
