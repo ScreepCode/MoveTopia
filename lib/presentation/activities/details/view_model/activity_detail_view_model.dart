@@ -25,6 +25,7 @@ class ActivityDetailedViewModel extends StateNotifier<ActivityDetailState> {
     if (activityDetailed != null) {
       var activity = Activity(
           distance: activityDetailed.distance,
+          steps: activityDetailed.steps,
           activityType: activityDetailed.activityType,
           caloriesBurnt: activityDetailed.caloriesBurnt,
           start: activityDetailed.start,

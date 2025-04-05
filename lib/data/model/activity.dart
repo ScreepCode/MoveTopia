@@ -16,6 +16,7 @@ interface class Activity extends ActivityPreview {
 
   Activity({
     required super.distance,
+    required super.steps,
     required super.activityType,
     required super.caloriesBurnt,
     required super.start,
@@ -30,6 +31,7 @@ interface class ActivityPreview {
   final HealthWorkoutActivityType activityType;
   final int caloriesBurnt;
   final double distance;
+  final int steps;
   final DateTime start;
   final DateTime end;
   final String sourceId;
@@ -39,6 +41,7 @@ interface class ActivityPreview {
     required this.activityType,
     required this.caloriesBurnt,
     required this.distance,
+    required this.steps,
     required this.start,
     required this.end,
     required this.sourceId,
@@ -55,6 +58,7 @@ interface class ActivityPreview {
       activityType: HealthWorkoutActivityType.WALKING,
       caloriesBurnt: json['caloriesBurnt'],
       distance: json['distance'],
+      steps: json['steps'],
       start: DateTime.parse(json['start']),
       end: DateTime.parse(json['end']),
       sourceId: json["sourceId"],
@@ -66,6 +70,7 @@ interface class ActivityPreview {
       'activityType': "",
       'caloriesBurnt': caloriesBurnt,
       'distance': distance,
+      'steps': steps,
       'start': start.toIso8601String(), // Convert DateTime to ISO8601 string
       'end': end.toIso8601String(), // Convert DateTime to ISO8601 string
     };

@@ -90,6 +90,14 @@ Widget _buildGroupedActivities(
     Map<DateTime, List<ActivityPreview>>? activities,
     bool isLoading,
     ScrollController scrollController) {
+  int getStepsForDay(List<ActivityPreview> activityList) {
+    int steps = 0;
+    for (var activity in activityList) {
+      steps += activity.steps;
+    }
+    return steps;
+  }
+
   return ListView.builder(
     controller: scrollController,
     physics: const ScrollPhysics(),
@@ -103,10 +111,18 @@ Widget _buildGroupedActivities(
           if (date != null && activityList.isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                DateFormat("dd. MMMM yyyy").format(date),
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      DateFormat("dd. MMMM yyyy").format(date),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      " ${getStepsForDay(activityList)} ${AppLocalizations.of(context)!.activity_steps}",
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ]),
             ),
           const Divider(),
           ...activityList.map(

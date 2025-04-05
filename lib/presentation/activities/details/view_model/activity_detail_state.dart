@@ -15,6 +15,7 @@ class ActivityDetailState {
         distance: 0,
         activityType: HealthWorkoutActivityType.OTHER,
         caloriesBurnt: 0,
+        steps: 0,
         start: DateTime.now(),
         end: DateTime.now(),
         heartRates: [],
