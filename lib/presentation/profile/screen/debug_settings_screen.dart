@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../provider/debug_provider.dart';
 import '../widgets/debug_section.dart';
+import 'log_screen.dart';
 
 class DebugSettingsScreen extends ConsumerWidget {
   const DebugSettingsScreen({super.key});
@@ -16,6 +17,19 @@ class DebugSettingsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.settingsDebugTitle),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.list_alt),
+            tooltip: 'App Logs',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const LogScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: isDebugBuild.when(
         data: (isDebug) {

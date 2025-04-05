@@ -3,20 +3,36 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
+import 'package:movetopia/core/app_logger.dart';
 import 'package:movetopia/core/navigation_host.dart';
 import 'package:movetopia/domain/service/app_startup_service.dart';
 import 'package:movetopia/presentation/common/theme.dart';
 import 'package:movetopia/presentation/onboarding/providers/onboarding_provider.dart';
+import 'package:movetopia/presentation/profile/provider/debug_provider.dart';
 import 'package:movetopia/presentation/profile/view_model/profile_view_model.dart';
 
 import 'core/health_authorized_view_model.dart';
 import 'data/repositories/device_info_repository_impl.dart';
 import 'domain/repositories/profile_repository.dart';
 
+final initLoggerProvider = Provider((ref) {
+  AppLogger.init();
+
+  ref.listen<AsyncValue<bool>>(isDebugBuildProvider, (_, next) {
+    next.whenData((isDebug) {
+      AppLogger.updateDebugStatus(isDebug);
+    });
+  });
+
+  return true; // Dummy-Wert
+});
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  _setupLogging();
+  AppLogger.init();
+  final log = AppLogger.getLogger('main');
+  log.info('App gestartet');
 
   runApp(
     const ProviderScope(
@@ -25,33 +41,10 @@ void main() {
   );
 }
 
-void _setupLogging() {
-  Logger.root.level = Level.ALL;
-
-  Logger.root.onRecord.listen((record) {
-    String emoji = '📃';
-    if (record.level == Level.CONFIG) emoji = '⚙️';
-    if (record.level == Level.INFO) emoji = 'ℹ️';
-    if (record.level == Level.WARNING) emoji = '⚠️';
-    if (record.level == Level.SEVERE) emoji = '🔥';
-
-    print(
-        '$emoji ${record.time}: [${record.loggerName}] ${record.level.name}: ${record.message}');
-
-    if (record.error != null) {
-      print('Error: ${record.error}');
-    }
-    if (record.stackTrace != null) {
-      print('StackTrace: ${record.stackTrace}');
-    }
-  });
-
-  final log = Logger('main');
-  log.info('Logging initialized');
-}
-
 final appInitProvider = Provider((ref) {
   final hasCompletedOnboarding = ref.watch(hasCompletedOnboardingProvider);
+
+  ref.watch(initLoggerProvider);
 
   hasCompletedOnboarding.whenData((isCompleted) {
     if (isCompleted) {

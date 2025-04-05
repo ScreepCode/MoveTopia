@@ -1,5 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logging/logging.dart';
+import 'package:movetopia/core/app_logger.dart';
+import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../../../data/repositories/badge_repository_impl.dart';
 import '../../../data/repositories/debug_repository_impl.dart';
@@ -7,8 +13,41 @@ import '../../../data/repositories/device_info_repository_impl.dart';
 import '../../../data/repositories/streak_repository_impl.dart';
 import '../../../domain/repositories/debug_repository.dart';
 import '../../../domain/service/badge_service.dart';
-import '../../challenges/provider/streak_provider.dart';
 import '../../challenges/badgeLists/viewmodel/badge_lists_view_model.dart';
+import '../../challenges/provider/streak_provider.dart';
+
+/// Ein StateNotifier für das Sammeln und Filtern von LogRecords
+class AppLogNotifier extends StateNotifier<List<LogRecord>> {
+  final _logger = AppLogger.getLogger('AppLogNotifier');
+
+  AppLogNotifier() : super([]) {
+    state = List.from(AppLogger.allLogs);
+
+    Logger.root.onRecord.listen((record) {
+      state = List.from(AppLogger.allLogs);
+    });
+
+    _logger.info('AppLogNotifier initialisiert');
+  }
+
+  void clearLogs() {
+    AppLogger.allLogs.clear();
+    state = [];
+    _logger.info('Logs wurden gelöscht');
+  }
+
+  List<LogRecord> getFilteredLogs(String? category) {
+    if (category == null || category.isEmpty) {
+      return state;
+    }
+    return state.where((log) => log.loggerName.contains(category)).toList();
+  }
+}
+
+/// Provider für alle App-Logs
+final appLogsProvider = StateNotifierProvider<AppLogNotifier, List<LogRecord>>(
+  (ref) => AppLogNotifier(),
+);
 
 // Provider für das Debug-Repository
 final debugRepositoryProvider = Provider<DebugRepository>((ref) {
@@ -134,4 +173,26 @@ final allBadgesProvider =
             'isAchieved': badge.isAchieved,
           })
       .toList();
+});
+
+// Provider zum Löschen der Badges-Datenbank und Erzwingen eines kompletten Neustarts
+final resetBadgesDatabaseProvider = Provider<Future<void> Function()>((ref) {
+  return () async {
+    try {
+      final databasePath = await getDatabasesPath();
+      final badgesDbPath = path.join(databasePath, 'badges.db');
+      final badgesDbFile = File(badgesDbPath);
+
+      if (await badgesDbFile.exists()) {
+        await badgesDbFile.delete();
+        await BadgeRepositoryImpl.closeDatabase();
+
+        ref.invalidate(allBadgesProvider);
+
+        return;
+      }
+    } catch (e) {
+      throw Exception('Fehler beim Zurücksetzen der Badges-Datenbank: $e');
+    }
+  };
 });
