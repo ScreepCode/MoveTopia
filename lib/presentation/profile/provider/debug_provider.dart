@@ -1,16 +1,21 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../data/repositories/badge_repository_impl.dart';
 import '../../../data/repositories/debug_repository_impl.dart';
 import '../../../data/repositories/device_info_repository_impl.dart';
 import '../../../data/repositories/streak_repository_impl.dart';
 import '../../../domain/repositories/debug_repository.dart';
-import '../../../domain/repositories/device_info_repository.dart';
+import '../../../domain/service/badge_service.dart';
 import '../../challenges/provider/streak_provider.dart';
+import '../../challenges/badgeLists/viewmodel/badge_lists_view_model.dart';
 
 // Provider für das Debug-Repository
 final debugRepositoryProvider = Provider<DebugRepository>((ref) {
   final streakRepository = ref.watch(streakRepositoryProvider);
-  return DebugRepositoryImpl(streakRepository);
+  final badgeRepository = ref.watch(badgeRepositoryProvider);
+  final badgeService = ref.watch(badgeServiceProvider);
+  return DebugRepositoryImpl(streakRepository, badgeRepository, badgeService);
 });
 
 // Provider um zu prüfen, ob die App im Debug-Modus läuft
@@ -62,6 +67,16 @@ final resetStreakProvider = Provider<Future<void> Function()>((ref) {
   };
 });
 
+// Provider für das Zurücksetzen der Badge-Daten
+final resetBadgesProvider = Provider<Future<void> Function()>((ref) {
+  return () async {
+    final debugRepository = ref.read(debugRepositoryProvider);
+
+    // Badges zurücksetzen
+    await debugRepository.resetBadgeData();
+  };
+});
+
 // Provider für die Simulation von vergangenen Tagen
 final simulateStreakForPastDaysProvider =
     Provider<Future<void> Function(int)>((ref) {
@@ -80,4 +95,43 @@ final simulateStreakForDateProvider =
     await debugRepository.simulateStreakForSpecificDate(date);
     ref.read(streakRefreshProvider.notifier).state++;
   };
+});
+
+// Provider für die Validation aller Badges
+final validateAllBadgesProvider = Provider<Future<void> Function()>((ref) {
+  return () async {
+    final debugRepository = ref.read(debugRepositoryProvider);
+    await debugRepository.validateAllBadges();
+
+    // Badges im UI aktualisieren
+    ref.read(badgeListsViewModelProvider.notifier).refreshBadges();
+  };
+});
+
+// Provider für das Umschalten des Status eines einzelnen Badges
+final toggleBadgeStatusProvider =
+    Provider<Future<void> Function(int, bool)>((ref) {
+  return (badgeId, achieved) async {
+    final debugRepository = ref.read(debugRepositoryProvider);
+    await debugRepository.toggleBadgeStatus(badgeId, achieved);
+
+    // Badges im UI aktualisieren
+    ref.read(badgeListsViewModelProvider.notifier).refreshBadges();
+  };
+});
+
+// Provider für alle Badges
+final allBadgesProvider =
+    FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final badgeRepository = ref.watch(badgeRepositoryProvider);
+  final badges = await badgeRepository.getAllBadges();
+
+  return badges
+      .map((badge) => {
+            'id': badge.id,
+            'name': badge.name,
+            'category': badge.category.toString().split('.').last,
+            'isAchieved': badge.isAchieved,
+          })
+      .toList();
 });

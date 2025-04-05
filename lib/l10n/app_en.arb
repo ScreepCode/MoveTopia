@@ -268,7 +268,28 @@
       }
     }
   },
-  "settingsDebugStreakResetSuccess": "Streak has been reset!",
+  "settingsDebugStreakResetSuccess": "Streak data reset successfully",
+  "settingsDebugBadgeTitle": "Debug Badges",
+  "settingsDebugBadgeReset": "Reset Badge Data",
+  "settingsDebugBadgeResetSuccess": "Badge data reset successfully",
+  "settingsDebugBadgeError": "Error resetting badges: {error}",
+  "@settingsDebugBadgeError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsDebugBadgeValidate": "Validate All Badges",
+  "settingsDebugBadgeValidateSuccess": "All badges validated successfully",
+  "settingsDebugBadgeToggleTitle": "Toggle Individual Badge Status",
+  "settingsDebugBadgeSelect": "Select Badge",
+  "settingsDebugBadgeStatusDone": "Achieved",
+  "settingsDebugBadgeStatusNotDone": "Not Achieved",
+  "settingsDebugBadgeApply": "Apply",
+  "settingsDebugBadgeToggleSuccess": "Badge status updated successfully",
+  "settingsDebugBadgeLoadError": "Error loading badges",
+
   "@_TRACKING": {},
   "tracking_title": "Fitness Tracking",
   "tracking_start_activity": "Start Activity",

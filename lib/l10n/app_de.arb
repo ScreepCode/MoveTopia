@@ -256,7 +256,7 @@
       }
     }
   },
-  "settingsDebugStreakDateMarked": "Tag {date} als erreicht markiert!",
+  "settingsDebugStreakDateMarked": "Tag {date} als abgeschlossen markiert!",
   "@settingsDebugStreakDateMarked": {
     "placeholders": {
       "date": {
@@ -264,7 +264,27 @@
       }
     }
   },
-  "settingsDebugStreakResetSuccess": "Serie wurde zurückgesetzt!",
+  "settingsDebugStreakResetSuccess": "Serien-Daten wurden zurückgesetzt",
+  "settingsDebugBadgeTitle": "Abzeichen Debuggen",
+  "settingsDebugBadgeReset": "Abzeichen-Daten zurücksetzen",
+  "settingsDebugBadgeResetSuccess": "Abzeichen-Daten wurden zurückgesetzt",
+  "settingsDebugBadgeError": "Fehler beim Zurücksetzen der Abzeichen: {error}",
+  "@settingsDebugBadgeError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsDebugBadgeValidate": "Alle Abzeichen validieren",
+  "settingsDebugBadgeValidateSuccess": "Alle Abzeichen wurden erfolgreich validiert",
+  "settingsDebugBadgeToggleTitle": "Status einzelner Abzeichen ändern",
+  "settingsDebugBadgeSelect": "Abzeichen auswählen",
+  "settingsDebugBadgeStatusDone": "Erreicht",
+  "settingsDebugBadgeStatusNotDone": "Nicht erreicht",
+  "settingsDebugBadgeApply": "Anwenden",
+  "settingsDebugBadgeToggleSuccess": "Abzeichen-Status erfolgreich aktualisiert",
+  "settingsDebugBadgeLoadError": "Fehler beim Laden der Abzeichen",
   "@_TRACKING": {},
   "tracking_title": "Fitness Tracking",
   "tracking_start_activity": "Aktivität starten",
