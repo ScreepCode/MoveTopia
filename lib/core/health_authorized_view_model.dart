@@ -60,12 +60,14 @@ class HealthAuthViewModel extends StateNotifier<HealthAuthViewModelState> {
             state = HealthAuthViewModelState.authorizationNotGranted;
           }
         } catch (error) {
+          log.severe('Health permission authorization error: $error');
           state = HealthAuthViewModelState.error;
         }
       } else {
         state = HealthAuthViewModelState.authorized;
       }
     } catch (error) {
+      log.severe('Health permission error: $error');
       state = HealthAuthViewModelState.error;
     }
   }
@@ -86,8 +88,9 @@ class HealthAuthViewModel extends StateNotifier<HealthAuthViewModelState> {
           permissions: accessPermissions);
       return authorized;
     } catch (error) {
+      log.severe('Health write permission error: $error');
       return false;
-    } finally {}
+    }
   }
 
   Future<void> authorize() async {

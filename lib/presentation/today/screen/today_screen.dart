@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:movetopia/presentation/common/app_assets.dart';
+import 'package:movetopia/presentation/onboarding/routes.dart';
 import 'package:movetopia/presentation/today/view_model/last_activity_view_model.dart';
 import 'package:movetopia/presentation/today/view_model/stats_view_model.dart';
 import 'package:movetopia/presentation/today/widgets/last_activity_card.dart';
@@ -27,12 +28,22 @@ class TodayScreen extends HookConsumerWidget {
     final statsState = ref.watch(statsViewModelProvider);
     final authState = ref.watch(healthViewModelProvider);
     final trackingState = ref.watch(trackingViewModelProvider);
+    final previousAuthState = useRef<HealthAuthViewModelState?>(null);
+
+    // Halte den Ladezustand
+    final isLoading = useState(false);
+    final refreshIndicatorKey = useRef(GlobalKey<RefreshIndicatorState>());
 
     Future<void> fetchHealthData() async {
-      await ref
-          .read(lastActivityViewModelProvider.notifier)
-          .fetchLastTraining();
-      await ref.read(statsViewModelProvider.notifier).fetchStats();
+      try {
+        isLoading.value = true;
+        await ref
+            .read(lastActivityViewModelProvider.notifier)
+            .fetchLastTraining();
+        await ref.read(statsViewModelProvider.notifier).fetchStats();
+      } finally {
+        isLoading.value = false;
+      }
     }
 
     Future<void> pauseTracking() async {
@@ -45,13 +56,39 @@ class TodayScreen extends HookConsumerWidget {
       context.push("/tracking");
     }
 
+    // Zeige den RefreshIndicator manuell an, wenn wir laden
+    useEffect(() {
+      if (isLoading.value) {
+        // Füge einen Frame-Callback hinzu, um sicherzustellen, dass der Indikator erst angezeigt wird,
+        // nachdem das Widget vollständig gerendert wurde
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          refreshIndicatorKey.value.currentState?.show();
+        });
+      }
+      return null;
+    }, [isLoading.value]);
+
+    useEffect(() {
+      if (authState == HealthAuthViewModelState.authorizationNotGranted ||
+          authState == HealthAuthViewModelState.error) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          context.go(authorizationProblemPath);
+        });
+      }
+      return null;
+    }, [authState]);
+
     useEffect(() {
       if (authState == HealthAuthViewModelState.authorized) {
-        fetchHealthData();
+        if (previousAuthState.value != HealthAuthViewModelState.authorized) {
+          fetchHealthData();
+        }
       }
 
+      previousAuthState.value = authState;
+
       return null;
-    }, []);
+    }, [authState]);
 
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
@@ -67,8 +104,16 @@ class TodayScreen extends HookConsumerWidget {
             IconButton(onPressed: () => (), icon: const Icon(Icons.settings))
           ],
         ),
-        body: _buildBody(context, ref, lastActivityState, statsState,
-            trackingState, fetchHealthData, stopTracking, pauseTracking),
+        body: _buildBody(
+            context,
+            ref,
+            lastActivityState,
+            statsState,
+            trackingState,
+            fetchHealthData,
+            stopTracking,
+            pauseTracking,
+            refreshIndicatorKey.value),
         floatingActionButton: trackingState?.isRecording == false
             ? FloatingActionButton(
                 child: const Icon(Icons.add),
@@ -88,9 +133,11 @@ Widget _buildBody(
   Future<void> Function() fetchHealthData,
   Future<void> Function() stopTracking,
   Future<void> Function() pauseTracking,
+  GlobalKey<RefreshIndicatorState> refreshIndicatorKey,
 ) {
   return Stack(children: [
     RefreshIndicator(
+      key: refreshIndicatorKey,
       color: Colors.white,
       backgroundColor: Colors.blue,
       onRefresh: fetchHealthData,
