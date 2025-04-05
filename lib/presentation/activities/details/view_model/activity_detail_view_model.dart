@@ -1,7 +1,7 @@
 import 'package:logging/logging.dart';
 import 'package:movetopia/data/model/activity.dart';
 import 'package:movetopia/data/repositories/local_health_impl.dart';
-import 'package:movetopia/utils/health_utils.dart';
+import 'package:movetopia/utils/system_utils.dart';
 import 'package:riverpod/riverpod.dart';
 
 import 'activity_detail_state.dart';
@@ -36,7 +36,7 @@ class ActivityDetailedViewModel extends StateNotifier<ActivityDetailState> {
           sourceId: activityDetailed.sourceId);
       activity.icon = preview.icon != null && preview.icon!.isNotEmpty
           ? preview.icon
-          : await getWorkoutIcon(preview.sourceId);
+          : await getInstalledAppIcon(preview.sourceId);
       state = state.copyWith(
         newActivity: activity,
       );

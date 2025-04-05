@@ -12,7 +12,6 @@ class LastActivityState {
             activityType: HealthWorkoutActivityType.OTHER,
             caloriesBurnt: 0,
             distance: 0,
-            steps: 0,
             start: DateTime.now(),
             end: DateTime.now(),
             sourceId: ""));

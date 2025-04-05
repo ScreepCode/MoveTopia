@@ -14,13 +14,12 @@ import 'package:movetopia/utils/health_utils.dart';
 import '../view_model/activities_state.dart';
 import '../view_model/activities_view_model.dart';
 
-final log = Logger("ActivitiesScreen");
-
 class ActivitiesScreen extends HookConsumerWidget {
   const ActivitiesScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final log = Logger("ActivitiesScreen");
     final activities = ref.watch(activitiesViewModelProvider);
     HealthAuthViewModelState authState = ref.read(healthViewModelProvider);
     var scrollController = useScrollController();

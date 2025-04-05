@@ -1,10 +1,6 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:health/health.dart';
-import 'package:installed_apps/installed_apps.dart';
-import 'package:movetopia/presentation/activities/list/screen/activities_screen.dart';
 
 Map<HealthWorkoutActivityType, String> activityTypeTranslations(
     BuildContext context) {
@@ -278,18 +274,4 @@ IconData getActivityIcon(HealthWorkoutActivityType type) {
       Icons.abc;
   }
   return Icons.abc;
-}
-
-Future<Uint8List?> getWorkoutIcon(String sourceId) async {
-  if (sourceId.isNotEmpty) {
-    try {
-      var appIcon = (await InstalledApps.getAppInfo(sourceId.toString()))?.icon;
-      if (appIcon != null && appIcon.isNotEmpty) {
-        return appIcon;
-      }
-    } catch (_) {
-      log.info("App icon fetching failed");
-    }
-  }
-  return null;
 }

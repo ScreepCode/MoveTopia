@@ -149,7 +149,6 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
             start: current.dateFrom,
             end: current.dateTo,
             distance: kilometres,
-            steps: healthValue.totalSteps ?? 0,
             sourceId: current.sourceName);
         parsedWorkouts.add(preview);
       }
@@ -180,7 +179,7 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
       return Activity(
         caloriesBurnt: preview.caloriesBurnt,
         distance: preview.distance,
-        steps: preview.steps,
+        steps: await getStepsInInterval(preview.start, preview.end),
         end: preview.end,
         start: preview.start,
         activityType: preview.activityType,
@@ -211,7 +210,6 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
         return ActivityPreview(
             activityType: healthValue.workoutActivityType,
             caloriesBurnt: calories,
-            steps: healthValue.totalSteps ?? 0,
             start: lastWorkout.dateFrom,
             end: lastWorkout.dateTo,
             distance: (healthValue.totalDistance ?? 0).toDouble(),
@@ -293,7 +291,6 @@ interface class LocalHealthRepoImpl extends LocalHealthRepository {
               (element) => element.name == preview.activityType?.name),
           start: startTime,
           end: endTime,
-          steps: preview.steps ?? 0,
           distance: preview.distance ?? 0,
           sourceId: appPackage.packageName,
           caloriesBurnt: 0);

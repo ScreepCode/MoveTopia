@@ -1,9 +1,7 @@
-import 'dart:typed_data';
-
 import 'package:logging/logging.dart';
 import 'package:movetopia/data/model/activity.dart';
 import 'package:movetopia/data/repositories/local_health_impl.dart';
-import 'package:movetopia/utils/health_utils.dart';
+import 'package:movetopia/utils/system_utils.dart';
 import 'package:riverpod/riverpod.dart';
 
 import 'activities_state.dart';
@@ -38,10 +36,10 @@ class ActivitiesViewModel extends StateNotifier<ActivitiesState> {
     for (int i = 0; i < workouts.length; i++) {
       ActivityPreview workout = workouts[i];
       state.icons ??= {};
-      if(state.icons!.containsKey(workout.sourceId)) {
+      if (state.icons!.containsKey(workout.sourceId)) {
         workouts[i].icon = state.icons?[workout.sourceId];
       } else {
-        workouts[i].icon = await getWorkoutIcon(
+        workouts[i].icon = await getInstalledAppIcon(
           workout.sourceId ?? "",
         );
         state.icons![workout.sourceId!] = workouts[i].icon;
