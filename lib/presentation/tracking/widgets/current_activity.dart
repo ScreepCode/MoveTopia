@@ -8,9 +8,13 @@ class CurrentActivity extends StatelessWidget {
 
   final Function onStop;
 
+  final Function onPause;
+
   final bool isRecording;
 
-  final String duration;
+  final bool isPaused;
+
+  final int durationMillis;
 
   final Function startTimer;
 
@@ -18,9 +22,11 @@ class CurrentActivity extends StatelessWidget {
       {super.key,
       required this.activity,
       required this.onStop,
+      required this.onPause,
       required this.isRecording,
       required this.startTimer,
-      required this.duration});
+      required this.durationMillis,
+      required this.isPaused});
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +34,10 @@ class CurrentActivity extends StatelessWidget {
         ? TrackingRecording(
             activity: activity,
             onStop: onStop,
-            duration: duration,
+            durationMillis: durationMillis,
+            isPaused: isPaused,
+            onPause: onPause,
           )
-        : TrackingFinished(activity: activity);
+        : TrackingFinished(activity: activity, durationMillis: durationMillis);
   }
 }

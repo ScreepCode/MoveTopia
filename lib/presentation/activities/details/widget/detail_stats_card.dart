@@ -21,14 +21,20 @@ class DetailStatsCardEntry extends StatelessWidget {
                   displayName,
                   style: TextStyle(
                       fontSize: 14,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      color: Theme
+                          .of(context)
+                          .colorScheme
+                          .onSurfaceVariant),
                 ),
               ]),
               Text(value,
                   textAlign: TextAlign.right,
                   style: TextStyle(
                       fontSize: 18,
-                      color: Theme.of(context).colorScheme.onSurface))
+                      color: Theme
+                          .of(context)
+                          .colorScheme
+                          .onSurface))
             ],
           ),
           if (child != null) child!

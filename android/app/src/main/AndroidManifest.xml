@@ -91,6 +91,14 @@
             android:exported="false"
             android:foregroundServiceType="location|health" />
 
+        <receiver
+            android:name="de.buseslaar.tracking.activity_tracking.notification.receiver.ActivityBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="de.buseslaar.tracking.PAUSE" />
+                <action android:name="de.buseslaar.tracking.STOP" />
+            </intent-filter>
+        </receiver>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
