@@ -241,8 +241,7 @@
     }
   },
   "@_DEBUGGING": {},
-  "settingsDebugTitle": "Debug-Einstellungen",
-  "settingsDebugMenu": "Debug-Werkzeuge",
+  "settingsDebugTitle": "Debug-Werkzeuge",
   "settingsDebugNotAvailable": "Dieser Bildschirm ist nur in Debug-Builds verfügbar",
   "settingsDebugStreakTitle": "Serie Debuggen",
   "settingsDebugStreakSimulate": "Serie simulieren",
@@ -326,6 +325,8 @@
   "permission_health_read_description": "Zum Lesen deiner Aktivitäten und Fitness-Daten",
   "permission_health_write_title": "Gesundheitsdaten Schreiben",
   "permission_health_write_description": "Zum Speichern deiner Aktivitäten in der Health-Datenbank",
+  "permission_health_historical_title": "Historische Gesundheitsdaten",
+  "permission_health_historical_description": "Für den Zugriff auf Gesundheitsdaten, die älter als 30 Tage sind, für Langzeitanalysen",
   "permission_allow": "Erlauben",
   "permission_settings_title": "Berechtigungen",
   "permission_settings_subtitle": "App-Berechtigungen verwalten",
@@ -355,7 +356,9 @@
   "health_write_granted": "Schreib-Zugriff erteilt",
   "health_write_denied": "Schreib-Zugriff nicht erteilt",
   "requesting_health_write_permissions": "Schreibrechte werden angefordert...",
-
+  "requesting_health_historical_permissions": "Zugriff auf historische Daten wird angefordert...",
+  "health_historical_granted": "Zugriff auf historische Gesundheitsdaten gewährt",
+  "health_historical_denied": "Zugriff auf historische Gesundheitsdaten nicht gewährt",
   "logs_title": "App-Protokolle",
   "logs_clear_tooltip": "Logs löschen",
   "logs_copy_tooltip": "Logs in Zwischenablage kopieren",
@@ -379,5 +382,18 @@
   "logs_details_error": "Fehler:",
   "logs_details_stack_trace": "Stack Trace:",
   "logs_copy": "Kopieren",
-  "logs_close": "Schließen"
+  "logs_close": "Schließen",
+  "settingsDebugAppDatesSectionTitle": "App-Daten",
+  "settingsDebugInstallationDate": "Installationsdatum",
+  "settingsDebugLastUpdatedDate": "Letztes Aktualisierungsdatum",
+  "settingsDebugNewInstallationDate": "Neues Installationsdatum",
+  "settingsDebugNewLastUpdatedDate": "Neues Aktualisierungsdatum",
+  "settingsDebugDateUpdated": "Datum erfolgreich aktualisiert",
+  "settingsDebugUpdateButton": "Aktualisieren",
+  "settingsDebugErrorLoadingDate": "Fehler beim Laden: {title}",
+  
+  "settingsDebugCacheTitle": "Cache-Verwaltung",
+  "settingsDebugCacheClear": "Cache leeren",
+  "settingsDebugCacheCleared": "Cache erfolgreich geleert",
+  "settingsDebugCacheError": "Fehler beim Leeren des Caches: {error}"
 }

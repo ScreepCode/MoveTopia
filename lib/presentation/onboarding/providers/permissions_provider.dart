@@ -17,6 +17,7 @@ class PermissionsState {
   final PermissionStatus notificationPermissionStatus;
   final bool healthPermissionStatus;
   final bool healthWritePermissionStatus;
+  final bool healthHistoricalPermissionStatus;
 
   bool get hasRequiredPermissions => healthPermissionStatus;
 
@@ -26,6 +27,7 @@ class PermissionsState {
     this.notificationPermissionStatus = PermissionStatus.denied,
     this.healthPermissionStatus = false,
     this.healthWritePermissionStatus = false,
+    this.healthHistoricalPermissionStatus = false,
   });
 
   PermissionsState copyWith({
@@ -34,6 +36,7 @@ class PermissionsState {
     PermissionStatus? notificationPermissionStatus,
     bool? healthPermissionStatus,
     bool? healthWritePermissionStatus,
+    bool? healthHistoricalPermissionStatus,
   }) {
     return PermissionsState(
       locationPermissionStatus:
@@ -46,12 +49,14 @@ class PermissionsState {
           healthPermissionStatus ?? this.healthPermissionStatus,
       healthWritePermissionStatus:
           healthWritePermissionStatus ?? this.healthWritePermissionStatus,
+      healthHistoricalPermissionStatus: healthHistoricalPermissionStatus ??
+          this.healthHistoricalPermissionStatus,
     );
   }
 
   @override
   String toString() {
-    return 'PermissionsState(location: $locationPermissionStatus, activity: $activityPermissionStatus, notification: $notificationPermissionStatus, health: $healthPermissionStatus, healthWrite: $healthWritePermissionStatus)';
+    return 'PermissionsState(location: $locationPermissionStatus, activity: $activityPermissionStatus, notification: $notificationPermissionStatus, health: $healthPermissionStatus, healthWrite: $healthWritePermissionStatus, healthHistorical: $healthHistoricalPermissionStatus)';
   }
 }
 
@@ -94,6 +99,7 @@ class PermissionsNotifier extends StateNotifier<PermissionsState> {
       await checkNotificationPermission();
       await checkHealthPermission();
       await checkHealthWritePermission();
+      await checkHealthHistoricalPermission();
     } catch (e) {
       log.severe('Error checking all permissions: $e');
     }
@@ -167,9 +173,17 @@ class PermissionsNotifier extends StateNotifier<PermissionsState> {
 
       final healthViewModel = ref.read(healthViewModelProvider);
 
-      if (healthViewModel == HealthAuthViewModelState.authorized &&
+      // Aktualisiere den Status basierend auf dem HealthAuthViewModel-Zustand
+      if ((healthViewModel == HealthAuthViewModelState.authorized ||
+              healthViewModel ==
+                  HealthAuthViewModelState.authorizedWithHistoricalAccess) &&
           !state.healthPermissionStatus) {
         state = state.copyWith(healthPermissionStatus: true);
+      }
+
+      // Prüfe historische Berechtigungen wenn Read-Berechtigungen vorhanden sind
+      if (state.healthPermissionStatus) {
+        await checkHealthHistoricalPermission();
       }
     } catch (e) {
       log.severe("Error checking health permission: $e");
@@ -211,14 +225,28 @@ class PermissionsNotifier extends StateNotifier<PermissionsState> {
       await healthViewModel.authorize();
 
       final result = ref.read(healthViewModelProvider);
+      final authorized = result == HealthAuthViewModelState.authorized ||
+          result == HealthAuthViewModelState.authorizedWithHistoricalAccess;
 
-      state = state.copyWith(
-          healthPermissionStatus:
-              result == HealthAuthViewModelState.authorized);
+      // Aktualisiere den Status basierend auf dem Ergebnis der Autorisierung
+      if (state.healthPermissionStatus != authorized) {
+        state = state.copyWith(healthPermissionStatus: authorized);
+      }
 
-      // After updating read permissions, check write permissions as well
-      if (result == HealthAuthViewModelState.authorized) {
-        await checkHealthWritePermission();
+      // Nach dem Aktualisieren der Leseberechtigungen auch die Schreibberechtigungen prüfen
+      if (authorized) {
+        // Diese Aufrufe können fehlschlagen, aber die App sollte trotzdem funktionieren
+        try {
+          await checkHealthWritePermission();
+        } catch (e) {
+          log.warning("Error checking write permissions: $e");
+        }
+
+        try {
+          await checkHealthHistoricalPermission();
+        } catch (e) {
+          log.warning("Error checking historical permissions: $e");
+        }
       }
     } catch (e) {
       log.severe("Error requesting health permission: $e");
@@ -242,6 +270,93 @@ class PermissionsNotifier extends StateNotifier<PermissionsState> {
       state = state.copyWith(healthWritePermissionStatus: success);
     } catch (e) {
       log.severe("Error requesting health write permission: $e");
+      log.severe("Stack trace: ${StackTrace.current}");
+    }
+  }
+
+  // Check health historical permission
+  Future<void> checkHealthHistoricalPermission() async {
+    try {
+      if (!state.healthPermissionStatus) {
+        // If read permissions aren't granted, historical permissions can't be granted
+        state = state.copyWith(healthHistoricalPermissionStatus: false);
+        return;
+      }
+
+      try {
+        // Verwende die direkte API-Methode, um zu prüfen, ob historische Berechtigungen gewährt wurden
+        bool hasHistoricalPermissions =
+            await _health.isHealthDataHistoryAuthorized();
+
+        // Wenn die API-Methode true zurückgibt, aktualisiere auch das ViewModel
+        if (hasHistoricalPermissions) {
+          // Stelle sicher, dass das ViewModel konsistent ist
+          final healthViewModel = ref.read(healthViewModelProvider);
+          if (healthViewModel !=
+              HealthAuthViewModelState.authorizedWithHistoricalAccess) {
+            ref.read(healthViewModelProvider.notifier).state =
+                HealthAuthViewModelState.authorizedWithHistoricalAccess;
+          }
+        }
+
+        // Setze den Status
+        state = state.copyWith(
+            healthHistoricalPermissionStatus: hasHistoricalPermissions);
+
+        // Debug-Info
+        log.info('Historical permissions check: $hasHistoricalPermissions');
+      } catch (e) {
+        // Fallback: Wenn die API-Methode fehlschlägt, verwenden wir den Status aus dem ViewModel
+        log.warning(
+            "Error during direct historical permission check, using ViewModel state: $e");
+
+        final healthViewModel = ref.read(healthViewModelProvider);
+        final hasHistorical = healthViewModel ==
+            HealthAuthViewModelState.authorizedWithHistoricalAccess;
+
+        state = state.copyWith(healthHistoricalPermissionStatus: hasHistorical);
+        log.info(
+            'Historical permissions fallback check from ViewModel: $hasHistorical');
+      }
+    } catch (e) {
+      log.severe("Error checking health historical permission: $e");
+      log.severe("Stack trace: ${StackTrace.current}");
+      state = state.copyWith(healthHistoricalPermissionStatus: false);
+    }
+  }
+
+  // Request health historical permission
+  Future<void> requestHealthHistoricalPermission() async {
+    try {
+      if (!state.healthPermissionStatus) {
+        // Can't request historical permissions if read permissions aren't granted
+        log.warning(
+            "Can't request historical permissions without read permissions");
+        return;
+      }
+
+      log.info("Requesting historical health permissions using health API");
+
+      // Direkt die API-Methode für historische Berechtigungen verwenden
+      bool success = await _health.requestHealthDataHistoryAuthorization();
+
+      // Nach der Anfrage den aktuellen Zustand prüfen (nicht auf ein anderes Objekt verlassen)
+      bool hasHistorical = await _health.isHealthDataHistoryAuthorized();
+
+      // Debug-Info
+      log.info(
+          "Historical permission result: success=$success, hasHistorical=$hasHistorical");
+
+      // Stelle sicher, dass das ViewModel konsistent ist
+      if (hasHistorical) {
+        ref.read(healthViewModelProvider.notifier).state =
+            HealthAuthViewModelState.authorizedWithHistoricalAccess;
+      }
+
+      // Update state
+      state = state.copyWith(healthHistoricalPermissionStatus: hasHistorical);
+    } catch (e) {
+      log.severe("Error requesting health historical permission: $e");
       log.severe("Stack trace: ${StackTrace.current}");
     }
   }

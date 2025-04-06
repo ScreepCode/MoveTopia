@@ -7,8 +7,28 @@ on:
   workflow_dispatch:
 
 jobs:
+  check-skip-conditions:
+    runs-on: ubuntu-latest
+    outputs:
+      skip-build: ${{ steps.check-labels.outputs.skip_build }}
+    steps:
+      - name: Check PR labels
+        id: check-labels
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const labels = context.payload.pull_request?.labels || [];
+            const skipLabels = ['docs-only', 'no-build'];
+            const shouldSkip = labels.some(label => skipLabels.includes(label.name));
+            console.log(`Labels: ${labels.map(l => l.name).join(', ')}`);
+            console.log(`Should skip build: ${shouldSkip}`);
+            core.setOutput('skip_build', shouldSkip.toString());
+          result-encoding: string
+
   build-check:
     name: "Build Check"
+    needs: check-skip-conditions
+    if: ${{ needs.check-skip-conditions.outputs.skip-build == 'false' }}
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout repository"

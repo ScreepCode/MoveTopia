@@ -181,6 +181,76 @@ class PermissionsSettingsScreen extends ConsumerWidget {
 
               const SizedBox(height: 16),
 
+              // Historical Health Data permission (optional)
+              PermissionCard(
+                icon: Icons.history,
+                title: l10n.permission_health_historical_title,
+                description: l10n.permission_health_historical_description,
+                status: permissionsState.healthHistoricalPermissionStatus
+                    ? PermissionStatus.granted
+                    : PermissionStatus.denied,
+                onRequestPermission: () {
+                  // Überprüfe zuerst, ob Read-Berechtigung vorhanden ist
+                  if (!permissionsState.healthPermissionStatus) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                            'Bitte erteile zuerst die Leseberechtigung für Gesundheitsdaten'),
+                        backgroundColor: theme.colorScheme.error,
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                    return;
+                  }
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Text(l10n.requesting_health_historical_permissions),
+                        ],
+                      ),
+                      duration: const Duration(seconds: 1),
+                    ),
+                  );
+
+                  // Request optional HISTORICAL-Permissions
+                  ref
+                      .read(permissionsProvider.notifier)
+                      .requestHealthHistoricalPermission()
+                      .then((_) {
+                    // Nach dem Anfordern den Status prüfen
+                    final historicalGranted = ref
+                        .read(permissionsProvider)
+                        .healthHistoricalPermissionStatus;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(historicalGranted
+                            ? l10n.health_historical_granted
+                            : l10n.health_historical_denied),
+                        backgroundColor: historicalGranted
+                            ? theme.colorScheme.primary
+                            : theme.colorScheme.error,
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  });
+                },
+                onOpenSettings: () => openAppSettings(),
+                isRequired: false,
+              ),
+
+              const SizedBox(height: 16),
+
               // Location permission
               PermissionCard(
                 icon: Icons.location_on,

@@ -30,7 +30,14 @@ class ActivitiesScreen extends HookConsumerWidget {
 
     useEffect(() {
       Future(() async {
-        if (authState == HealthAuthViewModelState.authorized) {
+        log.info('ActivitiesScreen: Checking health authorization state...');
+
+        if (authState == HealthAuthViewModelState.authorized ||
+            authState ==
+                HealthAuthViewModelState.authorizedWithHistoricalAccess) {
+          log.info(
+              'ActivitiesScreen: Health authorized, loading activities...');
+
           await fetchHealthData();
 
           scrollController.addListener(() {
@@ -42,10 +49,13 @@ class ActivitiesScreen extends HookConsumerWidget {
                   .fetchActivities(endOfData: lastDate);
             }
           });
+        } else {
+          log.warning(
+              'ActivitiesScreen: Health not authorized (state: $authState). Cannot load activities.');
         }
       });
       return null;
-    }, [authState]);
+    }, const []);
 
     return Scaffold(
       appBar: AppBar(
@@ -80,9 +90,36 @@ Widget _buildBody(
           )
         : activities.isLoading
             ? const Center(child: CircularProgressIndicator())
-            : Center(
-                child: Text(AppLocalizations.of(context)!
-                    .activity_no_activities_found)),
+            : ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.7,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.directions_run,
+                            size: 64,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withValues(alpha: 0.5),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            AppLocalizations.of(context)!
+                                .activity_no_activities_found,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
   );
 }
 
