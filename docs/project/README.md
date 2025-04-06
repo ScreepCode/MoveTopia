@@ -1,6 +1,9 @@
 # About MoveTopia
 
-MoveTopia is your fitness companion for a healthier lifestyle! It's a mobile health and fitness tracking application designed to turn your daily activities into an exciting adventure. The app helps users track their fitness data, set personal goals, and stay motivated through gamification elements.
+MoveTopia is your fitness companion for a healthier lifestyle! It's a mobile health and fitness
+tracking application designed to turn your daily activities into an exciting adventure. The app
+helps users track their fitness data, set personal goals, and stay motivated through gamification
+elements.
 
 ## Features
 
@@ -36,7 +39,8 @@ MoveTopia is your fitness companion for a healthier lifestyle! It's a mobile hea
 
 ## Technology
 
-MoveTopia is a Flutter application developed for both Android and iOS. The app uses a modern architecture with the following main components:
+MoveTopia is a Flutter application developed for both Android and iOS. The app uses a modern
+architecture with the following main components:
 
 - **Flutter**: Cross-platform framework for the user interface
 - **Riverpod/Hooks**: State management
@@ -58,9 +62,12 @@ The app is aimed at:
 MoveTopia aims to become a comprehensive health and fitness platform. Future developments include:
 
 - Social features for shared challenges
-- Reminder for challanges, streaks, ...
+- Reminder for challenges, streaks, ...
 - Expanded gamification features
 
 ## Privacy and Security
 
-MoveTopia places great importance on protecting user data. Health data is treated securely and confidentially. The app explicitly asks for permissions to access health data and stores sensitive information only locally on the device. We believe your fitness data belongs to you, and you should have full control over your personal information. 
+MoveTopia places great importance on protecting user data. Health data is treated securely and
+confidentially. The app explicitly asks for permissions to access health data and stores sensitive
+information only locally on the device. We believe your fitness data belongs to you, and you should
+have full control over your personal information. 
