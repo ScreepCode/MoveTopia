@@ -339,6 +339,8 @@
   "permission_health_read_description": "To read your activities and fitness data",
   "permission_health_write_title": "Health Data Write",
   "permission_health_write_description": "To save your activities to the health database",
+  "permission_health_historical_title": "Historical Health Data",
+  "permission_health_historical_description": "To access your health data older than 30 days for long-term analysis",
   "permission_allow": "Allow",
   "permission_settings_title": "Permissions",
   "permission_settings_subtitle": "Manage app permissions",
@@ -368,6 +370,9 @@
   "health_write_granted": "Write access granted",
   "health_write_denied": "Write access not granted",
   "requesting_health_write_permissions": "Requesting write permissions...",
+  "requesting_health_historical_permissions": "Requesting historical data access...",
+  "health_historical_granted": "Historical health data access granted",
+  "health_historical_denied": "Historical health data access denied",
   
   "@_LOGS": {},
   "logs_title": "App Logs",

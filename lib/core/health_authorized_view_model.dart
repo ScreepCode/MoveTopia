@@ -34,8 +34,38 @@ class HealthAuthViewModel extends StateNotifier<HealthAuthViewModelState> {
       : super(HealthAuthViewModelState.notAuthorized) {
     try {
       _health.configure();
+      _checkInitialState();
     } catch (e) {
       log.severe('Failed to configure health package: $e');
+    }
+  }
+
+  // Prüft den initialen Zustand der Gesundheitsberechtigungen
+  Future<void> _checkInitialState() async {
+    try {
+      bool? hasBasicPermissions =
+          await _health.hasPermissions(requiredReadPermissions);
+
+      if (hasBasicPermissions == true) {
+        state = HealthAuthViewModelState.authorized;
+
+        try {
+          bool hasHistorical = await _health.isHealthDataHistoryAuthorized();
+          if (hasHistorical) {
+            state = HealthAuthViewModelState.authorizedWithHistoricalAccess;
+            log.info('Initial state: Historical health data access authorized');
+          } else {
+            log.info(
+                'Initial state: Basic health data access authorized, no historical access');
+          }
+        } catch (e) {
+          log.warning('Failed to check historical permissions initially: $e');
+        }
+      } else {
+        log.info('Initial state: No health data access authorized');
+      }
+    } catch (e) {
+      log.warning('Failed to check initial health permissions: $e');
     }
   }
 
@@ -55,7 +85,11 @@ class HealthAuthViewModel extends StateNotifier<HealthAuthViewModelState> {
               permissions: accessPermissions);
 
           if (authorized) {
-            state = HealthAuthViewModelState.authorized;
+            if (state ==
+                HealthAuthViewModelState.authorizedWithHistoricalAccess) {
+            } else {
+              state = HealthAuthViewModelState.authorized;
+            }
           } else {
             state = HealthAuthViewModelState.authorizationNotGranted;
           }
@@ -64,7 +98,9 @@ class HealthAuthViewModel extends StateNotifier<HealthAuthViewModelState> {
           state = HealthAuthViewModelState.error;
         }
       } else {
-        state = HealthAuthViewModelState.authorized;
+        if (state != HealthAuthViewModelState.authorizedWithHistoricalAccess) {
+          state = HealthAuthViewModelState.authorized;
+        }
       }
     } catch (error) {
       log.severe('Health permission error: $error');
@@ -75,7 +111,8 @@ class HealthAuthViewModel extends StateNotifier<HealthAuthViewModelState> {
   /// Request OPTIONAL WRITE-Permissions
   /// You can only request WRITE when READ is already granted
   Future<bool> authorizeWriteAccess() async {
-    if (state != HealthAuthViewModelState.authorized) {
+    if (state != HealthAuthViewModelState.authorized &&
+        state != HealthAuthViewModelState.authorizedWithHistoricalAccess) {
       return false;
     }
 
@@ -93,14 +130,75 @@ class HealthAuthViewModel extends StateNotifier<HealthAuthViewModelState> {
     }
   }
 
+  /// Request OPTIONAL HISTORICAL-Permissions
+  /// You can only request HISTORICAL when READ is already granted
+  Future<bool> authorizeHistoricalAccess() async {
+    // Nur wenn grundlegende Read-Berechtigungen bereits gewährt wurden
+    if (state != HealthAuthViewModelState.authorized &&
+        state != HealthAuthViewModelState.authorizedWithHistoricalAccess) {
+      return false;
+    }
+
+    try {
+      log.info('Checking and requesting historical health data access');
+
+      bool isHistoricalAuthorized =
+          await _health.isHealthDataHistoryAuthorized();
+
+      if (isHistoricalAuthorized) {
+        log.info('Historical health data access already authorized');
+        state = HealthAuthViewModelState.authorizedWithHistoricalAccess;
+        return true;
+      }
+
+      log.info('Requesting historical health data access');
+      bool success = await _health.requestHealthDataHistoryAuthorization();
+
+      if (success) {
+        log.info('Historical health data access granted');
+        state = HealthAuthViewModelState.authorizedWithHistoricalAccess;
+      } else {
+        log.info('Historical health data access denied');
+      }
+
+      return success;
+    } catch (error) {
+      log.severe('Health historical permission error: $error');
+      return false;
+    }
+  }
+
   Future<void> authorize() async {
-    await authorizeReadAccess();
+    try {
+      await authorizeReadAccess();
+
+      if (state == HealthAuthViewModelState.authorized ||
+          state == HealthAuthViewModelState.authorizedWithHistoricalAccess) {
+        try {
+          bool hasHistoricalPermissions =
+              await _health.isHealthDataHistoryAuthorized();
+
+          if (hasHistoricalPermissions &&
+              state == HealthAuthViewModelState.authorized) {
+            state = HealthAuthViewModelState.authorizedWithHistoricalAccess;
+            log.info(
+                'Historical health data access detected during authorization');
+          }
+        } catch (e) {
+          log.warning(
+              'Failed to check historical permissions during authorization: $e');
+        }
+      }
+    } catch (e) {
+      log.severe('Basic authorization failed: $e');
+    }
   }
 }
 
 enum HealthAuthViewModelState {
   notAuthorized, // App started
   authorized,
+  authorizedWithHistoricalAccess,
   authorizationNotGranted,
   error,
 }
