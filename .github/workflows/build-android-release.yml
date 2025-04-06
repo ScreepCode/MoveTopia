@@ -1,23 +1,21 @@
-name: "Release Build APK"
+name: "Main Branch Release Build"
 on:
   push:
     branches: [ main ]
-    tags:
-      - 'v*'
   workflow_dispatch:
     inputs:
       deploy_target:
-        description: 'Deploy-Ziel (internal, beta)'
+        description: 'Deploy-Ziel (internal, alpha)'
         required: true
         default: 'internal'
         type: choice
         options:
           - internal
-          - beta
+          - alpha
 
 jobs:
   build-release:
-    name: "Build Release APK"
+    name: "Build & Deploy Release"
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout repository"
@@ -72,14 +70,14 @@ jobs:
         id: deploy-target
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "DEPLOY_TARGET=${{ github.event.inputs.deploy_target }}" >> $GITHUB_ENV
+            echo "DEPLOY_TO=${{ github.event.inputs.deploy_target }}" >> $GITHUB_ENV
           elif [[ "${{ github.ref }}" == refs/tags/v* ]]; then
-            echo "DEPLOY_TARGET=beta" >> $GITHUB_ENV
+            echo "DEPLOY_TO=alpha" >> $GITHUB_ENV
           else
-            echo "DEPLOY_TARGET=internal" >> $GITHUB_ENV
+            echo "DEPLOY_TO=internal" >> $GITHUB_ENV
           fi
 
-      - name: "Run Fastlane Release Build"
+      - name: "Run Fastlane Release Build and Deploy"
         id: fastlane
         uses: maierj/fastlane-action@v3.1.0
         with:
@@ -87,18 +85,19 @@ jobs:
           subdirectory: android
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          DEPLOY_TO: ${{ env.DEPLOY_TO }}
 
-      - name: "Upload Release APK"
+      - name: "Upload Release Artifacts"
         uses: actions/upload-artifact@v4
         with:
           name: movetopia-release
           path: android/fastlane/build/outputs/
 
-      - name: "Create release tag"
+      - name: "Create GitHub Release"
         uses: ncipollo/release-action@v1
         with:
           generateReleaseNotes: true
           prerelease: false
           tag: ${{ env.VERSION_NAME }}
           name: ${{ env.VERSION_NAME }}
-          artifacts: "android/fastlane/build/outputs/"
+          artifacts: "android/fastlane/build/outputs/*"

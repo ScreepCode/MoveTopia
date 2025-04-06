@@ -455,7 +455,7 @@ DART
     UI.message("Starting parallel release build (APK + AAB)")
     
     # Parse options for deployment
-    deploy_to = options[:deploy_to]
+    deploy_to = options[:deploy_to] || ENV["DEPLOY_TO"]
     
     # Setup keystore properties
     setup_keystore
@@ -503,7 +503,7 @@ DART
     UI.important("AAB path: #{aab_path}")
     
     # Check if we should deploy to Google Play Store
-    if deploy_to && ['internal', 'beta'].include?(deploy_to)
+    if deploy_to && ['internal', 'alpha'].include?(deploy_to)
       UI.message("Deploying to Google Play #{deploy_to.capitalize} track")
       
       # Check if we have the necessary credentials
@@ -514,7 +514,7 @@ DART
       # Upload to the selected track
       upload_to_play_store(
         track: deploy_to,
-        aab: aab_path,
+        aab: File.expand_path(aab_path),
         json_key: ENV['PLAYSTORE_JSON_KEY_PATH'],
         skip_upload_metadata: true,
         skip_upload_changelogs: true,

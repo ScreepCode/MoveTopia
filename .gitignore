@@ -46,6 +46,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 /android/app/.cxx
-/android/fastlane/build/outputs/movetopia-release.apk
+/android/fastlane/build/outputs/
 /android/fastlane/report.xml
 /lib/version.dart
