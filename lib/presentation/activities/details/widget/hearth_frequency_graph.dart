@@ -120,8 +120,9 @@ class HearthFrequencyGraph extends StatelessWidget {
             getTooltipColor: (touchedSpot) => _getColorForValue(touchedSpot.y),
           )),
       data: data,
-      activityStartTime: activityStartTime,
-      activityEndTime: activityEndTime,
+      activityStartTime:
+          activityStartTime.subtract(activityStartTime.timeZoneOffset),
+      activityEndTime: activityEndTime.subtract(activityEndTime.timeZoneOffset),
       title: l10n.activity_heart_frequency,
       barAreaData: BarAreaData(
         show: true,
