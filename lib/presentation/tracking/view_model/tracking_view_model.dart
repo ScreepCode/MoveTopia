@@ -7,7 +7,7 @@ import 'package:activity_tracking/model/activity_type.dart';
 import 'package:activity_tracking/model/event.dart';
 import 'package:activity_tracking/model/message.dart';
 import 'package:logging/logging.dart';
-import 'package:movetopia/data/repositories/local_health_impl.dart';
+import 'package:movetopia/data/repositories/base_local_health_impl.dart';
 import 'package:movetopia/presentation/tracking/view_model/tracking_state.dart';
 import 'package:movetopia/utils/tracking_utils.dart';
 import 'package:riverpod/riverpod.dart';

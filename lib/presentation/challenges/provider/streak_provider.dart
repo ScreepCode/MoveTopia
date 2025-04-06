@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
+import 'package:movetopia/data/service/health_service_impl.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../data/repositories/device_info_repository_impl.dart';
-import '../../../data/repositories/local_health_impl.dart';
 import '../../../data/repositories/streak_repository_impl.dart';
 import '../../profile/view_model/profile_view_model.dart';
 
@@ -62,7 +62,7 @@ final refreshStreakFromHealthDataProvider =
 
     final deviceInfoRepository = ref.read(deviceInfoRepositoryProvider);
     final streakRepository = ref.read(streakRepositoryProvider);
-    final healthRepository = ref.read(localHealthRepositoryProvider);
+    final healthRepository = ref.read(healthService);
     final profileRepository = ref.read(profileRepositoryProvider);
 
     try {
@@ -103,8 +103,8 @@ final refreshStreakFromHealthDataProvider =
         final endOfDay = DateTime(normalizedDay.year, normalizedDay.month,
             normalizedDay.day, 23, 59, 59);
 
-        final steps =
-            await healthRepository.getStepsInInterval(startOfDay, endOfDay);
+        final steps = (await healthRepository.getStepsInInterval(
+            startOfDay, endOfDay))[0];
         _logger.info('Tag: $normalizedDay, Schritte: $steps, Ziel: $stepGoal');
 
         // Prüfe, ob das Tagesziel erreicht wurde

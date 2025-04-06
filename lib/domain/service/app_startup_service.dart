@@ -3,7 +3,6 @@ import 'package:riverpod/riverpod.dart';
 
 import '../../data/repositories/device_info_repository_impl.dart';
 import '../../data/repositories/streak_repository_impl.dart';
-import '../../presentation/challenges/provider/streak_provider.dart';
 import '../../presentation/profile/view_model/profile_view_model.dart';
 import '../repositories/device_info_repository.dart';
 import '../repositories/profile_repository.dart';
@@ -44,7 +43,7 @@ class AppStartupService {
     // Überprüfe und aktualisiere die Badges
     try {
       logger.info('Checking and updating badges...');
-      await badgeService.checkAndUpdateBadges();
+      // await badgeService.checkAndUpdateBadges();
       logger.info('Badge update completed.');
     } catch (e) {
       logger.severe('Error updating badges: $e');
