@@ -160,7 +160,15 @@ Widget _buildActivityItem(BuildContext context, ActivityPreview activity) {
         children: [
           Text(
               "${DateFormat("HH:mm").format(activity.start)} - ${DateFormat("HH:mm").format(activity.end)}",
-              style: const TextStyle(fontSize: 12, color: Colors.black45)),
+              style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context)
+                              .colorScheme
+                              .onPrimary
+                              .computeLuminance() >
+                          0.5
+                      ? Colors.black54
+                      : Colors.white54)),
           Text(getTranslatedActivityType(context, activity.activityType))
         ],
       ),
