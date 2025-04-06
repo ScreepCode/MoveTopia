@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../../../profile/debug_settings/provider/debug_provider.dart';
 import '../../provider/streak_provider.dart';
 
 // Provider für den Ladezustand des manuellen Refreshs
@@ -23,7 +24,8 @@ class StreakDetailsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.streakDetails),
-        backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+        backgroundColor:
+            Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
         elevation: 0,
         actions: [
           // Manueller Refresh-Button in der AppBar
@@ -57,33 +59,6 @@ class StreakDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _refreshData(BuildContext context, WidgetRef ref) async {
-    final l10n = AppLocalizations.of(context)!;
-
-    try {
-      await ref.read(refreshStreakFromHealthDataProvider)();
-
-      // Optional: Bestätigung anzeigen
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.streakDataUpdated),
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.streakUpdateError(e.toString())),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
   Widget _buildContent(
     BuildContext context,
     List<DateTime> days,
@@ -108,7 +83,7 @@ class StreakDetailsScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  _buildCalendar(context, days, l10n),
+                  _buildCalendar(context, days, l10n, ref),
                   const SizedBox(height: 24),
                   _buildLegend(context, l10n),
                   const SizedBox(height: 16),
@@ -128,7 +103,7 @@ class StreakDetailsScreen extends ConsumerWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(24),
           bottomRight: Radius.circular(24),
@@ -228,8 +203,14 @@ class StreakDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildCalendar(
-      BuildContext context, List<DateTime> days, AppLocalizations l10n) {
+  Widget _buildCalendar(BuildContext context, List<DateTime> days,
+      AppLocalizations l10n, WidgetRef ref) {
+    final installDateAsyncValue = ref.watch(installationDateProvider);
+    DateTime? installationDate;
+    installDateAsyncValue.whenData((date) {
+      installationDate = date;
+    });
+
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
@@ -261,9 +242,11 @@ class StreakDetailsScreen extends ConsumerWidget {
                       d.year == DateTime.now().year &&
                       d.month == DateTime.now().month &&
                       d.day == DateTime.now().day)
-                  ? const Color(
-                      0xFFAF52DE) // Purple streak color when goal is met
-                  : Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                  ? StreakColors.active // Lila nur bei erreichten Zielen
+                  : Theme.of(context)
+                      .colorScheme
+                      .secondary
+                      .withValues(alpha: 0.3),
               shape: BoxShape.circle,
             ),
             selectedDecoration: BoxDecoration(
@@ -299,21 +282,85 @@ class StreakDetailsScreen extends ConsumerWidget {
           ),
           calendarBuilders: CalendarBuilders(
             defaultBuilder: (context, day, focusedDay) {
-              // Verwende die vereinfachte Streak-Logik
-              final color = day.getStreakColor(days);
-              final isToday = day.isToday;
-              final isCompleted = day.isCompletedIn(days);
+              final normalizedDay = DateTime(day.year, day.month, day.day);
 
-              // Berechne, ob Verbindungslinien angezeigt werden sollen
-              final prevDay = day.subtract(const Duration(days: 1));
-              final nextDay = day.add(const Duration(days: 1));
+              bool isBeforeInstallation = false;
+              if (installationDate != null) {
+                final normalizedInstallDate = DateTime(installationDate!.year,
+                    installationDate!.month, installationDate!.day);
+
+                if (normalizedDay.isBefore(normalizedInstallDate)) {
+                  isBeforeInstallation = true;
+                }
+              }
+
+              final isOutsideMonth = day.month != focusedDay.month;
+              final isToday = normalizedDay.isToday;
+              final isCompleted = normalizedDay.isCompletedIn(days);
+
+              if (isToday && !isCompleted) {
+                final yesterday =
+                    normalizedDay.subtract(const Duration(days: 1));
+                final isYesterdayCompleted = yesterday.isCompletedIn(days);
+
+                if (isYesterdayCompleted &&
+                    yesterday.getStreakColor(days) == StreakColors.active) {
+                  return _buildTodayWithActiveStreakContainer(
+                      context: context, day: day, isCompleted: false);
+                }
+              }
+
+              if (isBeforeInstallation) {
+                return Container(
+                  margin: const EdgeInsets.all(4),
+                  alignment: Alignment.center,
+                  child: Text(
+                    '${day.day}',
+                    style: TextStyle(
+                      color: Colors.grey.shade400,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                );
+              }
+
+              // Normale Verarbeitung für Tage nach Installation
+              final color = normalizedDay.getStreakColor(days);
+              bool isActive = color == StreakColors.active;
+
+              if (!isActive && isCompleted) {
+                final prevDay = normalizedDay.subtract(const Duration(days: 1));
+                final isPrevCompleted = prevDay.isCompletedIn(days);
+
+                if (isPrevCompleted) {
+                  final prevColor = prevDay.getStreakColor(days);
+                  if (prevColor == StreakColors.active) {
+                    isActive = true;
+                  }
+                }
+              }
+
+              Color effectiveColor = color;
+              if (isOutsideMonth) {
+                if (isActive || color == StreakColors.active) {
+                  effectiveColor = StreakColors.active.withValues(alpha: 0.5);
+                } else if (color == StreakColors.broken) {
+                  effectiveColor = StreakColors.broken.withValues(alpha: 0.5);
+                } else {
+                  effectiveColor =
+                      StreakColors.notCompleted.withValues(alpha: 0.3);
+                }
+              }
+
+              final prevDay = normalizedDay.subtract(const Duration(days: 1));
+              final nextDay = normalizedDay.add(const Duration(days: 1));
               final isPrevCompleted = prevDay.isCompletedIn(days);
               final isNextCompleted = nextDay.isCompletedIn(days);
 
               return Stack(
                 children: [
-                  // Horizontale Verbindungslinien, wenn benötigt
-                  if (isCompleted && isPrevCompleted)
+                  if ((isActive || color == StreakColors.active) &&
+                      isPrevCompleted)
                     Positioned(
                       left: 0,
                       top: 0,
@@ -322,11 +369,14 @@ class StreakDetailsScreen extends ConsumerWidget {
                         child: Container(
                           height: 4,
                           width: 12,
-                          color: color, // Gleiche Farbe wie der Tag
+                          color: isOutsideMonth
+                              ? StreakColors.active.withValues(alpha: 0.5)
+                              : StreakColors.active,
                         ),
                       ),
                     ),
-                  if (isCompleted && isNextCompleted)
+                  if ((isActive || color == StreakColors.active) &&
+                      isNextCompleted)
                     Positioned(
                       right: 0,
                       top: 0,
@@ -335,21 +385,132 @@ class StreakDetailsScreen extends ConsumerWidget {
                         child: Container(
                           height: 4,
                           width: 12,
-                          color: color, // Gleiche Farbe wie der Tag
+                          color: isOutsideMonth
+                              ? StreakColors.active.withValues(alpha: 0.5)
+                              : StreakColors.active,
                         ),
                       ),
                     ),
-
-                  // Haupt-Container für den Tag
                   _buildDayContainer(
                       context: context,
                       day: day,
-                      color: color,
+                      color: isActive ? StreakColors.active : effectiveColor,
                       isToday: isToday,
-                      isCompleted: isCompleted),
+                      isCompleted: isCompleted,
+                      isOutsideMonth: isOutsideMonth),
                 ],
               );
             },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDayContainer({
+    required BuildContext context,
+    required DateTime day,
+    required Color color,
+    required bool isToday,
+    required bool isCompleted,
+    required bool isOutsideMonth,
+  }) {
+    if (isToday) {
+      return Container(
+        margin: const EdgeInsets.all(4),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: isCompleted
+                  ? StreakColors.active
+                  : Theme.of(context).colorScheme.secondary,
+              width: 2,
+            ),
+            color: isCompleted
+                ? StreakColors.active.withValues(alpha: 0.2)
+                : Theme.of(context)
+                    .colorScheme
+                    .secondary
+                    .withValues(alpha: 0.1),
+          ),
+          padding: const EdgeInsets.all(6),
+          child: Text(
+            '${day.day}',
+            style: TextStyle(
+              color: isCompleted
+                  ? StreakColors.active
+                  : Theme.of(context).colorScheme.secondary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      );
+    }
+
+    final opacityFactor = isOutsideMonth ? 0.7 : 1.0;
+    final textOpacity = isOutsideMonth ? 0.8 : 1.0;
+
+    return Container(
+      margin: const EdgeInsets.all(4),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: isCompleted && !isOutsideMonth
+            ? [
+                BoxShadow(
+                  color: color.withValues(alpha: 0.3 * opacityFactor),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ]
+            : null,
+      ),
+      child: Text(
+        '${day.day}',
+        style: TextStyle(
+          color: color == StreakColors.notCompleted
+              ? Colors.black.withValues(alpha: textOpacity)
+              : Colors.white.withValues(alpha: textOpacity),
+          fontWeight: isOutsideMonth ? FontWeight.normal : FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTodayWithActiveStreakContainer({
+    required BuildContext context,
+    required DateTime day,
+    required bool isCompleted,
+  }) {
+    return Container(
+      margin: const EdgeInsets.all(4),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(100),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: StreakColors.active.withValues(alpha: 0.7),
+            width: 2,
+          ),
+          color: StreakColors.active.withValues(alpha: 0.1),
+        ),
+        padding: const EdgeInsets.all(6),
+        child: Text(
+          '${day.day}',
+          style: const TextStyle(
+            color: StreakColors.active,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),
@@ -489,81 +650,6 @@ class StreakDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildDayContainer({
-    required BuildContext context,
-    required DateTime day,
-    required Color color,
-    required bool isToday,
-    required bool isCompleted,
-  }) {
-    // Wenn es der heutige Tag ist, spezielle Darstellung verwenden
-    if (isToday) {
-      return Container(
-        margin: const EdgeInsets.all(4),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          // Transparenter Hintergrund für den heutigen Tag
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(100), // Immer rund für heute
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              // Lila Rand wenn erledigt, sonst die Standard-Farbe
-              color: isCompleted
-                  ? StreakColors.active
-                  : Theme.of(context).colorScheme.secondary,
-              width: 2,
-            ),
-            // Transparente Füllung in der entsprechenden Farbe
-            color: isCompleted
-                ? StreakColors.active.withOpacity(0.2)
-                : Theme.of(context).colorScheme.secondary.withOpacity(0.1),
-          ),
-          padding: const EdgeInsets.all(6),
-          child: Text(
-            '${day.day}',
-            style: TextStyle(
-              // Textfarbe passend zum Rand
-              color: isCompleted
-                  ? StreakColors.active
-                  : Theme.of(context).colorScheme.secondary,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      );
-    }
-
-    // Standard-Darstellung für alle anderen Tage
-    return Container(
-      margin: const EdgeInsets.all(4),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(8), // Eckig für andere Tage
-        boxShadow: isCompleted
-            ? [
-                BoxShadow(
-                  color: color.withOpacity(0.3),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ]
-            : null,
-      ),
-      child: Text(
-        '${day.day}',
-        style: TextStyle(
-          color:
-              color == StreakColors.notCompleted ? Colors.black : Colors.white,
-          fontWeight: FontWeight.normal,
-        ),
-      ),
-    );
-  }
-
   Widget _buildCompletedDaysText(
       BuildContext context, List<DateTime> days, AppLocalizations l10n) {
     if (days.isEmpty) {
@@ -632,5 +718,31 @@ class StreakDetailsScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _refreshData(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
+
+    try {
+      await ref.read(refreshStreakFromHealthDataProvider)();
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.streakDataUpdated),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.streakUpdateError(e.toString())),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }

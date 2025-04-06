@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../provider/streak_provider.dart';
+import '../routes.dart';
 import '../streak/screen/streak_details_screen.dart';
 
 class StreakCard extends ConsumerWidget {
@@ -25,12 +27,7 @@ class StreakCard extends ConsumerWidget {
       ),
       child: InkWell(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const StreakDetailsScreen(),
-            ),
-          );
+          context.go(fullStreakDetailsPath);
         },
         borderRadius: BorderRadius.circular(16),
         child: Container(

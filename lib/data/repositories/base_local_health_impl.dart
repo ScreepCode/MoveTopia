@@ -19,6 +19,8 @@ interface class BaseLocalHealthRepoImpl extends BaseLocalHealthRepository {
     try {
       _compareDate(start, end);
 
+      start = start.subtract(start.timeZoneOffset);
+      end = end.subtract(end.timeZoneOffset);
       List<HealthDataPoint> dataPoints = await Health()
           .getHealthDataFromTypes(types: types, startTime: start, endTime: end);
 

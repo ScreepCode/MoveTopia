@@ -108,7 +108,7 @@ class HealthServiceImpl implements HealthService {
         return [0];
       }
       List<int> steps = List.empty(growable: true);
-      for (var i = 0; i < healthDataPoints!.length; i++) {
+      for (var i = 0; i < healthDataPoints.length; i++) {
         steps.add((healthDataPoints[i].value as NumericHealthValue)
             .numericValue
             .toInt());

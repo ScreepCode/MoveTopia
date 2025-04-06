@@ -135,65 +135,64 @@ class StreakRepositoryImpl implements StreakRepository {
 
     final localHealthRepository = _healthService;
 
-    // Hole die Liste der bereits abgeschlossenen Tage
+    // Hole die Liste der bereits abgeschlossenen Tage - WICHTIG: Wir behalten diese bei!
     final allCompletedDays = await getCompletedDays() ?? [];
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     bool daysAdded = false;
 
-    // Überprüfe jeden Tag vom Installationsdatum bis heute
+    logger.info('Bestehende abgeschlossene Tage: ${allCompletedDays.length}');
+
     final oldestDay = installationDate;
     for (var day = oldestDay;
         !(day.isAfter(today) || day.isAtSameMomentAs(today));
         day = day.add(const Duration(days: 1))) {
       final normalizedDay = DateTime(day.year, day.month, day.day);
 
-      // Prüfe, ob der Tag bereits in der Liste der abgeschlossenen Tage ist
-      final dayExists =
+      final isPastDay = normalizedDay.isBefore(today);
+
+      final dayAlreadyCompleted =
           allCompletedDays.any((d) => _isSameDay(d, normalizedDay));
 
-      if (!dayExists) {
-        // Hole die Schritte für diesen Tag aus HealthKit/Google Fit
-        final startOfDay = normalizedDay;
-        final endOfDay = DateTime(normalizedDay.year, normalizedDay.month,
-            normalizedDay.day, 23, 59, 59);
+      final startOfDay = normalizedDay;
+      final endOfDay = DateTime(normalizedDay.year, normalizedDay.month,
+          normalizedDay.day, 23, 59, 59);
+      final steps = (await localHealthRepository.getStepsInInterval(
+          startOfDay, endOfDay))[0];
 
-        final steps = (await localHealthRepository.getStepsInInterval(
-            startOfDay, endOfDay))[0];
-        logger
-            .info('Tag: $normalizedDay, Schritte: $steps, Ziel: $currentGoal');
-
-        // Prüfe, ob das Tagesziel erreicht wurde
-        if (steps >= currentGoal) {
-          // Tag hinzufügen, nur wenn das Schrittziel erreicht wurde
+      if (isPastDay) {
+        if (dayAlreadyCompleted) {
           logger.info(
-              'Adding day $normalizedDay to completed days (steps: $steps >= goal: $currentGoal)');
-          await saveCompletedDay(normalizedDay);
-          daysAdded = true;
+              'Vergangener Tag $normalizedDay bleibt als erfüllt markiert');
         } else {
           logger.info(
-              'Day $normalizedDay did not reach goal (steps: $steps < goal: $currentGoal)');
+              'Vergangener Tag $normalizedDay bleibt als nicht erfüllt markiert');
+        }
+      } else {
+        logger.info(
+            'Heutiger Tag: $normalizedDay, Schritte: $steps, Aktuelles Ziel: $currentGoal');
+
+        if (steps >= currentGoal && !dayAlreadyCompleted) {
+          logger.info('Füge heutigen Tag als erfüllt hinzu');
+          await saveCompletedDay(normalizedDay);
+          daysAdded = true;
+        } else if (steps < currentGoal && dayAlreadyCompleted) {
+          logger.info(
+              'Heutiger Tag bleibt als erfüllt markiert, obwohl Schritte unter Ziel sind');
         }
       }
     }
 
-    // Aktualisiere die Liste der abgeschlossenen Tage - immer ausführen, unabhängig davon,
-    // ob neue Tage hinzugefügt wurden
     final updatedCompletedDays = await getCompletedDays() ?? [];
-    logger.info(
-        'Updated completed days list, length: ${updatedCompletedDays.length}');
-
-    // Berechne die aktuelle Streak-Länge neu - immer ausführen
     await _recalculateStreakCount(updatedCompletedDays);
     logger.info('Streak count recalculated');
 
-    // Zum Schluss das aktuelle Datum als letztes geprüftes Datum speichern
     await _deviceInfoRepository.updateLastOpenedDate(today);
 
     if (daysAdded) {
-      logger.info('New days were added to streak history');
+      logger.info('Neue Tage wurden zur Streak-Historie hinzugefügt');
     } else {
-      logger.info('No new days to add to streak history');
+      logger.info('Keine neuen Tage zur Streak-Historie hinzugefügt');
     }
   }
 
