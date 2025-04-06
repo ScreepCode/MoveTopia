@@ -17,4 +17,6 @@ abstract class BadgeRepository {
   Future<DateTime> getLastCheckDate();
 
   Future<void> updateLastCheckDate(DateTime date);
+
+  Future<void> validateAllBadges();
 }

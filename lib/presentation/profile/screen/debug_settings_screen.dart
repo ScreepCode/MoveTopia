@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../provider/debug_provider.dart';
+import '../routes.dart';
 import '../widgets/debug_section.dart';
 
 class DebugSettingsScreen extends ConsumerWidget {
@@ -16,6 +18,15 @@ class DebugSettingsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.settingsDebugTitle),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.list_alt),
+            tooltip: 'App Logs',
+            onPressed: () {
+              context.go('/$profilePath/$profileLoggingPath');
+            },
+          ),
+        ],
       ),
       body: isDebugBuild.when(
         data: (isDebug) {
@@ -40,11 +51,7 @@ class DebugSettingsScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 16),
 
-                // Debug-Sektionen
                 const DebugSection(),
-
-                // Hier könnten weitere Debug-Sektionen hinzugefügt werden
-                // z.B. für Badge-Debugging
               ],
             ),
           );

@@ -3,20 +3,44 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:movetopia/data/model/badge.dart' as model;
-import 'package:movetopia/presentation/challenges/badgeLists/widgets/reset_badges_button.dart';
 
 import '../../../../data/model/badge.dart';
 import '../../provider/badge_lists_provider.dart';
 import '../viewmodel/badge_lists_view_model.dart';
 import '../widgets/category_badges_section.dart';
 
-class BadgeListsScreen extends HookConsumerWidget {
+class BadgeListsScreen extends ConsumerStatefulWidget {
   final AchievementBadgeCategory? initialCategory;
 
   const BadgeListsScreen({super.key, this.initialCategory});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<BadgeListsScreen> createState() => _BadgeListsScreenState();
+}
+
+class _BadgeListsScreenState extends ConsumerState<BadgeListsScreen> {
+  bool _isRefreshing = false;
+
+  Future<void> _refreshBadges() async {
+    if (_isRefreshing) return;
+
+    setState(() {
+      _isRefreshing = true;
+    });
+
+    try {
+      await ref.read(badgeListsViewModelProvider.notifier).refreshBadges();
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isRefreshing = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final badgesState = ref.watch(badgeListsViewModelProvider);
 
@@ -24,65 +48,114 @@ class BadgeListsScreen extends HookConsumerWidget {
       appBar: AppBar(
         title: Text(l10n.badge_list_title),
         actions: [
-          const ResetBadgesButton(),
+          if (_isRefreshing)
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                ),
+              ),
+            ),
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () {
-              ref.read(badgeListsViewModelProvider.notifier).refreshBadges();
-            },
+            onPressed: _refreshBadges,
           ),
         ],
       ),
-      body: badgesState.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stackTrace) => Center(
-          child: Text(l10n.badge_error_loading(error)),
+      body: RefreshIndicator(
+        onRefresh: _refreshBadges,
+        child: badgesState.when(
+          loading: () => const _LoadingIndicator(),
+          error: (error, stackTrace) => _ErrorDisplay(error: error, l10n: l10n),
+          data: (badges) => _BadgeTabsView(
+            initialCategory: widget.initialCategory,
+            badges: badges,
+            l10n: l10n,
+          ),
         ),
-        data: (badges) {
-          // Only include the three specific categories
-          final categories = [
-            model.AchievementBadgeCategory.dailySteps,
-            model.AchievementBadgeCategory.totalSteps,
-            model.AchievementBadgeCategory.totalCyclingDistance,
-          ];
+      ),
+    );
+  }
+}
 
-          // Find initial tab index if initialCategory is provided
-          int initialIndex = 0;
-          if (initialCategory != null) {
-            final idx = categories.indexOf(initialCategory!);
-            if (idx >= 0) initialIndex = idx;
-          }
+class _LoadingIndicator extends StatelessWidget {
+  const _LoadingIndicator();
 
-          return DefaultTabController(
-            length: categories.length,
-            initialIndex: initialIndex,
-            child: Column(
-              children: [
-                TabBar(
-                  isScrollable: true,
-                  tabs: categories
-                      .map((category) =>
-                          Tab(text: _getCategoryName(category, l10n)))
-                      .toList(),
-                ),
-                Expanded(
-                  child: TabBarView(
-                    children: categories
-                        .map((category) =>
-                            _buildCategoryTab(context, ref, category))
-                        .toList(),
-                  ),
-                ),
-              ],
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: CircularProgressIndicator());
+  }
+}
+
+class _ErrorDisplay extends StatelessWidget {
+  final dynamic error;
+  final AppLocalizations l10n;
+
+  const _ErrorDisplay({required this.error, required this.l10n});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(l10n.badge_error_loading(error)),
+    );
+  }
+}
+
+class _BadgeTabsView extends StatelessWidget {
+  final AchievementBadgeCategory? initialCategory;
+  final List<AchievementBadge> badges;
+  final AppLocalizations l10n;
+
+  const _BadgeTabsView({
+    required this.initialCategory,
+    required this.badges,
+    required this.l10n,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Only include the three specific categories
+    final categories = [
+      model.AchievementBadgeCategory.dailySteps,
+      model.AchievementBadgeCategory.totalSteps,
+      model.AchievementBadgeCategory.totalCyclingDistance,
+    ];
+
+    // Find initial tab index if initialCategory is provided
+    int initialIndex = 0;
+    if (initialCategory != null) {
+      final idx = categories.indexOf(initialCategory!);
+      if (idx >= 0) initialIndex = idx;
+    }
+
+    return DefaultTabController(
+      length: categories.length,
+      initialIndex: initialIndex,
+      child: Column(
+        children: [
+          TabBar(
+            isScrollable: true,
+            tabs: categories
+                .map((category) => Tab(text: _getCategoryName(category, l10n)))
+                .toList(),
+          ),
+          Expanded(
+            child: TabBarView(
+              children: categories
+                  .map((category) => _buildCategoryTab(context, category, l10n))
+                  .toList(),
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildCategoryTab(BuildContext context, WidgetRef ref,
-      model.AchievementBadgeCategory category) {
+  Widget _buildCategoryTab(BuildContext context,
+      model.AchievementBadgeCategory category, AppLocalizations l10n) {
     // Return specific widget based on category
     switch (category) {
       case model.AchievementBadgeCategory.dailySteps:
@@ -94,7 +167,8 @@ class BadgeListsScreen extends HookConsumerWidget {
     }
   }
 
-  String _getCategoryName(model.AchievementBadgeCategory category, l10n) {
+  String _getCategoryName(
+      model.AchievementBadgeCategory category, AppLocalizations l10n) {
     switch (category) {
       case model.AchievementBadgeCategory.dailySteps:
         return l10n.badge_daily_steps_category;

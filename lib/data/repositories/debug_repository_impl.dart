@@ -1,14 +1,20 @@
 import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../../domain/repositories/badge_repository.dart';
 import '../../domain/repositories/debug_repository.dart';
 import '../../domain/repositories/streak_repository.dart';
+import '../../domain/service/badge_service.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class DebugRepositoryImpl implements DebugRepository {
   final logger = Logger('DebugRepositoryImpl');
   final StreakRepository _streakRepository;
+  final BadgeRepository _badgeRepository;
+  final BadgeService? _badgeService;
 
-  DebugRepositoryImpl(this._streakRepository);
+  DebugRepositoryImpl(this._streakRepository, this._badgeRepository,
+      [this._badgeService]);
 
   @override
   Future<bool> isDebugBuild() async {
@@ -61,6 +67,25 @@ class DebugRepositoryImpl implements DebugRepository {
   }
 
   @override
+  Future<void> resetBadgeData() async {
+    try {
+      final allBadges = await _badgeRepository.getAllBadges();
+
+      for (final badge in allBadges) {
+        await _badgeRepository.saveBadge(badge.copyWith(
+          isAchieved: false,
+          achievedCount: 0,
+          lastAchievedDate: null,
+        ));
+      }
+      logger.info('All badge data has been reset');
+    } catch (e) {
+      logger.severe('Error resetting badge data: $e');
+      rethrow;
+    }
+  }
+
+  @override
   Future<void> simulateStreakForSpecificDate(DateTime date) async {
     try {
       final normalizedDate = DateTime(date.year, date.month, date.day);
@@ -105,5 +130,39 @@ class DebugRepositoryImpl implements DebugRepository {
     }
 
     await _streakRepository.saveStreakCount(streak);
+  }
+
+  @override
+  Future<void> validateAllBadges() async {
+    try {
+      if (_badgeService == null) {
+        throw Exception('BadgeService is not available for validation');
+      }
+
+      await _badgeService!.checkAndUpdateBadges();
+      logger.info('All badges have been revalidated');
+    } catch (e) {
+      logger.severe('Error validating badges: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> toggleBadgeStatus(int badgeId, bool achieved) async {
+    try {
+      final badge = await _badgeRepository.getBadgeById(badgeId);
+
+      await _badgeRepository.saveBadge(badge.copyWith(
+        isAchieved: achieved,
+        achievedCount:
+            achieved ? (badge.achievedCount > 0 ? badge.achievedCount : 1) : 0,
+        lastAchievedDate: achieved ? DateTime.now() : null,
+      ));
+
+      logger.info('Badge $badgeId status toggled to: $achieved');
+    } catch (e) {
+      logger.severe('Error toggling badge $badgeId status: $e');
+      rethrow;
+    }
   }
 }

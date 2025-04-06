@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:movetopia/data/model/badge.dart';
+import 'package:movetopia/presentation/challenges/badgeLists/viewmodel/badge_lists_view_model.dart';
 import 'package:movetopia/presentation/challenges/dashboard/widgets/category_highlight_widget.dart';
 import 'package:movetopia/presentation/challenges/provider/badge_lists_provider.dart';
 import 'package:movetopia/presentation/challenges/routes.dart';
@@ -10,24 +11,56 @@ import 'package:movetopia/presentation/challenges/widgets/streak_card.dart';
 
 import '../../widgets/user_level_card.dart';
 
-class ChallengeDashboardScreen extends ConsumerWidget {
+class ChallengeDashboardScreen extends ConsumerStatefulWidget {
   const ChallengeDashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ChallengeDashboardScreen> createState() =>
+      _ChallengeDashboardScreenState();
+}
+
+class _ChallengeDashboardScreenState
+    extends ConsumerState<ChallengeDashboardScreen> {
+  bool _isRefreshing = false;
+
+  Future<void> _refreshData() async {
+    if (_isRefreshing) return;
+
+    setState(() {
+      _isRefreshing = true;
+    });
+
+    try {
+      // Badges neu prüfen und aktualisieren
+      await ref.read(badgeListsViewModelProvider.notifier).refreshBadges();
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isRefreshing = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.challenges_dashboard_title),
       ),
-      body: _buildContent(context, ref, l10n),
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: _buildContent(context, ref, l10n),
+      ),
     );
   }
 
   Widget _buildContent(
       BuildContext context, WidgetRef ref, AppLocalizations l10n) {
     return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
