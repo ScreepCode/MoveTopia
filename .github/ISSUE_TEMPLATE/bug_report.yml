@@ -1,0 +1,103 @@
+name: 🐞 Bug Report
+description: Report a bug in MoveTopia
+title: "[BUG] "
+labels: [ "bug" ]
+assignees: [ ]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug in MoveTopia!
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 🔍 Bug Description
+      description: Describe the bug clearly and precisely
+      placeholder: When I try to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: 🪜 Steps to Reproduce
+      description: Tell us how to reproduce this issue
+      placeholder: |
+        1. Open the app
+        2. Navigate to...
+        3. Click on...
+        4. Observe the error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: 🎬 Expected Behavior
+      description: What should actually happen?
+      placeholder: The app should...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: 📱 Platform
+      description: On which platform does this occur?
+      multiple: true
+      options:
+        - iOS
+        - Android
+        - All platforms
+    validations:
+      required: true
+
+  - type: input
+    id: app-version
+    attributes:
+      label: App Version
+      description: What version of MoveTopia are you using?
+      placeholder: e.g. 2025.04.06.0
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Device
+      description: What device are you using?
+      placeholder: e.g. iPhone 14 Pro, Samsung Galaxy S22
+    validations:
+      required: false
+
+  - type: input
+    id: os-version
+    attributes:
+      label: Operating System Version
+      description: What OS version are you using?
+      placeholder: e.g. iOS 16.5, Android 13
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 📸 Screenshots
+      description: If possible, add screenshots to help explain your problem
+      placeholder: Drag and drop images here
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: 📝 Additional Information
+      description: Any other helpful information
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping to improve MoveTopia! 

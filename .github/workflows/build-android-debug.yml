@@ -6,8 +6,66 @@ on:
   workflow_dispatch:
 
 jobs:
+  check-skip-conditions:
+    runs-on: ubuntu-latest
+    outputs:
+      skip-build: ${{ steps.check-labels.outputs.skip_build }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check PR labels
+        id: check-labels
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { execSync } = require('child_process');
+            
+            // Get the last commit message
+            const lastCommitMsg = execSync('git log -1 --pretty=format:%s').toString().trim();
+            console.log(`Last commit message: ${lastCommitMsg}`);
+            
+            // Check if this is a PR merge commit
+            const prMergeRegex = /Merge pull request #(\d+) from/;
+            const prMatch = lastCommitMsg.match(prMergeRegex);
+            
+            if (!prMatch) {
+              console.log('Not a PR merge commit, proceeding with build');
+              core.setOutput('skip_build', 'false');
+              return;
+            }
+            
+            const prNumber = prMatch[1];
+            console.log(`PR number: ${prNumber}`);
+            
+            // Get PR details from GitHub API
+            try {
+              const { data: pr } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: parseInt(prNumber)
+              });
+              
+              const labels = pr.labels || [];
+              const skipLabels = ['docs-only', 'no-build'];
+              const shouldSkip = labels.some(label => skipLabels.includes(label.name));
+              
+              console.log(`Labels: ${labels.map(l => l.name).join(', ')}`);
+              console.log(`Should skip build: ${shouldSkip}`);
+              
+              core.setOutput('skip_build', shouldSkip.toString());
+            } catch (error) {
+              console.error(`Error fetching PR #${prNumber}: ${error.message}`);
+              core.setOutput('skip_build', 'false');
+            }
+          result-encoding: string
+
   build-debug:
     name: "Build Debug APK"
+    needs: check-skip-conditions
+    if: ${{ needs.check-skip-conditions.outputs.skip-build == 'false' }}
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout repository"

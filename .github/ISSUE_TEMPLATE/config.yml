@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 🌐 MoveTopia Website
+    url: https://movetopia.de
+    about: Visit our website for more information about MoveTopia
+  - name: 📧 Support Email
+    url: mailto:mail@movetopia.de
+    about: Contact our support team directly via email
+  - name: 💬 MoveTopia Community Support
+    url: https://github.com/ScreepCode/MoveTopia/discussions
+    about: Discussions and help for the MoveTopia App
