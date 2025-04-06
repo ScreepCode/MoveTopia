@@ -1,0 +1,59 @@
+name: 💡 Feature Request
+description: Suggest a new idea for MoveTopia
+title: "[FEATURE] "
+labels: ["enhancement"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to suggest a new feature for MoveTopia!
+  
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: 🌟 Feature Description
+      description: Describe your idea clearly and precisely
+      placeholder: I'd like to see...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: motivation
+    attributes:
+      label: 🎯 Motivation
+      description: Why should we add this feature? What problem does it solve?
+      placeholder: This feature would help with...
+    validations:
+      required: true
+      
+  - type: textarea
+    id: user-experience
+    attributes:
+      label: 📱 User Experience
+      description: How do you envision the interaction with this feature?
+      placeholder: Users would be able to...
+    validations:
+      required: false
+      
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 🧩 Alternatives
+      description: Have you considered any alternatives?
+      placeholder: Another approach could be...
+    validations:
+      required: false
+      
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: 📝 Additional Information
+      description: Any other relevant information or context
+    validations:
+      required: false
+      
+  - type: markdown
+    attributes:
+      value: |
+        <!-- Fun fact: MoveTopia gets a little better every day! --> 

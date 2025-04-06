@@ -1,0 +1,46 @@
+name: 🔧 Quick Issue
+description: Create a simple issue with minimal details
+title: ""
+labels: []
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for quick and simple issues.
+  
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What needs to be done?
+      placeholder: Briefly describe what needs attention...
+    validations:
+      required: true
+      
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Any additional information needed?
+      placeholder: Add any relevant context...
+    validations:
+      required: false
+      
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How urgent is this issue?
+      options:
+        - Low
+        - Medium
+        - High
+        - Critical
+    validations:
+      required: false
+      
+  - type: markdown
+    attributes:
+      value: |
+        ℹ️ For more detailed templates, see our bug report and feature request options 
