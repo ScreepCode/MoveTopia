@@ -337,7 +337,10 @@ class HealthServiceImpl implements HealthService {
 
   // Method to clear all caches
   void clearCache() {
+    _logger.info('Clearing health service cache...');
     _cache.clear();
+    _cacheTimeRanges.clear();
     _cacheTimestamps.clear();
+    _logger.info('Health service cache cleared');
   }
 }

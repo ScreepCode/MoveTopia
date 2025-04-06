@@ -13,6 +13,7 @@ import 'package:movetopia/presentation/profile/view_model/profile_view_model.dar
 
 import 'core/health_authorized_view_model.dart';
 import 'data/repositories/device_info_repository_impl.dart';
+import 'data/service/health_service_impl.dart';
 import 'domain/repositories/profile_repository.dart';
 
 final initLoggerProvider = Provider((ref) {
@@ -72,6 +73,8 @@ interface class MoveTopiaAppViewModel {
     }
     _isInitialized = true;
 
+    log.info('Starting app initialization...');
+
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       systemNavigationBarContrastEnforced: false,
@@ -80,9 +83,16 @@ interface class MoveTopiaAppViewModel {
       systemStatusBarContrastEnforced: false,
     ));
 
-    await _initializeAppDates();
-    await _initializeStreaks();
-    await _checkAuthorization();
+    try {
+      await _initializeAppDates();
+      await _checkAuthorization();
+      await _initializeStreaks();
+      await _forceCacheRefresh();
+
+      log.info('App initialization completed successfully');
+    } catch (e) {
+      log.severe('Error during app initialization: $e');
+    }
   }
 
   Future<void> _initializeAppDates() async {
@@ -99,21 +109,47 @@ interface class MoveTopiaAppViewModel {
   }
 
   Future<void> _checkAuthorization() async {
-    final healthAuthViewModel = ref.read(healthViewModelProvider.notifier);
-    await healthAuthViewModel.authorize();
-    final state = ref.read(healthViewModelProvider);
-    switch (state) {
-      case HealthAuthViewModelState.authorized:
-        log.info('Health data access authorized.');
-        break;
-      case HealthAuthViewModelState.authorizationNotGranted:
-        log.info('Health data access not granted.');
-        break;
-      case HealthAuthViewModelState.error:
-        log.severe('Health data access authorization error.');
-        break;
-      default:
-        log.warning("Unrecognized HealthAuthViewModelState: $state");
+    try {
+      final healthAuthViewModel = ref.read(healthViewModelProvider.notifier);
+      await healthAuthViewModel.authorize();
+      final state = ref.read(healthViewModelProvider);
+
+      switch (state) {
+        case HealthAuthViewModelState.authorized:
+          log.info('Health data access authorized (basic).');
+          break;
+        case HealthAuthViewModelState.authorizedWithHistoricalAccess:
+          log.info('Health data access authorized with historical access.');
+          break;
+        case HealthAuthViewModelState.authorizationNotGranted:
+          log.warning(
+              'Health data access not granted. Some features may not work properly.');
+          break;
+        case HealthAuthViewModelState.error:
+          log.severe(
+              'Health data access authorization error. Some features may not work properly.');
+          break;
+        case HealthAuthViewModelState.notAuthorized:
+          log.warning(
+              'Health data not authorized yet. App will prompt user for permissions.');
+          break;
+        default:
+          log.warning("Unrecognized HealthAuthViewModelState: $state");
+      }
+    } catch (e) {
+      log.severe('Error checking health authorization: $e');
+    }
+  }
+
+  Future<void> _forceCacheRefresh() async {
+    try {
+      log.info('Forcing cache refresh for health data...');
+
+      final healthServiceInstance = ref.read(healthService);
+      healthServiceInstance.clearCache();
+      log.info('Health data cache cleared');
+    } catch (e) {
+      log.warning('Failed to force cache refresh: $e');
     }
   }
 }

@@ -36,29 +36,37 @@ class TodayOverview extends StatelessWidget {
           const Icon(Icons.navigate_next)
         ],
       ),
-      StaggeredGrid.count(
-          crossAxisCount: 2,
-          crossAxisSpacing: 6.0,
-          mainAxisSpacing: 6.0,
-          children: [
-            StaggeredGridTile.fit(
-                crossAxisCellCount: 1,
-                child: StepsCard(
-                  steps: steps,
-                  stepGoal: stepGoal,
-                )),
-            StaggeredGridTile.fit(
-                crossAxisCellCount: 1,
-                child: DistanceCard(
-                  value: '$distance km',
-                  percentage: 0.6,
-                )),
-            StaggeredGridTile.fit(
-                crossAxisCellCount: 1,
-                child: SleepCard(
-                  value: formatDuration(sleep),
-                )),
-          ])
+      const SizedBox(height: 8),
+      LayoutBuilder(
+        builder: (context, constraints) {
+          return SizedBox(
+            width: constraints.maxWidth,
+            child: StaggeredGrid.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 6.0,
+                mainAxisSpacing: 6.0,
+                children: [
+                  StaggeredGridTile.fit(
+                      crossAxisCellCount: 1,
+                      child: StepsCard(
+                        steps: steps,
+                        stepGoal: stepGoal,
+                      )),
+                  StaggeredGridTile.fit(
+                      crossAxisCellCount: 1,
+                      child: DistanceCard(
+                        value: '$distance km',
+                        percentage: 0.6,
+                      )),
+                  StaggeredGridTile.fit(
+                      crossAxisCellCount: 1,
+                      child: SleepCard(
+                        value: formatDuration(sleep),
+                      )),
+                ]),
+          );
+        },
+      )
     ]);
   }
 }
