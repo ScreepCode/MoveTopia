@@ -79,8 +79,10 @@ class TodayScreen extends HookConsumerWidget {
     }, [authState]);
 
     useEffect(() {
-      if (authState == HealthAuthViewModelState.authorized) {
-        if (previousAuthState.value != HealthAuthViewModelState.authorized) {
+      if (authState == HealthAuthViewModelState.authorized ||
+          authState ==
+              HealthAuthViewModelState.authorizedWithHistoricalAccess) {
+        if (previousAuthState.value != authState) {
           fetchHealthData();
         }
       }
@@ -89,6 +91,14 @@ class TodayScreen extends HookConsumerWidget {
 
       return null;
     }, [authState]);
+
+    // Initial data loading when screen builds the first time
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        fetchHealthData();
+      });
+      return null;
+    }, const []);
 
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
