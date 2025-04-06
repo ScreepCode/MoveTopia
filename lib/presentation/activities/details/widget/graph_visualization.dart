@@ -17,16 +17,12 @@ class GraphVisualization<T> extends StatelessWidget {
       required this.lineTouchData,
       required this.xAxisLabel,
       required this.yAxisLabel,
+      required this.gradientColors,
       this.checkToShowHorizontalLine});
 
   List<Data<T>> data;
   final String title;
-  final List<Color> gradientColors = const [
-    Colors.green,
-    Colors.yellow,
-    Colors.orange,
-    Colors.red,
-  ];
+  final List<Color> gradientColors;
   final String? xAxisLabel;
   final String? yAxisLabel;
   FlDotData dotData;

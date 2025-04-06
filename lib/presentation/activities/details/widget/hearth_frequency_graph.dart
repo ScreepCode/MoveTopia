@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:movetopia/data/model/activity.dart';
+import 'package:movetopia/data/model/heart_frequency_zones.dart';
 import 'package:movetopia/presentation/activities/details/widget/graph_visualization.dart';
 
 class HearthFrequencyGraph extends StatelessWidget {
@@ -15,32 +16,15 @@ class HearthFrequencyGraph extends StatelessWidget {
   final List<Data<int>> data;
   final DateTime activityStartTime;
   final DateTime activityEndTime;
-  final List<Color> gradientColors = const [
-    Colors.green,
-    Colors.lightGreen,
-    Colors.yellow,
-    Colors.orange,
-    Colors.red,
-  ];
 
   // Function to determine color based on y-value
   Color _getColorForValue(double value) {
     // Define thresholds for color changes
-    if (value < 100) {
-      return gradientColors[0]; // Green
-    } else if (value < 120) {
-      return gradientColors[1]; // Light Green
-    } else if (value < 140) {
-      return gradientColors[2]; // Yellow
-    } else if (value < 160) {
-      return gradientColors[3]; // Orange
-    } else {
-      return gradientColors[4]; // Red
-    }
+    return HeartFrequencyZone.fromBpm(value.toInt()).color;
   }
 
   LinearGradient _buildLinearGradient() {
-    var colors = gradientColors.toList();
+    var colors = HeartFrequencyZone.values.map((e) => e.color).toList();
     // We need to check if the maximum values are lower than the steps
     // If so, we need to remove the last color
     // So if no value higher than 160 is present, we remove the red color
@@ -143,6 +127,7 @@ class HearthFrequencyGraph extends StatelessWidget {
         show: true,
         gradient: _buildLinearGradient(),
       ),
+      gradientColors: HeartFrequencyZone.values.map((e) => e.color).toList(),
     );
   }
 }
