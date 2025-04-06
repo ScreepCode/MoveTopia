@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
-import 'package:movetopia/data/service/health_service_impl.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -62,89 +61,26 @@ final refreshStreakFromHealthDataProvider =
 
     final deviceInfoRepository = ref.read(deviceInfoRepositoryProvider);
     final streakRepository = ref.read(streakRepositoryProvider);
-    final healthRepository = ref.read(healthService);
     final profileRepository = ref.read(profileRepositoryProvider);
 
     try {
-      // Lade das Installationsdatum und das Schrittziel
       final installationDate = await deviceInfoRepository.getInstallationDate();
-      final stepGoal = await profileRepository.getStepGoal();
+      final currentStepGoal = await profileRepository.getStepGoal();
 
       _logger.info(
-          'Installationsdatum: $installationDate, Schrittziel: $stepGoal');
+          'Installationsdatum: $installationDate, Aktuelles Schrittziel: $currentStepGoal');
 
-      // Hole die bestehenden abgeschlossenen Tage
-      final existingCompletedDays = await streakRepository.getCompletedDays();
-      _logger.info(
-          'Bestehende abgeschlossene Tage: ${existingCompletedDays.length}');
-
-      // Prüfe jeden Tag seit der Installation
-      final now = DateTime.now();
-      final today = DateTime(now.year, now.month, now.day);
-      final completedDaysSet = <String>{};
-      final newCompletedDays = <DateTime>[];
-
-      // Setze alle bestehenden Tage zurück
-      _logger.info('Setze bestehende Tage zurück...');
-      await streakRepository.saveCompletedDaysList([]);
-
-      // Streak-Zähler zurücksetzen, damit auch eine Korrektur nach unten möglich ist
-      await streakRepository.saveStreakCount(0);
-      _logger.info('Streak-Zähler zurückgesetzt');
-
-      // Iteriere über alle Tage seit der Installation
-      for (var day = installationDate;
-          day.isBefore(today) || day.isAtSameMomentAs(today);
-          day = day.add(const Duration(days: 1))) {
-        final normalizedDay = DateTime(day.year, day.month, day.day);
-
-        // Hole die Schritte für diesen Tag
-        final startOfDay = normalizedDay;
-        final endOfDay = DateTime(normalizedDay.year, normalizedDay.month,
-            normalizedDay.day, 23, 59, 59);
-
-        final steps = (await healthRepository.getStepsInInterval(
-            startOfDay, endOfDay))[0];
-        _logger.info('Tag: $normalizedDay, Schritte: $steps, Ziel: $stepGoal');
-
-        // Prüfe, ob das Tagesziel erreicht wurde
-        if (steps >= stepGoal) {
-          _logger.info('Tagesziel erreicht für $normalizedDay');
-          newCompletedDays.add(normalizedDay);
-          // Vermerke den Tag als abgeschlossen
-          completedDaysSet.add(normalizedDay.toIso8601String().split('T')[0]);
-        }
-      }
-
-      // Speichere alle neuen Tage auf einmal, um Performanz zu verbessern
-      await streakRepository.saveCompletedDaysList(newCompletedDays);
-      _logger.info(
-          '${newCompletedDays.length} Tage als abgeschlossen gespeichert');
-
-      // Berechne die Streak neu basierend auf den neuen Tagen
-      final updatedDays = await streakRepository.getCompletedDays();
-      _logger
-          .info('Neuberechnung der Streak mit ${updatedDays.length} Tagen...');
-
-      // Verwende die öffentliche Methode zur Neuberechnung der Streak
       await streakRepository.checkAndUpdateStreaksSinceInstallation(
-          installationDate, stepGoal);
-      _logger.info(
-          'Streak-Länge wurde mit checkAndUpdateStreaksSinceInstallation neu berechnet');
+          installationDate, currentStepGoal);
+      _logger.info('Streak wurde mit aktuellem Ziel aktualisiert');
 
-      // Hole die aktuelle Streak-Länge zur Kontrolle
       final currentStreak = await streakRepository.getStreakCount();
-      _logger.info('Aktuelle Streak-Länge: $currentStreak');
+      final updatedDays = await streakRepository.getCompletedDays();
+      _logger.info(
+          'Aktuelle Streak-Länge: $currentStreak, Erfüllte Tage: ${updatedDays.length}');
 
-      // Aktualisiere den letzten Aktualisierungszeitpunkt
-      await deviceInfoRepository.updateLastOpenedDate(today);
-
-      // Aktualisiere den UI-Provider erst nach Abschluss aller Berechnungen
       ref.read(streakRefreshProvider.notifier).state++;
       _logger.info('UI-Refresh-Counter erhöht, UI sollte aktualisiert werden');
-
-      _logger.info(
-          'Streak-Aktualisierung abgeschlossen. ${completedDaysSet.length} Tage erfüllt.');
     } catch (e, stackTrace) {
       _logger.severe(
           'Fehler beim Aktualisieren der Streak-Daten', e, stackTrace);

@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../../../profile/debug_settings/provider/debug_provider.dart';
 import '../../provider/streak_provider.dart';
 
 // Provider für den Ladezustand des manuellen Refreshs
@@ -82,7 +83,7 @@ class StreakDetailsScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  _buildCalendar(context, days, l10n),
+                  _buildCalendar(context, days, l10n, ref),
                   const SizedBox(height: 24),
                   _buildLegend(context, l10n),
                   const SizedBox(height: 16),
@@ -202,8 +203,14 @@ class StreakDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildCalendar(
-      BuildContext context, List<DateTime> days, AppLocalizations l10n) {
+  Widget _buildCalendar(BuildContext context, List<DateTime> days,
+      AppLocalizations l10n, WidgetRef ref) {
+    final installDateAsyncValue = ref.watch(installationDateProvider);
+    DateTime? installationDate;
+    installDateAsyncValue.whenData((date) {
+      installationDate = date;
+    });
+
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
@@ -277,10 +284,18 @@ class StreakDetailsScreen extends ConsumerWidget {
             defaultBuilder: (context, day, focusedDay) {
               final normalizedDay = DateTime(day.year, day.month, day.day);
 
+              bool isBeforeInstallation = false;
+              if (installationDate != null) {
+                final normalizedInstallDate = DateTime(installationDate!.year,
+                    installationDate!.month, installationDate!.day);
+
+                if (normalizedDay.isBefore(normalizedInstallDate)) {
+                  isBeforeInstallation = true;
+                }
+              }
+
               final isOutsideMonth = day.month != focusedDay.month;
-
               final isToday = normalizedDay.isToday;
-
               final isCompleted = normalizedDay.isCompletedIn(days);
 
               if (isToday && !isCompleted) {
@@ -295,8 +310,22 @@ class StreakDetailsScreen extends ConsumerWidget {
                 }
               }
 
-              final color = normalizedDay.getStreakColor(days);
+              if (isBeforeInstallation) {
+                return Container(
+                  margin: const EdgeInsets.all(4),
+                  alignment: Alignment.center,
+                  child: Text(
+                    '${day.day}',
+                    style: TextStyle(
+                      color: Colors.grey.shade400,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                );
+              }
 
+              // Normale Verarbeitung für Tage nach Installation
+              final color = normalizedDay.getStreakColor(days);
               bool isActive = color == StreakColors.active;
 
               if (!isActive && isCompleted) {
