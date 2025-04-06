@@ -8,7 +8,7 @@ import 'package:movetopia/core/navigation_host.dart';
 import 'package:movetopia/domain/service/app_startup_service.dart';
 import 'package:movetopia/presentation/common/theme.dart';
 import 'package:movetopia/presentation/onboarding/providers/onboarding_provider.dart';
-import 'package:movetopia/presentation/profile/provider/debug_provider.dart';
+import 'package:movetopia/presentation/profile/debug_settings/provider/debug_provider.dart';
 import 'package:movetopia/presentation/profile/view_model/profile_view_model.dart';
 
 import 'core/health_authorized_view_model.dart';

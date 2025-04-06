@@ -375,5 +375,13 @@
   "logs_details_error": "Fehler:",
   "logs_details_stack_trace": "Stack Trace:",
   "logs_copy": "Kopieren",
-  "logs_close": "Schließen"
+  "logs_close": "Schließen",
+  "settingsDebugAppDatesSectionTitle": "App-Daten",
+  "settingsDebugInstallationDate": "Installationsdatum",
+  "settingsDebugLastUpdatedDate": "Letztes Aktualisierungsdatum",
+  "settingsDebugNewInstallationDate": "Neues Installationsdatum",
+  "settingsDebugNewLastUpdatedDate": "Neues Aktualisierungsdatum",
+  "settingsDebugDateUpdated": "Datum erfolgreich aktualisiert",
+  "settingsDebugUpdateButton": "Aktualisieren",
+  "settingsDebugErrorLoadingDate": "Fehler beim Laden: {title}"
 }

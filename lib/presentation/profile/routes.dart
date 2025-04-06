@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:movetopia/presentation/profile/screen/log_screen.dart';
 
-import 'screen/debug_settings_screen.dart';
+import 'debug_settings/screen/debug_settings_screen.dart';
+import 'debug_settings/screen/log_screen.dart';
 import 'screen/permissions_settings_screen.dart';
 import 'screen/profile_screen.dart';
 
