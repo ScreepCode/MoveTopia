@@ -451,9 +451,12 @@ DART
 
   # 6. Combined release build for both APK and AAB
   desc "Build release APK and AAB with versioning in parallel"
-  lane :build_release_files do
+  lane :build_release_and_deploy do |options|
     UI.message("Starting parallel release build (APK + AAB)")
-
+    
+    # Parse options for deployment
+    deploy_to = options[:deploy_to]
+    
     # Setup keystore properties
     setup_keystore
 
@@ -498,6 +501,29 @@ DART
     UI.important("Version information: name=#{version_name}, build=#{build_number}")
     UI.important("APK path: #{apk_path}")
     UI.important("AAB path: #{aab_path}")
+    
+    # Check if we should deploy to Google Play Store
+    if deploy_to && ['internal', 'beta'].include?(deploy_to)
+      UI.message("Deploying to Google Play #{deploy_to.capitalize} track")
+      
+      # Check if we have the necessary credentials
+      if ENV['PLAYSTORE_JSON_KEY_PATH'].nil?
+        UI.user_error!("Cannot deploy to Google Play Store: PLAYSTORE_JSON_KEY_PATH environment variable not set")
+      end
+      
+      # Upload to the selected track
+      upload_to_play_store(
+        track: deploy_to,
+        aab: aab_path,
+        json_key: ENV['PLAYSTORE_JSON_KEY_PATH'],
+        skip_upload_metadata: true,
+        skip_upload_changelogs: true,
+        skip_upload_images: true,
+        skip_upload_screenshots: true,
+      )
+      
+      UI.success("Successfully deployed to #{deploy_to.capitalize} track")
+    end
 
     # Return version info for GitHub Actions
     version_info

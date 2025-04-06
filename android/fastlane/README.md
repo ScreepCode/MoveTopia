@@ -79,10 +79,10 @@ Build release APK without creating a release or tag
 
 Build release AAB with versioning
 
-### android build_release_files
+### android build_release_and_deploy
 
 ```sh
-[bundle exec] fastlane android build_release_files
+[bundle exec] fastlane android build_release_and_deploy
 ```
 
 Build release APK and AAB with versioning in parallel

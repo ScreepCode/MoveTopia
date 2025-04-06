@@ -1,6 +1,19 @@
 name: "Release Build APK"
 on:
+  push:
+    branches: [ main ]
+    tags:
+      - 'v*'
   workflow_dispatch:
+    inputs:
+      deploy_target:
+        description: 'Deploy-Ziel (internal, beta)'
+        required: true
+        default: 'internal'
+        type: choice
+        options:
+          - internal
+          - beta
 
 jobs:
   build-release:
@@ -48,11 +61,29 @@ jobs:
           echo "KEY_ALIAS=$KEY_ALIAS" >> $GITHUB_ENV
           echo "KEY_PASSWORD=$KEY_PASSWORD" >> $GITHUB_ENV
 
+      - name: Setup Google Play credentials
+        env:
+          PLAY_STORE_JSON_KEY_BASE64: ${{ secrets.PLAY_STORE_JSON_KEY_BASE64 }}
+        run: |
+          echo $PLAY_STORE_JSON_KEY_BASE64 | base64 --decode > play-store-credentials.json
+          echo "PLAYSTORE_JSON_KEY_PATH=$(pwd)/play-store-credentials.json" >> $GITHUB_ENV
+
+      - name: Determine deploy target
+        id: deploy-target
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "DEPLOY_TARGET=${{ github.event.inputs.deploy_target }}" >> $GITHUB_ENV
+          elif [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            echo "DEPLOY_TARGET=beta" >> $GITHUB_ENV
+          else
+            echo "DEPLOY_TARGET=internal" >> $GITHUB_ENV
+          fi
+
       - name: "Run Fastlane Release Build"
         id: fastlane
         uses: maierj/fastlane-action@v3.1.0
         with:
-          lane: build_release_files
+          lane: build_release_and_deploy
           subdirectory: android
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
