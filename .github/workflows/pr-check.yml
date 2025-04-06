@@ -10,7 +10,7 @@ jobs:
   check-skip-conditions:
     runs-on: ubuntu-latest
     outputs:
-      should-skip: ${{ steps.check-labels.outputs.should-skip }}
+      skip-build: ${{ steps.check-labels.outputs.skip_build }}
     steps:
       - name: Check PR labels
         id: check-labels
@@ -22,12 +22,13 @@ jobs:
             const shouldSkip = labels.some(label => skipLabels.includes(label.name));
             console.log(`Labels: ${labels.map(l => l.name).join(', ')}`);
             console.log(`Should skip build: ${shouldSkip}`);
-            return shouldSkip;
+            core.setOutput('skip_build', shouldSkip.toString());
+          result-encoding: string
 
   build-check:
     name: "Build Check"
     needs: check-skip-conditions
-    if: ${{ needs.check-skip-conditions.outputs.should-skip != 'true' }}
+    if: ${{ needs.check-skip-conditions.outputs.skip-build == 'false' }}
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout repository"
