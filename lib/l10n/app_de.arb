@@ -237,8 +237,7 @@
     }
   },
   "@_DEBUGGING": {},
-  "settingsDebugTitle": "Debug-Einstellungen",
-  "settingsDebugMenu": "Debug-Werkzeuge",
+  "settingsDebugTitle": "Debug-Werkzeuge",
   "settingsDebugNotAvailable": "Dieser Bildschirm ist nur in Debug-Builds verfügbar",
   "settingsDebugStreakTitle": "Serie Debuggen",
   "settingsDebugStreakSimulate": "Serie simulieren",
@@ -383,5 +382,10 @@
   "settingsDebugNewLastUpdatedDate": "Neues Aktualisierungsdatum",
   "settingsDebugDateUpdated": "Datum erfolgreich aktualisiert",
   "settingsDebugUpdateButton": "Aktualisieren",
-  "settingsDebugErrorLoadingDate": "Fehler beim Laden: {title}"
+  "settingsDebugErrorLoadingDate": "Fehler beim Laden: {title}",
+  
+  "settingsDebugCacheTitle": "Cache-Verwaltung",
+  "settingsDebugCacheClear": "Cache leeren",
+  "settingsDebugCacheCleared": "Cache erfolgreich geleert",
+  "settingsDebugCacheError": "Fehler beim Leeren des Caches: {error}"
 }

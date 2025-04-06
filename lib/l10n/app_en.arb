@@ -241,8 +241,7 @@
   },
 
   "@_DEBUGGING": {},
-  "settingsDebugTitle": "Debug Settings",
-  "settingsDebugMenu": "Debug Tools",
+  "settingsDebugTitle": "Debug Tools",
   "settingsDebugNotAvailable": "This screen is only available in debug builds",
   "settingsDebugStreakTitle": "Debug Streak",
   "settingsDebugStreakSimulate": "Simulate Streak",
@@ -297,6 +296,11 @@
   "settingsDebugDateUpdated": "Date updated successfully",
   "settingsDebugUpdateButton": "Update",
   "settingsDebugErrorLoadingDate": "Error loading date: {title}",
+
+  "settingsDebugCacheTitle": "Cache Management",
+  "settingsDebugCacheClear": "Clear Cache",
+  "settingsDebugCacheCleared": "Cache cleared successfully",
+  "settingsDebugCacheError": "Error clearing cache: {error}",
 
   "@_TRACKING": {},
   "tracking_title": "Fitness Tracking",

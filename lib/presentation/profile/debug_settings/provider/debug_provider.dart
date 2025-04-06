@@ -7,6 +7,7 @@ import 'package:movetopia/data/repositories/badge_repository_impl.dart';
 import 'package:movetopia/data/repositories/debug_repository_impl.dart';
 import 'package:movetopia/data/repositories/device_info_repository_impl.dart';
 import 'package:movetopia/data/repositories/streak_repository_impl.dart';
+import 'package:movetopia/data/service/health_service_impl.dart';
 import 'package:movetopia/domain/repositories/debug_repository.dart';
 import 'package:movetopia/domain/service/badge_service.dart';
 import 'package:path/path.dart' as path;
@@ -228,6 +229,26 @@ final resetBadgesDatabaseProvider = Provider<Future<void> Function()>((ref) {
       }
     } catch (e) {
       throw Exception('Fehler beim Zurücksetzen der Badges-Datenbank: $e');
+    }
+  };
+});
+
+// Provider zum Löschen des App-Caches
+final clearCacheProvider = Provider<Future<void> Function()>((ref) {
+  return () async {
+    try {
+      // Health Service Cache leeren
+      ref.read(healthService).clearCache();
+
+      // Zusätzlich Riverpod-Provider invalidieren
+      ref.invalidate(streakRefreshProvider);
+      ref.invalidate(installationDateProvider);
+      ref.invalidate(lastOpenedDateProvider);
+      ref.invalidate(allBadgesProvider);
+
+      return;
+    } catch (e) {
+      throw Exception('Fehler beim Löschen des Caches: $e');
     }
   };
 });

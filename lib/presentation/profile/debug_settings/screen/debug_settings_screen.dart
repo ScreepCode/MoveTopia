@@ -8,6 +8,7 @@ import '../../routes.dart';
 import '../provider/debug_provider.dart';
 import '../widgets/app_dates_section.dart';
 import '../widgets/badge_debug_section.dart';
+import '../widgets/cache_debug_section.dart';
 import '../widgets/streak_debug_section.dart';
 
 class DebugSettingsScreen extends HookConsumerWidget {
@@ -27,7 +28,7 @@ class DebugSettingsScreen extends HookConsumerWidget {
             icon: const Icon(Icons.list_alt),
             tooltip: 'App Logs',
             onPressed: () {
-              context.go('/$profilePath/$profileLoggingPath');
+              context.go('$profilePath/$profileLoggingPath');
             },
           ),
         ],
@@ -49,27 +50,17 @@ class DebugSettingsScreen extends HookConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               spacing: 16,
               children: [
-                // Titel
-                Text(
-                  l10n.settingsDebugMenu,
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
+                // App-Daten Sektion
+                const AppDatesSection(),
 
-                // Debug-Sektionen direkt eingebunden
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 16,
-                  children: [
-                    // App-Daten Sektion
-                    const AppDatesSection(),
+                // Streak Debugging Sektion
+                StreakDebugSection(isLoading: isLoading),
 
-                    // Streak Debugging Sektion
-                    StreakDebugSection(isLoading: isLoading),
+                // Badge Debugging Sektion
+                BadgeDebugSection(isLoading: isLoading),
 
-                    // Badge Debugging Sektion
-                    BadgeDebugSection(isLoading: isLoading),
-                  ],
-                ),
+                // Cache Debuggin Sektion
+                CacheDebugSection(isLoading: isLoading)
               ],
             ),
           );
