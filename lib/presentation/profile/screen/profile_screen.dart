@@ -8,7 +8,7 @@ import 'package:logging/logging.dart';
 import 'package:movetopia/domain/repositories/profile_repository.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import '../provider/debug_provider.dart';
+import '../debug_settings/provider/debug_provider.dart';
 import '../routes.dart';
 import '../view_model/profile_view_model.dart';
 
