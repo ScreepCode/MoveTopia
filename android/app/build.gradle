@@ -51,7 +51,7 @@ if (flutterVersionName == null) {
 
 
 android {
-    namespace = "de.movetopia"
+    namespace = "de.buseslaar.movetopia"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = globalProperties.getProperty('flutter.ndkVersion')
 
@@ -69,7 +69,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "de.movetopia"
+        applicationId = "de.buseslaar.movetopia"
         minSdk = globalProperties.getProperty('flutter.minSdkVersion').toInteger()
         targetSdk = flutter.targetSdkVersion
         versionCode = flutterVersionCode.toInteger()

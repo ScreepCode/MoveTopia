@@ -1,10 +1,10 @@
-package de.movetopia
+package de.buseslaar.movetopia
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import de.movetopia.BuildConfig
+import de.buseslaar.movetopia.BuildConfig
 
 /**
  * Activity to show privacy policy.

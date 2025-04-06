@@ -62,7 +62,7 @@ interface class BaseLocalHealthRepoImpl extends BaseLocalHealthRepository {
               overlapIndex = i;
 
               // If this is from movetopia, prioritize it
-              if (point.sourceName.startsWith('de.movetopia') &&
+              if (point.sourceName.startsWith('de.buseslaar.movetopia') &&
                   (point.type == HealthDataType.WORKOUT ||
                       point.type == HealthDataType.DISTANCE_DELTA)) {
                 nonOverlapping[i] = point;
@@ -153,7 +153,7 @@ interface class BaseLocalHealthRepoImpl extends BaseLocalHealthRepository {
               (element) => element.name == preview.activityType?.name),
           start: startTime,
           end: endTime,
-          totalDistance: ((preview.distance ?? 0) * 1000).toInt(),
+          totalDistance: (preview.distance ?? 0).toInt() * 1000,
           totalDistanceUnit: HealthDataUnit.METER);
     } catch (e) {
       log.info(e);
