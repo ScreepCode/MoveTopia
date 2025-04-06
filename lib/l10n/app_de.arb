@@ -15,6 +15,8 @@
   "activity_duration_text": "{minutes} Min. {seconds} Sek.",
   "activity_steps": "Schritte",
   "activity_duration": "Dauer",
+  "activity_heart_frequency": "Herzfrequenz",
+  "activity_time": "Zeit",
   "activity_current_speed": "Geschwindigkeit",
   "activity_current_pace": "Tempo",
   "activity_avg_speed": "Durchschnittliche Geschwindigkeit",

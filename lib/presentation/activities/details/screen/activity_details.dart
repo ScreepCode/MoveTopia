@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:movetopia/core/health_authorized_view_model.dart';
 import 'package:movetopia/data/model/activity.dart';
+import 'package:movetopia/presentation/activities/details/widget/hearth_frequency_graph.dart';
 import 'package:movetopia/utils/health_utils.dart';
 
 import '../view_model/activity_detail_state.dart';
@@ -62,6 +63,9 @@ class ActivityDetailsScreen extends HookConsumerWidget {
         children: [
           _buildHeaderDetails(context, activityState),
           _buildWorkoutDetails(activityState),
+          if (activityState.activity.heartRates != null &&
+              activityState.activity.heartRates!.isNotEmpty)
+            _buildGraphDetails(context, activityState),
         ],
       ),
     );
@@ -86,6 +90,17 @@ class ActivityDetailsScreen extends HookConsumerWidget {
       caloriesBurnt: activityPreview.caloriesBurnt,
       steps: activityState.activity.steps,
       distance: activityState.activity.distance,
+    );
+  }
+
+  Widget _buildGraphDetails(
+      BuildContext context, ActivityDetailState activityState) {
+    var start = activityState.activity.start;
+    var end = activityState.activity.end;
+    return HearthFrequencyGraph(
+      data: activityState.activity.heartRates ?? [],
+      activityEndTime: end,
+      activityStartTime: start,
     );
   }
 }
