@@ -77,7 +77,7 @@ Widget _buildBody(
             activities.groupedActivities!,
             activities.isLoading,
             scrollController,
-          ) //_buildActivityList(context, activities.activities)
+          )
         : activities.isLoading
             ? const Center(child: CircularProgressIndicator())
             : Center(

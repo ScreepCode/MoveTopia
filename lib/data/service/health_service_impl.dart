@@ -10,6 +10,7 @@ import 'package:movetopia/data/repositories/base_local_health_impl.dart';
 import 'package:movetopia/domain/repositories/local_health.dart';
 import 'package:movetopia/domain/service/health_service.dart';
 import 'package:movetopia/utils/time_range.dart';
+import 'package:movetopia/utils/unit_utils.dart';
 
 final healthService = Provider<HealthServiceImpl>((ref) {
 // Get the base implementation
@@ -210,18 +211,12 @@ class HealthServiceImpl implements HealthService {
       var current = rawWorkouts[i];
       WorkoutHealthValue healthValue = current.value as WorkoutHealthValue;
 
-      var kilometres = healthValue.totalDistance != null
-          ? (healthValue.totalDistance! / 1000)
-          : 0.0;
-      // Round kilometres to 2 decimal places
-      kilometres = (((kilometres * 100).toInt()) / 100).toDouble();
-
       ActivityPreview preview = ActivityPreview(
           activityType: healthValue.workoutActivityType,
           caloriesBurnt: healthValue.totalEnergyBurned ?? 0,
           start: current.dateFrom,
           end: current.dateTo,
-          distance: kilometres,
+          distance: metresToKilometres(healthValue.totalDistance),
           sourceId: current.sourceName);
       parsedWorkouts.add(preview);
     }
@@ -273,14 +268,12 @@ class HealthServiceImpl implements HealthService {
         var lastWorkout = workouts.last;
         WorkoutHealthValue healthValue =
             lastWorkout.value as WorkoutHealthValue;
-        int calories = await getCaloriesBurnedInInterval(
-            lastWorkout.dateFrom, lastWorkout.dateTo);
         return ActivityPreview(
             activityType: healthValue.workoutActivityType,
-            caloriesBurnt: calories,
+            caloriesBurnt: healthValue.totalEnergyBurned ?? 0,
             start: lastWorkout.dateFrom,
             end: lastWorkout.dateTo,
-            distance: (healthValue.totalDistance ?? 0).toDouble(),
+            distance: metresToKilometres(healthValue.totalDistance),
             sourceId: lastWorkout.sourceName);
       }
     } catch (e) {
@@ -322,11 +315,7 @@ class HealthServiceImpl implements HealthService {
 
   void _invalidateRelatedCaches(DateTime start, DateTime end) {
     final keysToInvalidate = _cacheTimestamps.keys.where((key) {
-      return key.contains('getActivities') ||
-          key.contains('getLastActivity') ||
-          key.contains('getStepsInInterval') ||
-          key.contains('getDistanceInInterval') ||
-          key.contains('getCaloriesBurnedInInterval');
+      return key.contains('getHealthDataInterval');
     }).toList();
 
     for (final key in keysToInvalidate) {

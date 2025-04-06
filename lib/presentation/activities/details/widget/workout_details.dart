@@ -9,6 +9,7 @@ class WorkoutDetails extends StatelessWidget {
   final int duration;
   final int caloriesBurnt;
   final int steps;
+  final double distance;
 
   const WorkoutDetails({
     super.key,
@@ -16,6 +17,7 @@ class WorkoutDetails extends StatelessWidget {
     required this.duration,
     required this.caloriesBurnt,
     required this.steps,
+    required this.distance,
   });
 
   @override
@@ -33,20 +35,25 @@ class WorkoutDetails extends StatelessWidget {
               value: AppLocalizations.of(context)!.activity_duration_text(
                   (duration / 60).toStringAsFixed(0),
                   ((duration / 60 % 1) * 60).toStringAsFixed(0))),
-          if (averageHeartBeat != 0)
-            DetailStatsCardEntry(
-              displayName: l10n.activity_avg_heart_rate,
-              value: '$averageHeartBeat bpm',
-            ),
           if (steps != 0)
             DetailStatsCardEntry(
               displayName: l10n.activity_steps,
               value: '$steps',
             ),
+          if (averageHeartBeat != 0)
+            DetailStatsCardEntry(
+              displayName: l10n.activity_avg_heart_rate,
+              value: '$averageHeartBeat bpm',
+            ),
           if (caloriesBurnt != 0)
             DetailStatsCardEntry(
               displayName: l10n.activity_burnt_calories,
               value: '$caloriesBurnt kcal',
+            ),
+          if (distance != 0)
+            DetailStatsCardEntry(
+              displayName: l10n.activity_distance,
+              value: '$distance km',
             )
         ],
       ),
