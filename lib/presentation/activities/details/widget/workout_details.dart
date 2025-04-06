@@ -24,6 +24,17 @@ class WorkoutDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
+    String getDurationText(int duration) {
+      final hours = (duration / 3600).toInt();
+      final minutes = ((duration % 3600) / 60).toInt();
+      final seconds = (duration % 60).toInt();
+      if (hours > 0) {
+        return l10n.activity_duration_text_with_hours(hours, minutes, seconds);
+      } else {
+        return l10n.activity_duration_text(minutes, seconds);
+      }
+    }
+
     return GenericCard(
       title: l10n.activity_details_title,
       content: Column(
@@ -32,9 +43,7 @@ class WorkoutDetails extends StatelessWidget {
         children: [
           DetailStatsCardEntry(
               displayName: l10n.activity_duration,
-              value: AppLocalizations.of(context)!.activity_duration_text(
-                  (duration / 60).toStringAsFixed(0),
-                  ((duration / 60 % 1) * 60).toStringAsFixed(0))),
+              value: getDurationText(duration)),
           if (steps != 0)
             DetailStatsCardEntry(
               displayName: l10n.activity_steps,

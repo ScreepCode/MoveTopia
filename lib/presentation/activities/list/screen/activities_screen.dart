@@ -10,6 +10,7 @@ import 'package:movetopia/data/model/activity.dart';
 import 'package:movetopia/presentation/activities/routes.dart';
 import 'package:movetopia/presentation/tracking/routes.dart';
 import 'package:movetopia/utils/health_utils.dart';
+import 'package:movetopia/utils/unit_utils.dart';
 
 import '../view_model/activities_state.dart';
 import '../view_model/activities_view_model.dart';
@@ -158,7 +159,7 @@ Widget _buildGroupedActivities(
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      " ${AppLocalizations.of(context)!.activity_details_minutes(getActivityMinutes(activityList))}",
+                      getDuration(getActivityMinutes(activityList), context),
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ]),
@@ -210,11 +211,10 @@ Widget _buildActivityItem(BuildContext context, ActivityPreview activity) {
         ],
       ),
       subtitle: activity.distance > 0
-          ? Text(AppLocalizations.of(context)!.activity_details(
-              activity.distance,
-              activity.end.difference(activity.start).inMinutes))
-          : Text(AppLocalizations.of(context)!.activity_details_minutes(
-              activity.end.difference(activity.start).inMinutes)),
+          ? Text(
+              "${activity.distance} km in ${getDuration(activity.end.difference(activity.start).inMinutes, context)}")
+          : Text(getDuration(
+              activity.end.difference(activity.start).inMinutes, context)),
       trailing: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         CircleAvatar(
           backgroundColor: Theme.of(context).colorScheme.primary,
