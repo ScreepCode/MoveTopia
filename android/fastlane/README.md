@@ -23,6 +23,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 
 
+### android setup_keystore
+
+```sh
+[bundle exec] fastlane android setup_keystore
+```
+
+Setup keystore properties from CI environment
+
 ### android setup_github_token
 
 ```sh
