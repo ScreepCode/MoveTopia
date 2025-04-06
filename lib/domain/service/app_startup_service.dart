@@ -43,7 +43,7 @@ class AppStartupService {
     // Überprüfe und aktualisiere die Badges
     try {
       logger.info('Checking and updating badges...');
-      // await badgeService.checkAndUpdateBadges();
+      await badgeService.checkAndUpdateBadges();
       logger.info('Badge update completed.');
     } catch (e) {
       logger.severe('Error updating badges: $e');
