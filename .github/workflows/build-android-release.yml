@@ -52,7 +52,7 @@ jobs:
         id: fastlane
         uses: maierj/fastlane-action@v3.1.0
         with:
-          lane: build_release_with_release
+          lane: build_release_files
           subdirectory: android
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -61,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: movetopia-release
-          path: android/fastlane/build/outputs/movetopia-release.apk
+          path: android/fastlane/build/outputs/
 
       - name: "Create release tag"
         uses: ncipollo/release-action@v1
@@ -70,4 +70,4 @@ jobs:
           prerelease: false
           tag: ${{ env.VERSION_NAME }}
           name: ${{ env.VERSION_NAME }}
-          artifacts: "android/fastlane/build/outputs/movetopia-release.apk"
+          artifacts: "android/fastlane/build/outputs/"

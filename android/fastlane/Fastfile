@@ -256,6 +256,50 @@ platform :android do
     apk_path
   end
 
+  private_lane :build_aab do |options|
+    build_type = options[:build_type]
+    version_info = options[:version_info]
+  
+    unless build_type == "release"
+      UI.user_error!("Build type for AAB must be 'release'")
+    end
+  
+    unless version_info
+      UI.user_error!("Version information is required")
+    end
+  
+    # Extract version information
+    android_version_name = version_info[:android_version_name]
+    android_version_code = version_info[:android_version_code]
+  
+    # Setup GitHub token for private repositories if in CI
+    if ENV["CI"]
+      UI.message("Setting up GitHub token for private repository access")
+      setup_github_token
+    else
+      UI.message("Running in local mode, assuming git is already configured")
+    end
+  
+    # Navigate to project root for Flutter commands
+    proj_root = File.expand_path("../..", Dir.pwd)
+  
+    # Build AAB
+    UI.message("Building app bundle with versions:")
+    UI.message("  Android version: #{android_version_name} (#{android_version_code})")
+    sh("cd #{proj_root} && flutter build appbundle --release --build-name=#{android_version_name} --build-number=#{android_version_code}")
+  
+    # Create output directory
+    sh("mkdir -p build/outputs")
+  
+    # Copy the AAB
+    aab_path = "build/outputs/movetopia-release.aab"
+    sh("cp #{proj_root}/build/app/outputs/bundle/release/app-release.aab #{aab_path}")
+  
+    # Return the AAB path
+    UI.success("App Bundle built at: android/fastlane/#{aab_path}")
+    aab_path
+  end
+
   # Helper to update version.dart file
   private_lane :update_version_dart do |options|
     version_info = options[:version_info]
@@ -372,11 +416,11 @@ DART
     # Return version info for GitHub Actions
     version_info
   end
-  
-  # 4. Release build with versioning
-  desc "Build release APK with versioning"
-  lane :build_release_with_release do
-    UI.message("Starting release build with versioning")
+
+  # 4. Release assemble - build only AAB
+  desc "Build release AAB with versioning"
+  lane :assemble_release do
+    UI.message("Starting release AAB build")
 
     # Setup keystore properties
     setup_keystore
@@ -387,21 +431,76 @@ DART
     version_name = version_info[:version_name]
     build_number = version_info[:build_number]
     UI.message("Using version: #{version_name} (#{build_number})")
-    
+
     # Update version.dart file
     update_version_dart(version_info: version_info)
-    
-    # Build the APK
-    UI.message("Building release APK...")
-    apk_path = build_apk(
+
+    # Build the AAB
+    UI.message("Building release AAB...")
+    aab_path = build_aab(
       build_type: "release",
       version_info: version_info
     )
-    
-    UI.success("Release APK built successfully with version #{version_name}")
+
+    UI.success("Release AAB built successfully with version #{version_name}")
     UI.important("Version information: name=#{version_name}, build=#{build_number}")
-    
+
     # Return version info for GitHub Actions
     version_info
   end
+
+  # 6. Combined release build for both APK and AAB
+  desc "Build release APK and AAB with versioning in parallel"
+  lane :build_release_files do
+    UI.message("Starting parallel release build (APK + AAB)")
+
+    # Setup keystore properties
+    setup_keystore
+
+    # Get version information
+    UI.message("Generating version information...")
+    version_info = get_version_info
+    version_name = version_info[:version_name]
+    build_number = version_info[:build_number]
+    UI.message("Using version: #{version_name} (#{build_number})")
+
+    # Update version.dart file
+    update_version_dart(version_info: version_info)
+
+    # Create threads for parallel builds
+    apk_thread = Thread.new do
+      UI.message("Starting APK build thread...")
+      apk_path = build_apk(
+        build_type: "release",
+        version_info: version_info
+      )
+      Thread.current[:path] = apk_path
+    end
+
+    aab_thread = Thread.new do
+      UI.message("Starting AAB build thread...")
+      aab_path = build_aab(
+        build_type: "release",
+        version_info: version_info
+      )
+      Thread.current[:path] = aab_path
+    end
+
+    # Wait for both builds to complete
+    apk_thread.join
+    aab_thread.join
+
+    # Retrieve the paths
+    apk_path = apk_thread[:path]
+    aab_path = aab_thread[:path]
+
+    UI.success("Release builds completed successfully with version #{version_name}")
+    UI.important("Version information: name=#{version_name}, build=#{build_number}")
+    UI.important("APK path: #{apk_path}")
+    UI.important("AAB path: #{aab_path}")
+
+    # Return version info for GitHub Actions
+    version_info
+  end
+
 end

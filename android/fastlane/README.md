@@ -71,13 +71,21 @@ Build debug APK with versioning
 
 Build release APK without creating a release or tag
 
-### android build_release_with_release
+### android assemble_release
 
 ```sh
-[bundle exec] fastlane android build_release_with_release
+[bundle exec] fastlane android assemble_release
 ```
 
-Build release APK with versioning
+Build release AAB with versioning
+
+### android build_release_files
+
+```sh
+[bundle exec] fastlane android build_release_files
+```
+
+Build release APK and AAB with versioning in parallel
 
 ----
 
