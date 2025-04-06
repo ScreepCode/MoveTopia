@@ -85,9 +85,8 @@ class HealthAuthViewModel extends StateNotifier<HealthAuthViewModelState> {
               permissions: accessPermissions);
 
           if (authorized) {
-            if (state ==
+            if (state !=
                 HealthAuthViewModelState.authorizedWithHistoricalAccess) {
-            } else {
               state = HealthAuthViewModelState.authorized;
             }
           } else {
