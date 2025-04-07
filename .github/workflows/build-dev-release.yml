@@ -39,12 +39,16 @@ jobs:
 
       - name: Set up keystore
         env:
-          MT_KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-          MT_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          MT_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          MT_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           echo "CI=true" >> $GITHUB_ENV
+          echo "KEYSTORE_BASE64=$KEYSTORE_BASE64" >> $GITHUB_ENV
+          echo "KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> $GITHUB_ENV
+          echo "KEY_ALIAS=$KEY_ALIAS" >> $GITHUB_ENV
+          echo "KEY_PASSWORD=$KEY_PASSWORD" >> $GITHUB_ENV
 
       - name: "Run Fastlane Release Build"
         id: fastlane
