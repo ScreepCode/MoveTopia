@@ -19,6 +19,16 @@ class AppConstants {
   static const String niklasWebsiteUrl = 'https://niklas-buse.de';
 
   static const String joshuaWebsiteUrl = 'https://joshua.slaar.de';
+
+  /// Health Connect URLs
+  static const String healthConnectPlayStoreUrl =
+      'market://details?id=com.google.android.apps.healthdata';
+
+  static const String healthConnectPackageUrl =
+      'package:com.google.android.apps.healthdata';
+
+  static const String healthConnectConfigUrl =
+      'https://health.google/health-connect-android/';
 }
 
 /// Extension for URL-Formatierung

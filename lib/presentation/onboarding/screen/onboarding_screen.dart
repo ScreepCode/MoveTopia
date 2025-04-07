@@ -1,10 +1,14 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:movetopia/presentation/onboarding/providers/health_connect_provider.dart';
 import 'package:movetopia/presentation/onboarding/providers/onboarding_provider.dart';
 import 'package:movetopia/presentation/onboarding/providers/permissions_provider.dart';
 import 'package:movetopia/presentation/onboarding/widgets/features_page.dart';
+import 'package:movetopia/presentation/onboarding/widgets/health_connect_page.dart';
 import 'package:movetopia/presentation/onboarding/widgets/permissions_page.dart';
 import 'package:movetopia/presentation/onboarding/widgets/welcome_page.dart';
 import 'package:movetopia/presentation/today/routes.dart';
@@ -19,11 +23,21 @@ class OnboardingScreen extends HookConsumerWidget {
     final controller = PageController();
     final onboardingState = ref.watch(onboardingProvider);
     final permissionsState = ref.watch(permissionsProvider);
-    final isLastPage = onboardingState.currentPage == 2;
+    final healthConnectState = ref.watch(healthConnectProvider);
     final theme = Theme.of(context);
 
+    // Show Health Connect page only for Android below 14
+    final showHealthConnectPage =
+        Platform.isAndroid && healthConnectState.isAndroidBelow14;
+    final totalPages = showHealthConnectPage ? 4 : 3;
+    final isLastPage =
+        onboardingState.currentPage == (showHealthConnectPage ? 3 : 2);
+
+    // Check if the user can proceed
+    final canProceed = !showHealthConnectPage ||
+        (showHealthConnectPage && healthConnectState.isHealthConnectInstalled);
     final allRequiredPermissionsGranted =
-        permissionsState.hasRequiredPermissions;
+        permissionsState.hasRequiredPermissions && canProceed;
 
     return Scaffold(
       appBar: AppBar(
@@ -49,10 +63,11 @@ class OnboardingScreen extends HookConsumerWidget {
                 onPageChanged: (index) {
                   ref.read(onboardingProvider.notifier).setCurrentPage(index);
                 },
-                children: const [
-                  WelcomePage(),
-                  FeaturesPage(),
-                  PermissionsPage(),
+                children: [
+                  const WelcomePage(),
+                  const FeaturesPage(),
+                  if (showHealthConnectPage) const HealthConnectPage(),
+                  const PermissionsPage(),
                 ],
               ),
             ),
@@ -76,7 +91,7 @@ class OnboardingScreen extends HookConsumerWidget {
                   if (!isLastPage)
                     TextButton(
                       onPressed: () {
-                        controller.jumpToPage(2);
+                        controller.jumpToPage(showHealthConnectPage ? 3 : 2);
                       },
                       child: Text(l10n.onboarding_skip),
                     )
@@ -87,7 +102,7 @@ class OnboardingScreen extends HookConsumerWidget {
                   Center(
                     child: SmoothPageIndicator(
                       controller: controller,
-                      count: 3,
+                      count: totalPages,
                       effect: ScrollingDotsEffect(
                         spacing: 16,
                         dotColor: theme.colorScheme.surfaceContainerHighest,
