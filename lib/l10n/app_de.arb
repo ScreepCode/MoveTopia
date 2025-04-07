@@ -400,5 +400,22 @@
   "settingsDebugCacheTitle": "Cache-Verwaltung",
   "settingsDebugCacheClear": "Cache leeren",
   "settingsDebugCacheCleared": "Cache erfolgreich geleert",
-  "settingsDebugCacheError": "Fehler beim Leeren des Caches: {error}"
+  "settingsDebugCacheError": "Fehler beim Leeren des Caches: {error}",
+  "@_ABOUT": {},
+  "about_app_header": "Über MoveTopia",
+  "about_app_text": "Mehr über die App erfahren",
+  "about_app_dialog_header": "Über MoveTopia",
+  "about_app_dialog_text_1": "MoveTopia ist eine Fitness-Tracking-App, die dir hilft, aktiv und motiviert zu bleiben. Sie integriert sich mit den Gesundheitsdaten deines Geräts, um deine täglichen Aktivitäten und deinen Fortschritt zu verfolgen.",
+  "about_app_dialog_text_2": "Die App bietet Schrittzählung, Aktivitäts-Tracking, tägliche Serien und ein Abzeichen-System, um dich motiviert zu halten. Du kannst persönliche Schrittziele festlegen, deinen Fortschritt über die Zeit verfolgen und Abzeichen für deine Erfolge sammeln. MoveTopia unterstützt auch verschiedene Aktivitätstypen und bietet detaillierte Statistiken.",
+  "about_app_disclaimer": "Dies ist eine frühe Version von MoveTopia. Wir führen derzeit Benutzertests durch und freuen uns über dein Feedback, um die App zu verbessern. Bitte melde Probleme oder Vorschläge über den Bereich 'Bekannte Probleme'.",
+  "about_dev_header": "Über die Entwickler",
+  "about_dev_text": "Mehr über das Team erfahren",
+  "about_dev_dialog_header": "Über die Entwickler",
+  "about_dev_dialog_text_1": "MoveTopia wurde von Niklas Buse und Joshua Slaar entwickelt, zwei leidenschaftlichen Entwicklern mit gemeinsamen Interessen in Fitness und Technologie. Die App wurde als Teil ihres Universitätsprojekts erstellt und verbindet ihre Expertise in der Softwareentwicklung mit ihrer Begeisterung für Gesundheit und Fitness.",
+  "about_dev_dialog_text_2": "Unser Ziel ist es, eine benutzerfreundliche, datenschutzorientierte Fitness-Tracking-Lösung anzubieten, die Menschen hilft, motiviert zu bleiben und ihre Fitnessziele zu erreichen. Wir glauben an kontinuierliche Verbesserung und freuen uns über Feedback unserer Nutzer, um MoveTopia noch besser zu machen.",
+  "about_issues_header": "Bekannte Probleme",
+  "about_issues_text": "Fehler und bekannte Probleme melden",
+  "about_community_header": "Community Diskussionen",
+  "about_community_text": "Tritt der Community auf GitHub bei",
+  "common_close": "Schließen"
 }
