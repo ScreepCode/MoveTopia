@@ -23,6 +23,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 
 
+### android setup_keystore
+
+```sh
+[bundle exec] fastlane android setup_keystore
+```
+
+Setup keystore properties from CI environment
+
 ### android setup_github_token
 
 ```sh
@@ -63,13 +71,21 @@ Build debug APK with versioning
 
 Build release APK without creating a release or tag
 
-### android build_release_with_release
+### android assemble_release
 
 ```sh
-[bundle exec] fastlane android build_release_with_release
+[bundle exec] fastlane android assemble_release
 ```
 
-Build release APK with versioning
+Build release AAB with versioning
+
+### android build_release_and_deploy
+
+```sh
+[bundle exec] fastlane android build_release_and_deploy
+```
+
+Build release APK and AAB with versioning in parallel
 
 ----
 

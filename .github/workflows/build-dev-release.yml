@@ -1,0 +1,71 @@
+name: "Dev Branch Release Build"
+on:
+  push:
+    branches: [ development ]
+  workflow_dispatch:
+
+jobs:
+  build-dev-release:
+    name: "Build Dev Release APK"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+
+      - name: "Set up Java"
+        uses: actions/setup-java@v4
+        with:
+          distribution: "oracle"
+          java-version: "22"
+
+      - name: "Set up Gradle"
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: wrapper
+
+      - name: "Set up Flutter"
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version-file: pubspec.yaml
+          cache: true
+
+      - name: "Setup Ruby"
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+          working-directory: 'android'
+          bundler-cache: true
+
+      - name: Set up keystore
+        env:
+          MT_KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          MT_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          MT_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          MT_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          echo "CI=true" >> $GITHUB_ENV
+
+      - name: "Run Fastlane Release Build"
+        id: fastlane
+        uses: maierj/fastlane-action@v3.1.0
+        with:
+          lane: build_release
+          subdirectory: android
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: "Upload Release APK"
+        uses: actions/upload-artifact@v4
+        with:
+          name: movetopia-dev-release
+          path: android/fastlane/build/outputs/movetopia-release.apk
+
+      - name: "Create GitHub Pre-Release"
+        uses: ncipollo/release-action@v1
+        with:
+          generateReleaseNotes: true
+          prerelease: true
+          tag: ${{ env.VERSION_NAME }}
+          name: "Dev: ${{ env.VERSION_NAME }}"
+          artifacts: "android/fastlane/build/outputs/movetopia-release.apk" 
