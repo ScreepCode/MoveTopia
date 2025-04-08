@@ -18,6 +18,7 @@
     <uses-permission android:name="androidx.health.permission.Distance.READ" />
     <uses-permission android:name="androidx.health.permission.Distance.WRITE" />
     <uses-permission android:name="android.permission.health.READ_TOTAL_CALORIES_BURNED" />
+    <uses-permission android:name="android.permission.health.READ_ACTIVE_CALORIES_BURNED" />
     <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
     <uses-permission android:name="android.permission.health.READ_HEALTH_DATA_HISTORY" />
     <uses-permission android:name="android.permission.MANAGE_HEALTH_DATA" />
@@ -61,8 +62,8 @@
         <activity
             android:name=".PrivacyPolicyActivity"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
-        </activity>
+            android:theme="@style/Theme.AppCompat.NoActionBar"></activity>
+
         <activity-alias
             android:name="ViewPermissionUsageActivity"
             android:exported="true"
