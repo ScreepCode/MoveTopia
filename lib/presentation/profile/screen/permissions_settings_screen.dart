@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:movetopia/core/health_authorized_view_model.dart';
 import 'package:movetopia/presentation/common/widgets/permission_card.dart';
@@ -7,7 +8,7 @@ import 'package:movetopia/presentation/common/widgets/section_header.dart';
 import 'package:movetopia/presentation/onboarding/providers/permissions_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class PermissionsSettingsScreen extends ConsumerWidget {
+class PermissionsSettingsScreen extends HookConsumerWidget {
   const PermissionsSettingsScreen({super.key});
 
   @override
@@ -16,10 +17,21 @@ class PermissionsSettingsScreen extends ConsumerWidget {
     final permissionsState = ref.watch(permissionsProvider);
     final theme = Theme.of(context);
 
-    // Überprüfe die Berechtigungen beim Aufbau des Bildschirms
-    Future.microtask(() {
-      ref.read(permissionsProvider.notifier).checkAllPermissions();
-    });
+    useEffect(() {
+      Future.microtask(() {
+        // Überprüfe die Berechtigungen beim Aufbau des Bildschirms
+        ref.read(permissionsProvider.notifier).checkAllPermissions();
+      });
+
+      return null;
+    }, [
+      permissionsState.notificationPermissionStatus,
+      permissionsState.activityPermissionStatus,
+      permissionsState.locationPermissionStatus,
+      permissionsState.healthPermissionStatus,
+      permissionsState.healthWritePermissionStatus,
+      permissionsState.healthHistoricalPermissionStatus
+    ]);
 
     return Scaffold(
       appBar: AppBar(
