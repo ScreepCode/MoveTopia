@@ -437,5 +437,14 @@
   "error_checking_health_connect": "Fehler beim Überprüfen des Health Connect Status",
   "onboarding_health_title": "Gesundheitsdaten Zugriff einrichten",
   "onboarding_health_description": "MoveTopia benötigt Zugriff auf deine Gesundheitsdaten, um deine Aktivitäten zu tracken.",
-  "app_restart_may_be_needed": "Health Connect wurde installiert. Möglicherweise musst du die App neu starten, damit die Änderungen wirksam werden."
+  "app_restart_may_be_needed": "Health Connect wurde installiert. Möglicherweise musst du die App neu starten, damit die Änderungen wirksam werden.",
+  "weekly_steps_title": "Wöchentliche Schritte",
+  "weekly_stats_title": "Wöchentliche Statistiken",
+  "today": "Heute",
+  "yesterday": "Gestern",
+  "exercise_minutes_title": "Trainingsminuten",
+  "this_week": "Diese Woche",
+  "common_daily": "Täglich",
+  "common_weekly": "Wöchentlich",
+  "common_minutes": "Minuten"
 }

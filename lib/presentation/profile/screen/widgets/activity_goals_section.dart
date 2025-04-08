@@ -12,7 +12,13 @@ class ActivityGoalsSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final stepsGoal = ref.watch(profileProvider).stepGoal;
+    final l10n = AppLocalizations.of(context)!;
+    final profileState = ref.watch(profileProvider);
+    final stepsGoal = profileState.stepGoal;
+    final dailyExerciseMinutes = profileState.dailyExerciseMinutesGoal;
+    final weeklyExerciseMinutes = profileState.weeklyExerciseMinutesGoal;
+
+    // Controller für Steps
     TextEditingController stepsInputController =
         TextEditingController(text: stepsGoal.toString());
     FocusNode stepsFocusNode = FocusNode();
@@ -27,6 +33,40 @@ class ActivityGoalsSection extends ConsumerWidget {
       }
     });
 
+    // Controller für tägliche Trainingsminuten
+    TextEditingController dailyExerciseInputController =
+        TextEditingController(text: dailyExerciseMinutes.toString());
+    FocusNode dailyExerciseFocusNode = FocusNode();
+    dailyExerciseFocusNode.addListener(() {
+      if (!dailyExerciseFocusNode.hasFocus) {
+        final minutes = int.tryParse(dailyExerciseInputController.text);
+        if (minutes != null) {
+          ref
+              .read(profileProvider.notifier)
+              .setDailyExerciseMinutesGoal(minutes);
+        } else {
+          dailyExerciseInputController.text = dailyExerciseMinutes.toString();
+        }
+      }
+    });
+
+    // Controller für wöchentliche Trainingsminuten
+    TextEditingController weeklyExerciseInputController =
+        TextEditingController(text: weeklyExerciseMinutes.toString());
+    FocusNode weeklyExerciseFocusNode = FocusNode();
+    weeklyExerciseFocusNode.addListener(() {
+      if (!weeklyExerciseFocusNode.hasFocus) {
+        final minutes = int.tryParse(weeklyExerciseInputController.text);
+        if (minutes != null) {
+          ref
+              .read(profileProvider.notifier)
+              .setWeeklyExerciseMinutesGoal(minutes);
+        } else {
+          weeklyExerciseInputController.text = weeklyExerciseMinutes.toString();
+        }
+      }
+    });
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -35,23 +75,56 @@ class ActivityGoalsSection extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(AppLocalizations.of(context)!.goal_activities_title,
+              Text(l10n.goal_activities_title,
                   style: Theme.of(context).textTheme.titleMedium),
               const Divider()
             ],
           ),
         ),
+        // Schrittziel
         TextField(
           controller: stepsInputController,
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
-            labelText: AppLocalizations.of(context)!.goal_steps_title,
-            hintText: AppLocalizations.of(context)!.goal_steps_set_goal,
+            labelText: l10n.goal_steps_title,
+            hintText: l10n.goal_steps_set_goal,
             border: const OutlineInputBorder(),
           ),
           focusNode: stepsFocusNode,
           onTapOutside: (context) {
             stepsFocusNode.unfocus();
+          },
+        ),
+        const SizedBox(height: 16),
+        // Tägliches Trainingsziel
+        TextField(
+          controller: dailyExerciseInputController,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            labelText: "${l10n.exercise_minutes_title} (${l10n.common_daily})",
+            hintText: "${l10n.exercise_minutes_title} (${l10n.common_daily})",
+            border: const OutlineInputBorder(),
+            suffixText: l10n.common_minutes,
+          ),
+          focusNode: dailyExerciseFocusNode,
+          onTapOutside: (context) {
+            dailyExerciseFocusNode.unfocus();
+          },
+        ),
+        const SizedBox(height: 16),
+        // Wöchentliches Trainingsziel
+        TextField(
+          controller: weeklyExerciseInputController,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            labelText: "${l10n.exercise_minutes_title} (${l10n.common_weekly})",
+            hintText: "${l10n.exercise_minutes_title} (${l10n.common_weekly})",
+            border: const OutlineInputBorder(),
+            suffixText: l10n.common_minutes,
+          ),
+          focusNode: weeklyExerciseFocusNode,
+          onTapOutside: (context) {
+            weeklyExerciseFocusNode.unfocus();
           },
         ),
       ],
