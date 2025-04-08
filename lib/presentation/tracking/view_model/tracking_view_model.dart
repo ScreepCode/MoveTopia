@@ -8,8 +8,9 @@ import 'package:activity_tracking/model/event.dart';
 import 'package:activity_tracking/model/message.dart';
 import 'package:logging/logging.dart';
 import 'package:movetopia/data/repositories/base_local_health_impl.dart';
+import 'package:movetopia/presentation/onboarding/providers/permissions_provider.dart';
 import 'package:movetopia/presentation/tracking/view_model/tracking_state.dart';
-import 'package:movetopia/utils/tracking_utils.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:riverpod/riverpod.dart';
 
 final trackingViewModelProvider =
@@ -25,11 +26,35 @@ class TrackingViewModel extends StateNotifier<TrackingState?> {
 
   TrackingViewModel(this.ref) : super(TrackingState.initial());
 
+  Future<void> checkTrackingPermission() async {
+    var permissionGranted =
+        ref.read(permissionsProvider).healthWritePermissionStatus;
+    var locationPermissionGranted =
+        ref.read(permissionsProvider).locationPermissionStatus;
+    var activityPermissionGranted =
+        ref.read(permissionsProvider).activityPermissionStatus;
+    var notificationPermissionGranted =
+        ref.read(permissionsProvider).notificationPermissionStatus;
+
+    state = state?.copyWith(
+        newPermissionsGranted: _isPermissionGranted(
+            permissionGranted,
+            locationPermissionGranted,
+            activityPermissionGranted,
+            notificationPermissionGranted));
+
+    log.info("Permissions granted: ${state?.permissionsGranted}");
+  }
+
+  _isPermissionGranted(bool writePermissionGranted, PermissionStatus location,
+      PermissionStatus activityRecognition, PermissionStatus notification) {
+    return writePermissionGranted &&
+        location == PermissionStatus.granted &&
+        activityRecognition == PermissionStatus.granted &&
+        notification == PermissionStatus.granted;
+  }
+
   startTracking(ActivityType activityType) async {
-    var success = await checkPermission();
-    if (!success) {
-      return;
-    }
     Activity? startedActivity =
         await activityTrackingPlugin.startActivity(activityType);
     state = state?.copyWith(newActivity: startedActivity, newIsRecording: true);

@@ -7,6 +7,7 @@ class TrackingState {
   Activity activity;
   bool isRecording = false;
   bool isPaused = false;
+  bool permissionsGranted = false;
   int durationMillis = 0;
   final log = Logger('trackingState');
 
@@ -14,12 +15,14 @@ class TrackingState {
       {required this.activity,
       required this.isRecording,
       required this.isPaused,
-      required this.durationMillis});
+      required this.durationMillis,
+      required this.permissionsGranted});
 
   factory TrackingState.initial() {
     return TrackingState(
         isRecording: false,
         isPaused: false,
+        permissionsGranted: false,
         durationMillis: 0,
         activity: Activity(
             activityType: ActivityType.unknown,
@@ -32,11 +35,13 @@ class TrackingState {
       {Activity? newActivity,
       bool? newIsRecording,
       bool? newIsPaused,
-      int? newDurationMillis}) {
+      int? newDurationMillis,
+      bool? newPermissionsGranted}) {
     return TrackingState(
       isRecording: newIsRecording ?? isRecording,
       activity: newActivity ?? activity,
       isPaused: newIsPaused ?? isPaused,
+      permissionsGranted: newPermissionsGranted ?? permissionsGranted,
       durationMillis: newDurationMillis ?? durationMillis,
     );
   }
