@@ -2,10 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/services.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:movetopia/data/model/badge.dart';
-import 'package:movetopia/data/repositories/device_info_repository_impl.dart';
 import 'package:movetopia/domain/repositories/badge_repository.dart';
 import 'package:movetopia/domain/repositories/device_info_repository.dart';
 import 'package:movetopia/presentation/common/app_assets.dart';
@@ -276,8 +274,3 @@ class BadgeRepositoryImpl implements BadgeRepository {
     }
   }
 }
-
-final badgeRepositoryProvider = Provider<BadgeRepository>((ref) {
-  final deviceInfoRepository = ref.watch(deviceInfoRepositoryProvider);
-  return BadgeRepositoryImpl(deviceInfoRepository);
-});

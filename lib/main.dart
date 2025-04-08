@@ -6,13 +6,13 @@ import 'package:logging/logging.dart';
 import 'package:movetopia/core/app_logger.dart';
 import 'package:movetopia/core/navigation_host.dart';
 import 'package:movetopia/domain/service/app_startup_service.dart';
+import 'package:movetopia/presentation/challenges/provider/badge_repository_provider.dart';
 import 'package:movetopia/presentation/common/theme.dart';
 import 'package:movetopia/presentation/onboarding/providers/onboarding_provider.dart';
 import 'package:movetopia/presentation/profile/debug_settings/provider/debug_provider.dart';
 import 'package:movetopia/presentation/profile/view_model/profile_view_model.dart';
 
 import 'core/health_authorized_view_model.dart';
-import 'data/repositories/device_info_repository_impl.dart';
 import 'data/service/health_service_impl.dart';
 import 'domain/repositories/profile_repository.dart';
 

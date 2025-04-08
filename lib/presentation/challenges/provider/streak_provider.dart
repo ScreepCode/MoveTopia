@@ -3,9 +3,9 @@ import 'package:logging/logging.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../data/repositories/device_info_repository_impl.dart';
 import '../../../data/repositories/streak_repository_impl.dart';
 import '../../profile/view_model/profile_view_model.dart';
+import 'badge_repository_provider.dart';
 
 // Logger für Streak-Provider
 final _logger = Logger('StreakProvider');

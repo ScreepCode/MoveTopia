@@ -5,7 +5,6 @@ import 'package:logging/logging.dart';
 import 'package:movetopia/core/app_logger.dart';
 import 'package:movetopia/data/repositories/badge_repository_impl.dart';
 import 'package:movetopia/data/repositories/debug_repository_impl.dart';
-import 'package:movetopia/data/repositories/device_info_repository_impl.dart';
 import 'package:movetopia/data/repositories/streak_repository_impl.dart';
 import 'package:movetopia/data/service/health_service_impl.dart';
 import 'package:movetopia/domain/repositories/debug_repository.dart';
@@ -15,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../../challenges/badgeLists/viewmodel/badge_lists_view_model.dart';
+import '../../../challenges/provider/badge_repository_provider.dart';
 import '../../../challenges/provider/streak_provider.dart';
 
 // Provider für versteckten Logs-Zugriff im Release-Build

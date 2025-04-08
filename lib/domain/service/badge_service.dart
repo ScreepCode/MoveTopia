@@ -2,12 +2,11 @@ import 'package:collection/collection.dart';
 import 'package:health/health.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:movetopia/data/model/badge.dart';
-import 'package:movetopia/data/repositories/badge_repository_impl.dart';
-import 'package:movetopia/data/repositories/device_info_repository_impl.dart';
 import 'package:movetopia/data/service/health_service_impl.dart';
 import 'package:movetopia/domain/repositories/badge_repository.dart';
 import 'package:movetopia/domain/repositories/device_info_repository.dart';
 
+import '../../presentation/challenges/provider/badge_repository_provider.dart';
 import 'level_service.dart';
 
 class BadgeService {

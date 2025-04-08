@@ -1,8 +1,8 @@
 import 'package:logging/logging.dart';
 import 'package:riverpod/riverpod.dart';
 
-import '../../data/repositories/device_info_repository_impl.dart';
 import '../../data/repositories/streak_repository_impl.dart';
+import '../../presentation/challenges/provider/badge_repository_provider.dart';
 import '../../presentation/profile/view_model/profile_view_model.dart';
 import '../repositories/device_info_repository.dart';
 import '../repositories/profile_repository.dart';
