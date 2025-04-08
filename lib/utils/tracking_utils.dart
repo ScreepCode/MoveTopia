@@ -1,23 +1,5 @@
 import 'package:activity_tracking/model/activity_type.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
-
-Future<bool> checkPermission() async {
-  Map<Permission, PermissionStatus> perms = await [
-    Permission.location,
-    Permission.activityRecognition,
-    Permission.locationWhenInUse,
-    Permission.notification,
-  ].request();
-  var success = true;
-  for (var val in perms.entries) {
-    if (val.value.isDenied) {
-      print("Permission denied for ${val.key}");
-      success = false;
-    }
-  }
-  return success;
-}
 
 Icon getIcon(ActivityType activityType,
     {double? size = 36, Color? color = Colors.black}) {

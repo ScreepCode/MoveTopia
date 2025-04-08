@@ -36,7 +36,9 @@ class ActivityDetailsScreen extends HookConsumerWidget {
           var activityDetailNotifier =
               ref.read(activityDetailedViewModelProvider.notifier);
           activityDetailNotifier.setLoading(true);
-          if (authState == HealthAuthViewModelState.authorized) {
+          if (authState == HealthAuthViewModelState.authorized ||
+              authState ==
+                  HealthAuthViewModelState.authorizedWithHistoricalAccess) {
             await fetchDetailedActivity();
           }
 

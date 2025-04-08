@@ -4,7 +4,7 @@ import 'package:movetopia/presentation/challenges/streak/screen/streak_details_s
 
 import '../../data/model/badge.dart';
 import 'badgeLists/screen/badge_lists_screen.dart';
-import 'dashboard/screen/challange_dashboard_screen.dart';
+import 'dashboard/screen/challenge_dashboard_screen.dart';
 
 const challengesPath = '/challenges';
 

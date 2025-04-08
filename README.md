@@ -1,94 +1,65 @@
-# MoveTopia
+# MoveTopia <img src="assets/icon/app_icon.png" width="40" height="40" alt="MoveTopia Logo">
 
-![MoveTopia App Icon](assets/icon/app_icon.png)
+[![Main Build](https://github.com/ScreepCode/MoveTopia/actions/workflows/build-android-release.yml/badge.svg?branch=main)](https://github.com/ScreepCode/MoveTopia/actions/workflows/build-android-release.yml)
+[![Development Build](https://github.com/ScreepCode/MoveTopia/actions/workflows/build-dev-release.yml/badge.svg?branch=development)](https://github.com/ScreepCode/MoveTopia/actions/workflows/build-dev-release.yml)
+[![Flutter: v3.29.2](https://img.shields.io/badge/Flutter-v3.29.2-blue.svg)](https://flutter.dev)
 
-## CI/CD and Versioning
+MoveTopia - your fitness companion for a healthier lifestyle! Track your daily activities, set goals, and stay motivated with MoveTopia. Our app turns fitness into an exciting adventure where you can earn badges, build streaks, and visualize your progress on the journey to a more active life.
 
-The MoveTopia project uses an automated CI/CD system with Fastlane and GitHub Actions for a consistent build and release pipeline.
+<a href='https://play.google.com/store/apps/details?id=de.buseslaar.movetopia'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width="200"/></a>
 
-### Versioning System
+## Features
 
-Our version numbers follow this format:
+- **Activity Tracking**: Track steps, distance, runs, walks and more with ease
+- **Statistics & Analytics**: Get detailed insights into your activities and progress
+- **Challenges & Awards**: Complete challenges, earn badges and collect experience points
+- **Motivating Streaks**: Build daily streaks of success and visualize them in the calendar
+- **Privacy-Focused**: All health data stays on your device - full control over your personal information
 
+## Beta Testing
+
+Join our beta testing program to get early access to new features:
+
+<a href='https://groups.google.com/g/movetopia-beta'><img alt='Join Beta Testing' src='https://img.shields.io/badge/Join-Beta_Testing-orange?style=for-the-badge&logo=google' height="30"/></a>
+
+For more information about the app and its features, visit our [website](https://movetopia.de).
+
+## Technology
+
+- Flutter for cross-platform development
+- Health API integration for health data
+- Riverpod/Hooks for state management
+- Fastlane for CI/CD
+
+## Documentation
+
+Detailed documentation is available in the `docs/` directory:
+
+- [General Project Description](docs/project/README.md)
+- [Developer Documentation](docs/development/README.md)
+- [CI/CD and Versioning](docs/ci_cd/README.md)
+
+## Installation for Developers
+
+```bash
+# Clone repository
+git clone https://github.com/ScreepCode/MoveTopia.git
+cd movetopia
+
+# Install dependencies
+flutter pub get
+
+# Run the app
+flutter run
 ```
-YYYY.MM.DD+HOTFIX
-```
 
-Example: `2025.04.03+0`
+## Versioning
+MoveTopia uses a date-based versioning system in the format `YYYY.MM.DD+HOTFIX`.
 
-- **YYYY.MM.DD**: Date of the build
-- **HOTFIX**: A number that is automatically incremented when multiple builds are created on the same day
 
-### Fastlane
+Thanks to all our contributors who help make MoveTopia better every day!
 
-For build process automation, we use [Fastlane](https://fastlane.tools/). The configuration is located in the `android/fastlane` directory.
+## Contact
 
-#### Main Features of Fastlane
-
-- **Automatic Version Generation**: Based on the current date and existing Git tags
-- **Android Build Configuration**: Updates the `local.properties` file for the native Android build (not tracked by Git)
-- **Flutter Version**: Generates a `version.dart` file with all version information for the app
-
-Details on the Fastlane configuration can be found in [android/fastlane/README.md](android/fastlane/README.md).
-
-#### Available Lanes
-
-- `build_debug`: Creates a debug build of the app
-- `build_release`: Creates a release build of the app
-- `build_debug_with_release`: Creates a debug build with complete version information
-- `build_release_with_release`: Creates a release build with complete version information
-
-### GitHub Actions
-
-The project uses GitHub Actions for automated builds and releases. The workflows are located in the `.github/workflows/` directory.
-
-#### Debug Build Workflow
-
-File: `.github/workflows/build-android-debug.yml`
-
-This workflow is automatically triggered:
-- On every push to the `main` branch
-- On pull requests to the `main` branch
-- Manually through the GitHub interface
-
-Features:
-- Creates a debug APK
-- Uploads the build as an artifact
-- Creates a GitHub release with a tag in the format `YYYY.MM.DD+HOTFIX`
-- Marks releases as "Pre-release"
-
-#### Release Build Workflow
-
-File: `.github/workflows/build-android-release.yml`
-
-This workflow is only triggered manually and creates official releases.
-
-Features:
-- Creates a release APK
-- Uploads the build as an artifact
-- Creates a GitHub release with a tag in the format `YYYY.MM.DD+HOTFIX`
-- Creates an official release (not marked as pre-release)
-
-### Manual Version Adjustment
-
-If you want to set a specific version for a build, you have the following options:
-
-1. **Via local.properties**: 
-   Edit the file `android/local.properties` and set:
-   ```
-   flutter.versionName=YOUR.VERSION.HERE.0
-   flutter.versionCode=YOURCODENUMBER
-   ```
-   Note: This file is ignored by Git and won't be pushed to the repository.
-
-2. **Via Environment Variables**:
-   Set the following environment variables before running Fastlane:
-   ```bash
-   export VERSION_NAME="2025.04.03+1"
-   export BUILD_NUMBER="2025040301"
-   ```
-
-3. **Directly in the GitHub Workflow**:
-   You can manually define values for env.VERSION_NAME by customizing the workflow.
-
-**Note**: After a manual version update, you should synchronize your local repository with the current changes.
+- Website: [https://movetopia.de](https://movetopia.de)
+- Email: [mail@movetopia.de](mailto:mail@movetopia.de)

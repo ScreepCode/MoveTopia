@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:movetopia/presentation/tracking/screen/tracking.dart';
+import 'package:movetopia/presentation/tracking/screen/tracking_screen.dart';
 
 const trackingPath = '/tracking';
 
