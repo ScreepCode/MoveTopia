@@ -31,7 +31,6 @@ class ActivityDetailedViewModel extends StateNotifier<ActivityDetailState> {
           end: activityDetailed.end,
           heartRates: activityDetailed.heartRates,
           speed: activityDetailed.speed,
-          // icon: preview.icon,
           sourceId: activityDetailed.sourceId);
       activity.icon = preview.icon != null && preview.icon!.isNotEmpty
           ? preview.icon

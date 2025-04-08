@@ -105,7 +105,7 @@ class HearthFrequencyGraph extends StatelessWidget {
             getTooltipItems: (touchedSpots) {
               return touchedSpots.map((touchedSpot) {
                 return LineTooltipItem(
-                  '${touchedSpot.y} bpm',
+                  '${touchedSpot.y.toInt()} bpm',
                   TextStyle(
                     color:
                         (touchedSpot.bar.color?.computeLuminance() ?? 0) > 0.5
