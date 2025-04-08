@@ -6,11 +6,42 @@ import 'package:movetopia/presentation/common/app_assets.dart';
 import 'package:movetopia/presentation/onboarding/providers/health_connect_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class HealthConnectPage extends ConsumerWidget {
+class HealthConnectPage extends ConsumerStatefulWidget {
   const HealthConnectPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HealthConnectPage> createState() => _HealthConnectPageState();
+}
+
+class _HealthConnectPageState extends ConsumerState<HealthConnectPage>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+
+    // Check status when page is first created
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(healthConnectProvider.notifier).forceRefreshAfterResuming();
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // When app is resumed (user returns from Play Store), check if Health Connect is installed
+    if (state == AppLifecycleState.resumed) {
+      ref.read(healthConnectProvider.notifier).forceRefreshAfterResuming();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final healthConnectState = ref.watch(healthConnectProvider);
@@ -135,15 +166,33 @@ class HealthConnectPage extends ConsumerWidget {
                                 .read(healthConnectProvider.notifier)
                                 .installHealthConnect();
 
-                            // Refresh the status after a short delay
-                            await Future.delayed(const Duration(seconds: 2));
-                            if (context.mounted) {
-                              ref
-                                  .read(healthConnectProvider.notifier)
-                                  .refresh();
-                            }
+                            // The app will most likely go to background at this point as Play Store opens
+                            // We have a lifecycle observer that will check again when the app resumes
+
+                            // Still, for safety, use the improved method with retries after a delay
+                            // This handles cases where the app doesn't completely go to background
+                            Future.delayed(const Duration(seconds: 3),
+                                () async {
+                              if (mounted) {
+                                final detected = await ref
+                                    .read(healthConnectProvider.notifier)
+                                    .checkWithRetries(
+                                        maxRetries: 4, delaySeconds: 2);
+
+                                // If still not detected, show a message suggesting app restart
+                                if (mounted && !detected) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content:
+                                          Text(l10n.app_restart_may_be_needed),
+                                      duration: const Duration(seconds: 5),
+                                    ),
+                                  );
+                                }
+                              }
+                            });
                           } catch (e) {
-                            if (context.mounted) {
+                            if (mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(

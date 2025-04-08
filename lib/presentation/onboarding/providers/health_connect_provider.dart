@@ -78,6 +78,53 @@ class HealthConnectNotifier extends StateNotifier<HealthConnectState> {
     await _checkHealthConnect();
   }
 
+  /// Forcibly checks if Health Connect is installed by bypassing any caching
+  Future<void> forceRefreshAfterResuming() async {
+    state = state.copyWith(isLoading: true);
+
+    if (!Platform.isAndroid) {
+      state = state.copyWith(isLoading: false);
+      return;
+    }
+
+    try {
+      // Request a fresh check from the Health plugin
+      final isHealthConnectInstalled = await _health.isHealthConnectAvailable();
+
+      // Update state only if there's a change or if we previously had an error
+      if (isHealthConnectInstalled != state.isHealthConnectInstalled ||
+          state.error.isNotEmpty) {
+        state = state.copyWith(
+          isHealthConnectInstalled: isHealthConnectInstalled,
+          isLoading: false,
+          error: '',
+        );
+      } else {
+        state = state.copyWith(isLoading: false);
+      }
+    } catch (e) {
+      _log.severe('Error forcibly checking Health Connect status: $e');
+      state = state.copyWith(
+        isLoading: false,
+        error: 'error_checking_health_connect',
+      );
+    }
+  }
+
+  /// Checks if Health Connect is installed with multiple attempts
+  Future<bool> checkWithRetries(
+      {int maxRetries = 3, int delaySeconds = 2}) async {
+    for (int i = 0; i < maxRetries; i++) {
+      await Future.delayed(Duration(seconds: delaySeconds + i));
+      await forceRefreshAfterResuming(); // Use the more aggressive refresh
+
+      if (state.isHealthConnectInstalled) {
+        return true;
+      }
+    }
+    return state.isHealthConnectInstalled;
+  }
+
   /// Install Google Health Connect on this phone.
   Future<void> installHealthConnect() async {
     try {

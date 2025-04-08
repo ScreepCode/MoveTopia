@@ -435,5 +435,6 @@
   "error_installing_health_connect": "Fehler bei der Installation von Health Connect",
   "error_checking_health_connect": "Fehler beim Überprüfen des Health Connect Status",
   "onboarding_health_title": "Gesundheitsdaten Zugriff einrichten",
-  "onboarding_health_description": "MoveTopia benötigt Zugriff auf deine Gesundheitsdaten, um deine Aktivitäten zu tracken."
+  "onboarding_health_description": "MoveTopia benötigt Zugriff auf deine Gesundheitsdaten, um deine Aktivitäten zu tracken.",
+  "app_restart_may_be_needed": "Health Connect wurde installiert. Möglicherweise musst du die App neu starten, damit die Änderungen wirksam werden."
 }
