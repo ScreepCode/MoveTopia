@@ -75,6 +75,9 @@ class HealthServiceImpl implements HealthService {
       final cachedData = _cache[fullMatchKey] as List<HealthDataPoint>;
       // Filter for the exact time range requested
       log("Cache hit for $types");
+      //  The time needs to be adjusted to UTC
+      start = start.subtract(start.timeZoneOffset);
+      end = end.subtract(end.timeZoneOffset);
       return cachedData.where((point) {
         return (point.dateFrom
                     .isAfter(start.subtract(const Duration(seconds: 1))) ||
