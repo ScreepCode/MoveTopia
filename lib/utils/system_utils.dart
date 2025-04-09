@@ -18,3 +18,12 @@ Future<Uint8List?> getInstalledAppIcon(String sourceId) async {
   }
   return null;
 }
+
+DateTime toUtc(DateTime date) {
+  return date.toUtc();
+}
+
+DateTime toLocal(DateTime date) {
+  // Convert UTC to local time
+  return date.toLocal();
+}
