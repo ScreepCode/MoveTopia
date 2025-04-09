@@ -21,10 +21,29 @@ final totalStepsProvider = FutureProvider<double>((ref) async {
   final service = ref.read(badgeServiceProvider);
   final installationDate =
       await service.deviceInfoRepository.getInstallationDate();
-  final totalSteps = (await service.healthService.getStepsInInterval(
+  final now = DateTime.now();
+  final endOfToday = DateTime(
+    now.year,
+    now.month,
+    now.day,
+    23,
+    59,
+    59,
+  );
+  final stepsList = (await service.healthService.getStepsInInterval(
     installationDate,
-    DateTime.now(),
-  ))[0];
+    endOfToday,
+  ));
+  if (stepsList.isEmpty) {
+    return 0.0;
+  }
+  var totalSteps = 0;
+  for (var step in stepsList) {
+    if (step != 0) {
+      totalSteps += step;
+    }
+  }
+
   return totalSteps.toDouble();
 });
 
