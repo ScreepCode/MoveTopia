@@ -10,6 +10,7 @@ import 'package:movetopia/data/model/activity.dart';
 import 'package:movetopia/presentation/activities/routes.dart';
 import 'package:movetopia/presentation/tracking/routes.dart';
 import 'package:movetopia/utils/health_utils.dart';
+import 'package:movetopia/utils/system_utils.dart';
 import 'package:movetopia/utils/unit_utils.dart';
 
 import '../view_model/activities_state.dart';
@@ -197,7 +198,7 @@ Widget _buildActivityItem(BuildContext context, ActivityPreview activity) {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-              "${DateFormat("HH:mm").format(activity.start)} - ${DateFormat("HH:mm").format(activity.end)}",
+              "${DateFormat("HH:mm").format(toLocal(activity.start))} - ${DateFormat("HH:mm").format(toLocal(activity.end))}",
               style: TextStyle(
                   fontSize: 12,
                   color: Theme.of(context)

@@ -32,6 +32,13 @@ interface class BaseLocalHealthRepoImpl extends BaseLocalHealthRepository {
       for (var point in dataPoints) {
         final key = point.typeString;
 
+        // Convert to UTC
+        if (!point.dateFrom.isUtc) {
+          point.dateFrom = point.dateFrom.toUtc();
+        }
+        if (!point.dateTo.isUtc) {
+          point.dateTo = point.dateTo.toUtc();
+        }
         if (!dataByType.containsKey(key)) {
           dataByType[key] = [];
         }

@@ -9,6 +9,7 @@ import 'package:movetopia/data/model/activity.dart';
 import 'package:movetopia/data/repositories/base_local_health_impl.dart';
 import 'package:movetopia/domain/repositories/local_health.dart';
 import 'package:movetopia/domain/service/health_service.dart';
+import 'package:movetopia/utils/system_utils.dart';
 import 'package:movetopia/utils/time_range.dart';
 import 'package:movetopia/utils/unit_utils.dart';
 
@@ -57,6 +58,9 @@ class HealthServiceImpl implements HealthService {
   @override
   Future<List<HealthDataPoint>> getHealthDataInInterval(
       DateTime start, DateTime end, List<HealthDataType> types) async {
+    //  The time needs to be adjusted to UTC for our time and the time of the data
+    start = toUtc(start); //start.subtract(start.timeZoneOffset);
+    end = toUtc(end); //end.subtract(end.timeZoneOffset);
     final methodKey = _createMethodKey(
         'getHealthDataInInterval', [types.map((e) => e.toString()).join(',')]);
 
@@ -75,9 +79,7 @@ class HealthServiceImpl implements HealthService {
       final cachedData = _cache[fullMatchKey] as List<HealthDataPoint>;
       // Filter for the exact time range requested
       log("Cache hit for $types");
-      //  The time needs to be adjusted to UTC
-      start = start.subtract(start.timeZoneOffset);
-      end = end.subtract(end.timeZoneOffset);
+
       return cachedData.where((point) {
         return (point.dateFrom
                     .isAfter(start.subtract(const Duration(seconds: 1))) ||
