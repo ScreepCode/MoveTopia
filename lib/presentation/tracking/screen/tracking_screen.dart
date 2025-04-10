@@ -56,17 +56,24 @@ class TrackingScreen extends HookConsumerWidget {
                           t.name == trackingState.activity.activityType?.name)))
                   : Text(AppLocalizations.of(context)!.tracking_title),
             ),
-            body: trackingState.permissionsGranted
-                ? _buildTracking(
-                    context,
-                    trackingState,
-                    ref.read(trackingViewModelProvider.notifier).startTracking,
-                    ref.read(trackingViewModelProvider.notifier).stopTracking,
-                    ref
-                        .read(trackingViewModelProvider.notifier)
-                        .togglePauseTracking,
-                    ref.read(trackingViewModelProvider.notifier).startTimer)
-                : PermissionScreen()));
+            body: Container(
+                margin: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewPadding.bottom),
+                child: trackingState.permissionsGranted
+                    ? _buildTracking(
+                        context,
+                        trackingState,
+                        ref
+                            .read(trackingViewModelProvider.notifier)
+                            .startTracking,
+                        ref
+                            .read(trackingViewModelProvider.notifier)
+                            .stopTracking,
+                        ref
+                            .read(trackingViewModelProvider.notifier)
+                            .togglePauseTracking,
+                        ref.read(trackingViewModelProvider.notifier).startTimer)
+                    : PermissionScreen())));
   }
 
   Widget _buildTracking(
