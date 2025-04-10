@@ -76,8 +76,17 @@ class BadgeService {
 
   Future<void> _checkTotalStepsBadges(
       DateTime installationDate, DateTime end) async {
-    final totalSteps =
-        (await healthService.getStepsInInterval(installationDate, end))[0];
+    final stepsList =
+        (await healthService.getStepsInInterval(installationDate, end));
+    if (stepsList.isEmpty) {
+      return;
+    }
+    int totalSteps = 0;
+    for (var step in stepsList) {
+      if (step != 0) {
+        totalSteps += step;
+      }
+    }
     final badges = await badgeRepository
         .getBadgesByCategory(AchievementBadgeCategory.totalSteps);
 

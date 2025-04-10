@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:movetopia/presentation/common/widgets/generic_card.dart';
+import 'package:movetopia/utils/system_utils.dart';
 
 class HeaderDetails extends StatelessWidget {
   final String title;
@@ -40,7 +41,7 @@ class HeaderDetails extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                        "${DateFormat("d MMM y HH:mm").format(start)} - ${DateFormat("HH:mm").format(end)}",
+                        "${DateFormat("d MMM y HH:mm").format(toLocal(start))} - ${DateFormat("HH:mm").format(toLocal(end))}",
                         style: TextStyle(
                           fontSize: 17,
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
