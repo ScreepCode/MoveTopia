@@ -1,4 +1,3 @@
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:movetopia/domain/repositories/device_info_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -39,7 +38,3 @@ class DeviceInfoRepositoryImpl implements DeviceInfoRepository {
     await prefs.setString(lastOpenedDateKey, date.toIso8601String());
   }
 }
-
-final deviceInfoRepositoryProvider = Provider<DeviceInfoRepository>((ref) {
-  return DeviceInfoRepositoryImpl();
-});

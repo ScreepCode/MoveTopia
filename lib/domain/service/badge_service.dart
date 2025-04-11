@@ -1,12 +1,12 @@
+import 'package:collection/collection.dart';
 import 'package:health/health.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:movetopia/data/model/badge.dart';
-import 'package:movetopia/data/repositories/badge_repository_impl.dart';
-import 'package:movetopia/data/repositories/device_info_repository_impl.dart';
 import 'package:movetopia/data/service/health_service_impl.dart';
 import 'package:movetopia/domain/repositories/badge_repository.dart';
 import 'package:movetopia/domain/repositories/device_info_repository.dart';
 
+import '../../presentation/challenges/provider/badge_repository_provider.dart';
 import 'level_service.dart';
 
 class BadgeService {
@@ -76,17 +76,9 @@ class BadgeService {
 
   Future<void> _checkTotalStepsBadges(
       DateTime installationDate, DateTime end) async {
-    final stepsList =
-        (await healthService.getStepsInInterval(installationDate, end));
-    if (stepsList.isEmpty) {
-      return;
-    }
-    int totalSteps = 0;
-    for (var step in stepsList) {
-      if (step != 0) {
-        totalSteps += step;
-      }
-    }
+    final totalSteps =
+        (await healthService.getStepsInInterval(installationDate, end)).sum;
+
     final badges = await badgeRepository
         .getBadgesByCategory(AchievementBadgeCategory.totalSteps);
 
@@ -126,7 +118,7 @@ class BadgeService {
           startOfDay.add(const Duration(hours: 23, minutes: 59, seconds: 59));
 
       final steps =
-          (await healthService.getStepsInInterval(startOfDay, endOfDay))[0];
+          (await healthService.getStepsInInterval(startOfDay, endOfDay)).sum;
 
       for (var badge in badges) {
         final currentBadge = await badgeRepository.getBadgeById(badge.id);

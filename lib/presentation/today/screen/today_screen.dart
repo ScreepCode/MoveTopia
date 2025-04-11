@@ -7,15 +7,20 @@ import 'package:movetopia/presentation/common/app_assets.dart';
 import 'package:movetopia/presentation/onboarding/routes.dart';
 import 'package:movetopia/presentation/today/view_model/last_activity_view_model.dart';
 import 'package:movetopia/presentation/today/view_model/stats_view_model.dart';
+import 'package:movetopia/presentation/today/widgets/achievement_preview_card.dart';
+import 'package:movetopia/presentation/today/widgets/exercise_minutes_card.dart';
 import 'package:movetopia/presentation/today/widgets/last_activity_card.dart';
-import 'package:movetopia/presentation/today/widgets/today_overview.dart';
+import 'package:movetopia/presentation/today/widgets/steps_streak_card.dart';
 import 'package:movetopia/presentation/today/widgets/tracking_active.dart';
+import 'package:movetopia/presentation/today/widgets/weekly_steps_chart.dart';
+import 'package:movetopia/presentation/tracking/routes.dart';
 import 'package:movetopia/presentation/tracking/view_model/tracking_state.dart';
 import 'package:movetopia/presentation/tracking/view_model/tracking_view_model.dart';
 
 import '../../../core/health_authorized_view_model.dart';
-import '../../challenges/widgets/streak_card.dart';
+import '../../challenges/routes.dart';
 import '../../profile/view_model/profile_view_model.dart';
+import '../../settings/routes.dart';
 import '../view_model/last_activity_state.dart';
 import '../view_model/stats_state.dart';
 
@@ -30,7 +35,7 @@ class TodayScreen extends HookConsumerWidget {
     final trackingState = ref.watch(trackingViewModelProvider);
     final previousAuthState = useRef<HealthAuthViewModelState?>(null);
 
-    // Halte den Ladezustand
+    // Hold loading state
     final isLoading = useState(false);
     final refreshIndicatorKey = useRef(GlobalKey<RefreshIndicatorState>());
 
@@ -48,19 +53,24 @@ class TodayScreen extends HookConsumerWidget {
 
     Future<void> pauseTracking() async {
       await ref.read(trackingViewModelProvider.notifier).togglePauseTracking();
-      context.push("/tracking");
+      context.push(trackingPath);
     }
 
     Future<void> stopTracking() async {
       await ref.read(trackingViewModelProvider.notifier).stopTracking();
-      context.push("/tracking");
+      context.push(trackingPath);
     }
 
-    // Zeige den RefreshIndicator manuell an, wenn wir laden
+    void navigateToBadges() {
+      // Navigate to badges screen
+      context.push(fullBadgeListsPath);
+    }
+
+    // Show RefreshIndicator manually when we are loading
     useEffect(() {
       if (isLoading.value) {
-        // Füge einen Frame-Callback hinzu, um sicherzustellen, dass der Indikator erst angezeigt wird,
-        // nachdem das Widget vollständig gerendert wurde
+        // Add a frame callback to ensure the indicator is only shown
+        // after the widget has been fully rendered
         WidgetsBinding.instance.addPostFrameCallback((_) {
           refreshIndicatorKey.value.currentState?.show();
         });
@@ -107,11 +117,18 @@ class TodayScreen extends HookConsumerWidget {
             children: [
               const Image(
                   image: AssetImage(AppAssets.appIcon), width: 40, height: 40),
+              const SizedBox(width: 8),
               Text(AppLocalizations.of(context)!.app_name)
             ],
           ),
           actions: [
-            IconButton(onPressed: () => (), icon: const Icon(Icons.settings))
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () {
+                context.push(settingsPath);
+              },
+              tooltip: AppLocalizations.of(context)!.common_settings,
+            ),
           ],
         ),
         body: _buildBody(
@@ -123,12 +140,13 @@ class TodayScreen extends HookConsumerWidget {
             fetchHealthData,
             stopTracking,
             pauseTracking,
+            navigateToBadges,
             refreshIndicatorKey.value),
         floatingActionButton: trackingState?.isRecording == false
             ? FloatingActionButton(
                 child: const Icon(Icons.add),
                 onPressed: () {
-                  context.push("/tracking");
+                  context.push(trackingPath);
                 })
             : null);
   }
@@ -143,22 +161,68 @@ Widget _buildBody(
   Future<void> Function() fetchHealthData,
   Future<void> Function() stopTracking,
   Future<void> Function() pauseTracking,
+  void Function() navigateToBadges,
   GlobalKey<RefreshIndicatorState> refreshIndicatorKey,
 ) {
+  final theme = Theme.of(context);
+  final l10n = AppLocalizations.of(context)!;
+
   return Stack(children: [
     RefreshIndicator(
       key: refreshIndicatorKey,
-      color: Colors.white,
-      backgroundColor: Colors.blue,
+      color: theme.colorScheme.onPrimary,
+      backgroundColor: theme.colorScheme.primary,
       onRefresh: fetchHealthData,
       child: SafeArea(
-        minimum: const EdgeInsets.all(16.0),
+        minimum: const EdgeInsets.symmetric(horizontal: 16.0),
         child: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
           children: [
-            _buildTodayOverview(context, ref, statsState),
-            const StreakCard(isCompact: true),
-            if (lastActivityState != null)
+            // Today's Section
+            _buildSectionHeader(context, l10n.navigation_today, theme),
+            const SizedBox(height: 12),
+
+            // Combined Steps & Streak Card
+            StepsStreakCard(
+              steps: statsState.steps,
+              stepGoal: ref.read(profileProvider).stepGoal,
+            ),
+            const SizedBox(height: 12),
+
+            // Last Activity Card
+            if (lastActivityState != null &&
+                lastActivityState.activityPreview != null)
               _buildLastActivityCard(context, lastActivityState),
+
+            const SizedBox(height: 24),
+
+            // Weekly Section
+            _buildSectionHeader(context, "Weekly Stats", theme),
+            const SizedBox(height: 12),
+
+            // Weekly Steps Chart with Sleep
+            WeeklyStepsChart(
+              stepsData: statsState.weeklySteps,
+              sleepData: statsState.weeklySleep,
+              stepGoal: ref.read(profileProvider).stepGoal,
+            ),
+            const SizedBox(height: 16),
+
+            // Exercise Minutes Card
+            ExerciseMinutesCard(
+              minutesToday: statsState.exerciseMinutesToday,
+              minutesWeek: statsState.exerciseMinutesWeek,
+            ),
+            const SizedBox(height: 24),
+
+            // Achievements Section
+            _buildSectionHeader(
+                context, l10n.challenges_achievements_title, theme),
+            const SizedBox(height: 12),
+
+            // Badge Preview using new component
+            AchievementPreviewCard(onTapViewAll: navigateToBadges),
+            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -167,6 +231,21 @@ Widget _buildBody(
       _buildCurrentTracking(
           context, ref, trackingState, stopTracking, pauseTracking),
   ]);
+}
+
+Widget _buildSectionHeader(
+    BuildContext context, String title, ThemeData theme) {
+  return Row(
+    children: [
+      Text(
+        title,
+        style: theme.textTheme.titleLarge?.copyWith(
+          fontWeight: FontWeight.bold,
+          color: theme.colorScheme.primary,
+        ),
+      ),
+    ],
+  );
 }
 
 void _onCardClick(BuildContext context) {
@@ -188,16 +267,6 @@ Widget _buildCurrentTracking(
     onCardClick: () => _onCardClick(context),
     onPause: pauseTracking,
     onStop: stopTracking,
-  );
-}
-
-Widget _buildTodayOverview(
-    BuildContext context, WidgetRef ref, StatsState statsState) {
-  return TodayOverview(
-    steps: statsState.steps,
-    sleep: statsState.sleep,
-    distance: statsState.distance.toStringAsFixed(2),
-    stepGoal: ref.read(profileProvider).stepGoal,
   );
 }
 

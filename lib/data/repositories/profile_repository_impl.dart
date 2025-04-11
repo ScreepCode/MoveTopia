@@ -109,24 +109,37 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   @override
   Future<DateTime> getLastUpdated() async {
-    final value = await loadSetting(lastUpdatedKey);
-    if (value != null) {
-      try {
-        return DateTime.parse(value as String);
-      } catch (e) {
-        logger.warning('Failed to parse last updated date', e);
-      }
+    final lastUpdated = await loadSetting(lastUpdatedKey);
+    if (lastUpdated != null) {
+      return DateTime.parse(lastUpdated);
     }
-    // Default: Heute
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    // Gleich speichern
-    await saveLastUpdated(today);
-    return today;
+    return DateTime.now();
   }
 
   @override
   Future<void> saveLastUpdated(DateTime date) async {
-    await saveSetting(lastUpdatedKey, date);
+    await saveSetting(lastUpdatedKey, date.toIso8601String());
+  }
+
+  @override
+  Future<int> getDailyExerciseMinutesGoal() async {
+    final minutes = await loadSetting(dailyExerciseMinutesGoalKey);
+    return minutes ?? 30;
+  }
+
+  @override
+  Future<void> saveDailyExerciseMinutesGoal(int minutes) async {
+    await saveSetting(dailyExerciseMinutesGoalKey, minutes);
+  }
+
+  @override
+  Future<int> getWeeklyExerciseMinutesGoal() async {
+    final minutes = await loadSetting(weeklyExerciseMinutesGoalKey);
+    return minutes ?? 150;
+  }
+
+  @override
+  Future<void> saveWeeklyExerciseMinutesGoal(int minutes) async {
+    await saveSetting(weeklyExerciseMinutesGoalKey, minutes);
   }
 }

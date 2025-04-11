@@ -45,3 +45,20 @@ String getDuration(int minutes, BuildContext context) {
     return "$hoursText $minutesText";
   }
 }
+
+/// Normalizes the data to a specific length by adding default values or trimming excess values.
+List<int> normalizeData(List<int> data, int length, int defaultValue) {
+  if (data.isEmpty) {
+    return List.filled(length, defaultValue);
+  }
+
+  if (data.length < length) {
+    return [...List.filled(length - data.length, defaultValue), ...data];
+  }
+
+  if (data.length > length) {
+    return data.sublist(data.length - length);
+  }
+
+  return List.from(data);
+}

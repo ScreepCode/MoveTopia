@@ -4,6 +4,8 @@ const userEPKey = 'userEP';
 const userLevelKey = 'userLevel';
 const installationDateKey = 'installationDate';
 const lastUpdatedKey = 'lastUpdated';
+const dailyExerciseMinutesGoalKey = 'dailyExerciseMinutesGoal';
+const weeklyExerciseMinutesGoalKey = 'weeklyExerciseMinutesGoal';
 
 enum AppThemeMode {
   system,
@@ -40,4 +42,12 @@ abstract class ProfileRepository {
   Future<DateTime> getLastUpdated();
 
   Future<void> saveLastUpdated(DateTime date);
+
+  Future<int> getDailyExerciseMinutesGoal();
+
+  Future<void> saveDailyExerciseMinutesGoal(int minutes);
+
+  Future<int> getWeeklyExerciseMinutesGoal();
+
+  Future<void> saveWeeklyExerciseMinutesGoal(int minutes);
 }

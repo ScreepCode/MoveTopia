@@ -1,13 +1,14 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
-import 'package:movetopia/data/repositories/device_info_repository_impl.dart';
 import 'package:movetopia/data/service/health_service_impl.dart';
 import 'package:movetopia/domain/repositories/device_info_repository.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../domain/repositories/streak_repository.dart';
+import '../../presentation/challenges/provider/badge_repository_provider.dart';
 
 const streakCountKey = 'streakCount';
 const streakDaysCompletedKey = 'streakDaysCompleted';
@@ -157,8 +158,9 @@ class StreakRepositoryImpl implements StreakRepository {
       final startOfDay = normalizedDay;
       final endOfDay = DateTime(normalizedDay.year, normalizedDay.month,
           normalizedDay.day, 23, 59, 59);
-      final steps = (await localHealthRepository.getStepsInInterval(
-          startOfDay, endOfDay))[0];
+      final steps =
+          (await localHealthRepository.getStepsInInterval(startOfDay, endOfDay))
+              .sum;
 
       if (isPastDay) {
         if (dayAlreadyCompleted) {
