@@ -61,10 +61,8 @@ interface class BaseLocalHealthRepoImpl extends BaseLocalHealthRepository {
             var existing = nonOverlapping[i];
 
             // Check for time overlap
-            if ((point.dateFrom.isBefore(existing.dateTo) ||
-                    point.dateFrom.isAtSameMomentAs(existing.dateTo)) &&
-                (point.dateTo.isAfter(existing.dateFrom) ||
-                    point.dateTo.isAtSameMomentAs(existing.dateFrom))) {
+            if (point.dateFrom.isBefore(existing.dateTo) &&
+                point.dateTo.isAfter(existing.dateFrom)) {
               hasOverlap = true;
               overlapIndex = i;
 
