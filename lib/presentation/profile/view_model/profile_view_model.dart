@@ -20,12 +20,18 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
       final themeMode = await _repository.getThemeMode();
       final installationDate = await _repository.getInstallationDate();
       final lastUpdated = await _repository.getLastUpdated();
+      final dailyExerciseMinutesGoal =
+          await _repository.getDailyExerciseMinutesGoal();
+      final weeklyExerciseMinutesGoal =
+          await _repository.getWeeklyExerciseMinutesGoal();
 
       state = state.copyWith(
         stepGoal: stepGoal,
         themeMode: themeMode,
         installationDate: installationDate,
         lastUpdated: lastUpdated,
+        dailyExerciseMinutesGoal: dailyExerciseMinutesGoal,
+        weeklyExerciseMinutesGoal: weeklyExerciseMinutesGoal,
       );
 
       logger.info('Profile settings loaded');
@@ -41,6 +47,10 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
   DateTime get installationDate => state.installationDate;
 
   DateTime get lastUpdated => state.lastUpdated;
+
+  int get dailyExerciseMinutesGoal => state.dailyExerciseMinutesGoal;
+
+  int get weeklyExerciseMinutesGoal => state.weeklyExerciseMinutesGoal;
 
   void setStepGoal(int stepGoal) async {
     await _repository.saveStepGoal(stepGoal);
@@ -60,6 +70,16 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
   void setLastUpdated(DateTime date) async {
     await _repository.saveLastUpdated(date);
     state = state.copyWith(lastUpdated: date);
+  }
+
+  void setDailyExerciseMinutesGoal(int minutes) async {
+    await _repository.saveDailyExerciseMinutesGoal(minutes);
+    state = state.copyWith(dailyExerciseMinutesGoal: minutes);
+  }
+
+  void setWeeklyExerciseMinutesGoal(int minutes) async {
+    await _repository.saveWeeklyExerciseMinutesGoal(minutes);
+    state = state.copyWith(weeklyExerciseMinutesGoal: minutes);
   }
 }
 

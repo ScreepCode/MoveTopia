@@ -6,6 +6,7 @@ import 'package:movetopia/presentation/onboarding/providers/onboarding_provider.
 import 'package:movetopia/presentation/onboarding/routes.dart';
 import 'package:movetopia/presentation/onboarding/screen/authorization_problem_screen.dart';
 import 'package:movetopia/presentation/onboarding/screen/onboarding_screen.dart';
+import 'package:movetopia/presentation/settings/routes.dart';
 import 'package:movetopia/presentation/tracking/routes.dart';
 
 import '../presentation/activities/routes.dart';
@@ -40,6 +41,9 @@ final navigationRoutesProvider = Provider<GoRouter>((ref) {
         path: authorizationProblemPath,
         builder: (context, state) => const AuthorizationProblemScreen(),
       ),
+
+      // Settings als separate Route
+      ...SettingsRoutes.routes,
 
       // Haupt-Navigation mit StatefulShell
       StatefulShellRoute.indexedStack(

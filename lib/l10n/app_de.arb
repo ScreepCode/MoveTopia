@@ -53,6 +53,12 @@
   "common_error_version": "Fehler beim Laden der Version",
   "common_error": "Fehler {error}",
   "common_unknown": "Unbekannt",
+  "common_days": "Tage",
+  "common_this_month": "Diesen Monat",
+  "common_daily": "Täglich",
+  "common_weekly": "Wöchentlich",
+  "common_minutes": "Minuten",
+  "common_close": "Schließen",
   "date_installation": "Installationsdatum",
   "date_last_updated": "Zuletzt aktualisiert",
   "date_select": "Datum auswählen",
@@ -418,7 +424,6 @@
   "about_issues_text": "Fehler und bekannte Probleme melden",
   "about_community_header": "Community Diskussionen",
   "about_community_text": "Tritt der Community auf GitHub bei",
-  "common_close": "Schließen",
   "onboarding_health_connect_title": "Health Connect erforderlich",
   "onboarding_health_connect_description": "MoveTopia verwendet Health Connect, um auf deine Fitnessdaten zuzugreifen. Dies ist für Android-Geräte unter Version 14 erforderlich.",
   "onboarding_health_connect_install_title": "Health Connect installieren",
@@ -437,5 +442,42 @@
   "error_checking_health_connect": "Fehler beim Überprüfen des Health Connect Status",
   "onboarding_health_title": "Gesundheitsdaten Zugriff einrichten",
   "onboarding_health_description": "MoveTopia benötigt Zugriff auf deine Gesundheitsdaten, um deine Aktivitäten zu tracken.",
-  "app_restart_may_be_needed": "Health Connect wurde installiert. Möglicherweise musst du die App neu starten, damit die Änderungen wirksam werden."
+  "app_restart_may_be_needed": "Health Connect wurde installiert. Möglicherweise musst du die App neu starten, damit die Änderungen wirksam werden.",
+  "weekly_steps_title": "Wöchentliche Schritte",
+  "weekly_stats_title": "Wöchentliche Statistiken",
+  "today": "Heute",
+  "yesterday": "Gestern",
+  "exercise_minutes_title": "Trainingsminuten",
+  "this_week": "Diese Woche",
+  "@_WEEKLY_STEPS": {},
+  "weekly_steps_goal": "Ziel: {goal}",
+  "@weekly_steps_goal": {
+    "placeholders": {
+      "goal": {
+        "type": "int"
+      }
+    }
+  },
+  "weekly_steps_chart_error": "Diagramm konnte nicht geladen werden",
+  "weekly_steps_km": "km",
+  "weekly_steps_kmh": "km/h",
+  "weekly_steps_min_km": "min/km",
+  "@_STEPS_CARD": {},
+  "steps_card_goal_reached": "Ziel erreicht!",
+  "steps_card_goal_format": "/ {goal}",
+  "@steps_card_goal_format": {
+    "placeholders": {
+      "goal": {
+        "type": "int"
+      }
+    }
+  },
+  "steps_card_percent": "{percent}%",
+  "@steps_card_percent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  }
 }
