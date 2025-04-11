@@ -462,5 +462,37 @@
   "this_week": "This Week",
   "common_daily": "Daily",
   "common_weekly": "Weekly",
-  "common_minutes": "Minutes"
+  "common_minutes": "Minutes",
+  "@_WEEKLY_STEPS": {},
+  "weekly_steps_goal": "Goal: {goal}",
+  "@weekly_steps_goal": {
+    "placeholders": {
+      "goal": {
+        "type": "int"
+      }
+    }
+  },
+  "weekly_steps_chart_error": "Chart could not be loaded",
+  "weekly_steps_km": "km",
+  "weekly_steps_kmh": "km/h",
+  "weekly_steps_min_km": "min/km",
+
+  "@_STEPS_CARD": {},
+  "steps_card_goal_reached": "Goal Reached!",
+  "steps_card_goal_format": "/ {goal}",
+  "@steps_card_goal_format": {
+    "placeholders": {
+      "goal": {
+        "type": "int"
+      }
+    }
+  },
+  "steps_card_percent": "{percent}%",
+  "@steps_card_percent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  }
 }
