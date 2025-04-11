@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:activity_tracking/model/activity.dart' as tracking_activity;
+import 'package:collection/collection.dart';
 import 'package:health/health.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
@@ -245,7 +246,7 @@ class HealthServiceImpl implements HealthService {
       return Activity(
         caloriesBurnt: preview.caloriesBurnt,
         distance: preview.distance,
-        steps: (await getStepsInInterval(preview.start, preview.end))[0],
+        steps: (await getStepsInInterval(preview.start, preview.end)).sum,
         end: preview.end,
         start: preview.start,
         activityType: preview.activityType,

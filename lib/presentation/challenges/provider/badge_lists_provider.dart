@@ -1,4 +1,5 @@
 // Provider for today's steps
+import 'package:collection/collection.dart';
 import 'package:health/health.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:movetopia/domain/service/badge_service.dart';
@@ -12,7 +13,8 @@ final todayStepsProvider = FutureProvider<double>((ref) async {
   final todaySteps = (await service.healthService.getStepsInInterval(
     startOfDay,
     endOfDay,
-  ))[0];
+  ))
+      .sum;
   return todaySteps.toDouble();
 });
 
@@ -30,19 +32,11 @@ final totalStepsProvider = FutureProvider<double>((ref) async {
     59,
     59,
   );
-  final stepsList = (await service.healthService.getStepsInInterval(
+  final totalSteps = (await service.healthService.getStepsInInterval(
     installationDate,
     endOfToday,
-  ));
-  if (stepsList.isEmpty) {
-    return 0.0;
-  }
-  var totalSteps = 0;
-  for (var step in stepsList) {
-    if (step != 0) {
-      totalSteps += step;
-    }
-  }
+  ))
+      .sum;
 
   return totalSteps.toDouble();
 });

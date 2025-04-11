@@ -1,8 +1,9 @@
+import 'package:collection/collection.dart';
+import 'package:logging/logging.dart';
 import 'package:movetopia/data/service/health_service_impl.dart';
 import 'package:movetopia/presentation/challenges/provider/streak_provider.dart';
 import 'package:movetopia/presentation/profile/view_model/profile_view_model.dart';
 import 'package:riverpod/riverpod.dart';
-import 'package:logging/logging.dart';
 
 import 'stats_state.dart';
 
@@ -28,8 +29,9 @@ class StatsViewModel extends StateNotifier<StatsState> {
 
       log.info('Fetching steps for time range: $startOfDay to $endOfDay');
       int steps = (await ref
-          .read(healthService)
-          .getStepsInInterval(startOfDay, endOfDay))[0];
+              .read(healthService)
+              .getStepsInInterval(startOfDay, endOfDay))
+          .sum;
       log.info('Got steps: $steps');
 
       log.info('Fetching distance for time range: $startOfDay to $endOfDay');
