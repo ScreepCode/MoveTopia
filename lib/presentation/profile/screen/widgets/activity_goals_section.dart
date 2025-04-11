@@ -12,13 +12,14 @@ class ActivityGoalsSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final profileState = ref.watch(profileProvider);
     final stepsGoal = profileState.stepGoal;
     final dailyExerciseMinutes = profileState.dailyExerciseMinutesGoal;
     final weeklyExerciseMinutes = profileState.weeklyExerciseMinutesGoal;
 
-    // Controller für Steps
+    // Textcontroller for steps goal
     TextEditingController stepsInputController =
         TextEditingController(text: stepsGoal.toString());
     FocusNode stepsFocusNode = FocusNode();
@@ -33,7 +34,7 @@ class ActivityGoalsSection extends ConsumerWidget {
       }
     });
 
-    // Controller für tägliche Trainingsminuten
+    // Textcontroller for daily exercise minutes
     TextEditingController dailyExerciseInputController =
         TextEditingController(text: dailyExerciseMinutes.toString());
     FocusNode dailyExerciseFocusNode = FocusNode();
@@ -50,7 +51,7 @@ class ActivityGoalsSection extends ConsumerWidget {
       }
     });
 
-    // Controller für wöchentliche Trainingsminuten
+    // Textcontroller for weekly exercise minutes
     TextEditingController weeklyExerciseInputController =
         TextEditingController(text: weeklyExerciseMinutes.toString());
     FocusNode weeklyExerciseFocusNode = FocusNode();
@@ -76,58 +77,125 @@ class ActivityGoalsSection extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(l10n.goal_activities_title,
-                  style: Theme.of(context).textTheme.titleMedium),
+                  style: theme.textTheme.titleMedium),
               const Divider()
             ],
           ),
         ),
-        // Schrittziel
-        TextField(
+
+        // Goal Input Cards
+        _buildGoalCard(
+          context,
+          icon: Icons.directions_walk,
+          title: l10n.goal_steps_title,
           controller: stepsInputController,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(
-            labelText: l10n.goal_steps_title,
-            hintText: l10n.goal_steps_set_goal,
-            border: const OutlineInputBorder(),
-          ),
           focusNode: stepsFocusNode,
-          onTapOutside: (context) {
-            stepsFocusNode.unfocus();
-          },
+          suffix: "",
+          color: theme.colorScheme.primary,
         ),
+
         const SizedBox(height: 16),
-        // Tägliches Trainingsziel
-        TextField(
+
+        _buildGoalCard(
+          context,
+          icon: Icons.timer,
+          title: "${l10n.exercise_minutes_title} (${l10n.common_daily})",
           controller: dailyExerciseInputController,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(
-            labelText: "${l10n.exercise_minutes_title} (${l10n.common_daily})",
-            hintText: "${l10n.exercise_minutes_title} (${l10n.common_daily})",
-            border: const OutlineInputBorder(),
-            suffixText: l10n.common_minutes,
-          ),
           focusNode: dailyExerciseFocusNode,
-          onTapOutside: (context) {
-            dailyExerciseFocusNode.unfocus();
-          },
+          suffix: l10n.common_minutes,
+          color: theme.colorScheme.secondary,
         ),
+
         const SizedBox(height: 16),
-        // Wöchentliches Trainingsziel
-        TextField(
+
+        _buildGoalCard(
+          context,
+          icon: Icons.calendar_month,
+          title: "${l10n.exercise_minutes_title} (${l10n.common_weekly})",
           controller: weeklyExerciseInputController,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(
-            labelText: "${l10n.exercise_minutes_title} (${l10n.common_weekly})",
-            hintText: "${l10n.exercise_minutes_title} (${l10n.common_weekly})",
-            border: const OutlineInputBorder(),
-            suffixText: l10n.common_minutes,
-          ),
           focusNode: weeklyExerciseFocusNode,
-          onTapOutside: (context) {
-            weeklyExerciseFocusNode.unfocus();
-          },
+          suffix: l10n.common_minutes,
+          color: theme.colorScheme.tertiary,
         ),
       ],
+    );
+  }
+
+  Widget _buildGoalCard(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required TextEditingController controller,
+    required FocusNode focusNode,
+    required String suffix,
+    required Color color,
+  }) {
+    final theme = Theme.of(context);
+
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: theme.colorScheme.outline.withOpacity(0.2),
+          width: 1,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                color: color,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: theme.textTheme.titleSmall,
+                  ),
+                  const SizedBox(height: 4),
+                  TextField(
+                    controller: controller,
+                    keyboardType: TextInputType.number,
+                    focusNode: focusNode,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 12),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(
+                          color: theme.colorScheme.outline,
+                          width: 1,
+                        ),
+                      ),
+                      suffixText: suffix,
+                    ),
+                    onTapOutside: (_) => focusNode.unfocus(),
+                    style: TextStyle(
+                      color: color,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
