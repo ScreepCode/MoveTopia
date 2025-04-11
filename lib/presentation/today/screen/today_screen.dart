@@ -3,10 +3,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:movetopia/data/model/badge.dart';
-import 'package:movetopia/domain/repositories/badge_repository.dart';
-import 'package:movetopia/presentation/challenges/provider/badge_repository_provider.dart';
-import 'package:movetopia/presentation/challenges/widgets/badge_detail_dialog.dart';
 import 'package:movetopia/presentation/common/app_assets.dart';
 import 'package:movetopia/presentation/onboarding/routes.dart';
 import 'package:movetopia/presentation/today/view_model/last_activity_view_model.dart';
@@ -24,6 +20,7 @@ import 'package:movetopia/presentation/tracking/view_model/tracking_view_model.d
 import '../../../core/health_authorized_view_model.dart';
 import '../../challenges/routes.dart';
 import '../../profile/view_model/profile_view_model.dart';
+import '../../settings/routes.dart';
 import '../view_model/last_activity_state.dart';
 import '../view_model/stats_state.dart';
 
@@ -125,7 +122,13 @@ class TodayScreen extends HookConsumerWidget {
             ],
           ),
           actions: [
-            IconButton(onPressed: () => {}, icon: const Icon(Icons.settings))
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () {
+                context.push(settingsPath);
+              },
+              tooltip: AppLocalizations.of(context)!.common_settings,
+            ),
           ],
         ),
         body: _buildBody(
@@ -143,7 +146,7 @@ class TodayScreen extends HookConsumerWidget {
             ? FloatingActionButton(
                 child: const Icon(Icons.add),
                 onPressed: () {
-                  context.push("/tracking");
+                  context.push(trackingPath);
                 })
             : null);
   }
