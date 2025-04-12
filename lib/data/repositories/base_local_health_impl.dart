@@ -60,6 +60,13 @@ interface class BaseLocalHealthRepoImpl extends BaseLocalHealthRepository {
           for (int i = 0; i < nonOverlapping.length; i++) {
             var existing = nonOverlapping[i];
 
+            // We use isBefore and isAfter to check for overlap
+            // We also need to check that the sources are different
+            bool isSameSource = point.sourceId == existing.sourceId;
+            if (isSameSource) {
+              continue;
+            }
+
             // Check for time overlap
             if (point.dateFrom.isBefore(existing.dateTo) &&
                 point.dateTo.isAfter(existing.dateFrom)) {
