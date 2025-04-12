@@ -62,7 +62,7 @@ interface class BaseLocalHealthRepoImpl extends BaseLocalHealthRepository {
 
             // We use isBefore and isAfter to check for overlap
             // We also need to check that the sources are different
-            bool isSameSource = point.sourceId == existing.sourceId;
+            bool isSameSource = point.sourceName == existing.sourceName;
             if (isSameSource) {
               continue;
             }
