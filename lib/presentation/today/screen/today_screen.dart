@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -142,13 +143,14 @@ class TodayScreen extends HookConsumerWidget {
             pauseTracking,
             navigateToBadges,
             refreshIndicatorKey.value),
-        floatingActionButton: trackingState?.isRecording == false
-            ? FloatingActionButton(
-                child: const Icon(Icons.add),
-                onPressed: () {
-                  context.push(trackingPath);
-                })
-            : null);
+        floatingActionButton:
+            trackingState?.isRecording == false && Platform.isAndroid
+                ? FloatingActionButton(
+                    child: const Icon(Icons.add),
+                    onPressed: () {
+                      context.push(trackingPath);
+                    })
+                : null);
   }
 }
 
