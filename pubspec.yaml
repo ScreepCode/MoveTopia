@@ -38,6 +38,7 @@ dependencies:
   smooth_page_indicator: ^1.1.0
   app_settings: ^6.1.1
   url_launcher: ^6.2.5
+  geolocator: ^13.0.4
 
 dev_dependencies:
   flutter_test:
