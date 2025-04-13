@@ -138,12 +138,12 @@ class TrackingViewModel extends StateNotifier<TrackingState?> {
       case Event.pause:
         if (eventMessage.data != null) {
           state = state?.copyWith(
-              newActivity: eventMessage.data as Activity, newIsPaused: false);
+              newActivity: eventMessage.data as Activity, newIsPaused: true);
         }
       case Event.resume:
         if (eventMessage.data != null) {
           state = state?.copyWith(
-              newActivity: eventMessage.data as Activity, newIsPaused: true);
+              newActivity: eventMessage.data as Activity, newIsPaused: false);
           startTimer();
         }
       case Event.stop:

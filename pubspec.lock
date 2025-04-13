@@ -14,7 +14,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "3f5fa4d122126adbda9c6ea441ec149b9d0c621c"
+      resolved-ref: "7220ff53dd7fd926a3250001200dc308f5d97cf4"
       url: "https://github.com/Jozys/activity_tracking.git"
     source: git
     version: "0.0.1"
