@@ -21,11 +21,15 @@ class StreakDetailsScreen extends ConsumerWidget {
     // Key für den RefreshIndicator
     final refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
+    // Farbe für Header und AppBar
+    final headerColor =
+        Theme.of(context).colorScheme.primary.withValues(alpha: 0.1);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.streakDetails),
-        backgroundColor:
-            Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+        scrolledUnderElevation: 0.0,
+        backgroundColor: headerColor,
         elevation: 0,
         actions: [
           // Manueller Refresh-Button in der AppBar
@@ -47,6 +51,7 @@ class StreakDetailsScreen extends ConsumerWidget {
           l10n,
           ref,
           refreshIndicatorKey,
+          headerColor,
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
@@ -66,6 +71,7 @@ class StreakDetailsScreen extends ConsumerWidget {
     AppLocalizations l10n,
     WidgetRef ref,
     GlobalKey<RefreshIndicatorState> refreshIndicatorKey,
+    Color headerColor,
   ) {
     return RefreshIndicator(
       key: refreshIndicatorKey,
@@ -73,7 +79,7 @@ class StreakDetailsScreen extends ConsumerWidget {
       child: Column(
         children: [
           // Header mit Streak-Zähler
-          _buildHeader(context, streakCount, ref),
+          _buildHeader(context, streakCount, ref, headerColor),
 
           // Kalender
           Expanded(
@@ -97,13 +103,13 @@ class StreakDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(
-      BuildContext context, AsyncValue<int> streakCount, WidgetRef ref) {
+  Widget _buildHeader(BuildContext context, AsyncValue<int> streakCount,
+      WidgetRef ref, Color headerColor) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+        color: headerColor,
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(24),
           bottomRight: Radius.circular(24),

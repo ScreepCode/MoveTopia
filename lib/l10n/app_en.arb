@@ -321,11 +321,13 @@
   "tracking_start_activity": "Start Activity",
   "tracking_stop_activity": "Stop Activity",
   "tracking_activity_paused": "Activity Paused",
-  "tracking_leave_title": "Are you sure you want to leave?",
-  "tracking_leave_message": "Your activity recording will be stopped if you leave",
-  "tracking_leave_cancel": "Cancel",
-  "tracking_leave_confirm": "Leave",
   "tracking_permissions_description": "In order to track your activities, MoveTopia needs the following permissions.",
+  "tracking_permissions_location_title": "Location Services Disabled",
+  "tracking_permissions_location_description": "In order to track workout activities correctly location service needs to be enabled. Please make sure you enable them and then try again.",
+  "tracking_permissions_location_settings": "Open Settings",
+  "tracking_permissions_location_cancel": "Cancel",
+
+
   "@_ONBOARDING": {},
   "onboarding_skip": "Skip",
   "onboarding_next": "Next",

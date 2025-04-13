@@ -76,12 +76,6 @@ interface class MoveTopiaAppViewModel {
     log.info('Starting app initialization...');
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      systemNavigationBarContrastEnforced: false,
-      statusBarColor: Colors.transparent,
-      systemNavigationBarColor: Colors.transparent,
-      systemStatusBarContrastEnforced: false,
-    ));
 
     try {
       await _initializeAppDates();
@@ -181,6 +175,18 @@ class MoveTopiaApp extends HookConsumerWidget {
     }
 
     theme = useDarkTheme ? darkTheme : lightTheme;
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.transparent,
+      statusBarIconBrightness:
+          useDarkTheme ? Brightness.light : Brightness.dark,
+      statusBarBrightness: useDarkTheme ? Brightness.dark : Brightness.light,
+      systemNavigationBarIconBrightness:
+          useDarkTheme ? Brightness.light : Brightness.dark,
+      systemNavigationBarContrastEnforced: false,
+      systemStatusBarContrastEnforced: false,
+    ));
 
     if (onboardingStatus is AsyncLoading) {
       return MaterialApp(
