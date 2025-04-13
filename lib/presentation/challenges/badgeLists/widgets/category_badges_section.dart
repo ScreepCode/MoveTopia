@@ -58,64 +58,68 @@ class _CategoryBadgesSectionState extends ConsumerState<CategoryBadgesSection> {
         // Get next badge (with lowest threshold)
         final nextBadge = remainingBadges.first;
 
-        return Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: SingleChildScrollView(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildProgressCard(),
+        return Container(
+            margin: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewPadding.bottom),
+            child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: SingleChildScrollView(
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildProgressCard(),
 
-                // Next badge
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
-                  child: Text(
-                    l10n.badge_next_goal,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                ),
+                    // Next badge
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
+                      child: Text(
+                        l10n.badge_next_goal,
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                      ),
+                    ),
 
-                BadgeItem(
-                  badge: nextBadge,
-                  currentValue: widget.currentValue,
-                  showProgress: true,
-                ),
+                    BadgeItem(
+                      badge: nextBadge,
+                      currentValue: widget.currentValue,
+                      showProgress: true,
+                    ),
 
-                // Other remaining badges (expandable)
-                if (remainingBadges.length > 1)
-                  _buildExpandableSection(
-                    title:
-                        "${l10n.badge_upcoming_badges} (${remainingBadges.length - 1})",
-                    isExpanded: _showRemainingBadges,
-                    onTap: () => setState(
-                        () => _showRemainingBadges = !_showRemainingBadges),
-                    badgeWidgets: remainingBadges
-                        .skip(1)
-                        .map((badge) => BadgeItem(
-                              badge: badge,
-                              currentValue: widget.currentValue,
-                              showProgress: true,
-                            ))
-                        .toList(),
-                  ),
+                    // Other remaining badges (expandable)
+                    if (remainingBadges.length > 1)
+                      _buildExpandableSection(
+                        title:
+                            "${l10n.badge_upcoming_badges} (${remainingBadges.length - 1})",
+                        isExpanded: _showRemainingBadges,
+                        onTap: () => setState(
+                            () => _showRemainingBadges = !_showRemainingBadges),
+                        badgeWidgets: remainingBadges
+                            .skip(1)
+                            .map((badge) => BadgeItem(
+                                  badge: badge,
+                                  currentValue: widget.currentValue,
+                                  showProgress: true,
+                                ))
+                            .toList(),
+                      ),
 
-                // Achieved badges (expandable)
-                if (achievedBadges.isNotEmpty)
-                  _buildExpandableSection(
-                    title:
-                        "${l10n.badge_achieved_badges} (${achievedBadges.length})",
-                    isExpanded: _showAchievedBadges,
-                    onTap: () => setState(
-                        () => _showAchievedBadges = !_showAchievedBadges),
-                    badgeWidgets: achievedBadges
-                        .map((badge) => BadgeItem(badge: badge))
-                        .toList(),
-                  ),
-              ],
-            )));
+                    // Achieved badges (expandable)
+                    if (achievedBadges.isNotEmpty)
+                      _buildExpandableSection(
+                        title:
+                            "${l10n.badge_achieved_badges} (${achievedBadges.length})",
+                        isExpanded: _showAchievedBadges,
+                        onTap: () => setState(
+                            () => _showAchievedBadges = !_showAchievedBadges),
+                        badgeWidgets: achievedBadges
+                            .map((badge) => BadgeItem(badge: badge))
+                            .toList(),
+                      ),
+                  ],
+                ))));
       },
     );
   }

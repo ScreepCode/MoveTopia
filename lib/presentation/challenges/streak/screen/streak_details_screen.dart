@@ -68,33 +68,36 @@ class StreakDetailsScreen extends ConsumerWidget {
     GlobalKey<RefreshIndicatorState> refreshIndicatorKey,
   ) {
     return RefreshIndicator(
-      key: refreshIndicatorKey,
-      onRefresh: () => _refreshData(context, ref),
-      child: Column(
-        children: [
-          // Header mit Streak-Zähler
-          _buildHeader(context, streakCount, ref),
+        key: refreshIndicatorKey,
+        onRefresh: () => _refreshData(context, ref),
+        child: Container(
+          margin: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewPadding.bottom),
+          child: Column(
+            children: [
+              // Header mit Streak-Zähler
+              _buildHeader(context, streakCount, ref),
 
-          // Kalender
-          Expanded(
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              // Wichtig für RefreshIndicator
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  _buildCalendar(context, days, l10n, ref),
-                  const SizedBox(height: 24),
-                  _buildLegend(context, l10n),
-                  const SizedBox(height: 16),
-                  _buildCompletedDaysText(context, days, l10n),
-                ],
+              // Kalender
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  // Wichtig für RefreshIndicator
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      _buildCalendar(context, days, l10n, ref),
+                      const SizedBox(height: 24),
+                      _buildLegend(context, l10n),
+                      const SizedBox(height: 16),
+                      _buildCompletedDaysText(context, days, l10n),
+                    ],
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
-    );
+        ));
   }
 
   Widget _buildHeader(
