@@ -24,11 +24,33 @@ class MoveTopiaNavigator extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final isRootRoute = _isRootRoute(context);
+
+    // Get system insets via MediaQuery
+    final mediaQuery = MediaQuery.of(context);
 
     return Scaffold(
-      body: navigationShell,
-      bottomNavigationBar: _isRootRoute(context)
+      // For screens with bottom navigation, we modify the body to handle insets differently
+      body: MediaQuery(
+        // Remove bottom padding from content area when showing navigation bar
+        // This ensures content in all screens is properly inset
+        data: isRootRoute
+            ? mediaQuery.copyWith(
+                padding: mediaQuery.padding.copyWith(bottom: 0),
+                viewPadding: mediaQuery.viewPadding.copyWith(bottom: 0),
+                viewInsets: mediaQuery.viewInsets,
+              )
+            : mediaQuery,
+        child: SafeArea(
+          // Only apply bottom padding on screens without bottom navigation
+          bottom: !isRootRoute,
+          child: navigationShell,
+        ),
+      ),
+      // Bottom navigation bar that extends behind system navigation
+      bottomNavigationBar: isRootRoute
           ? NavigationBar(
+              height: 80,
               selectedIndex: navigationShell.currentIndex,
               onDestinationSelected: (int index) =>
                   navigationShell.goBranch(index),
