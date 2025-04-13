@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -66,11 +67,13 @@ class ActivitiesScreen extends HookConsumerWidget {
       body: activities.isLoading && activities.activities.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : _buildBody(context, activities, fetchHealthData, scrollController),
-      floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.add),
-          onPressed: () {
-            context.push(trackingPath);
-          }),
+      floatingActionButton: Platform.isAndroid
+          ? FloatingActionButton(
+              child: const Icon(Icons.add),
+              onPressed: () {
+                context.push(trackingPath);
+              })
+          : null,
     );
   }
 }
