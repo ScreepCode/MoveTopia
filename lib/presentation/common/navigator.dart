@@ -49,37 +49,29 @@ class MoveTopiaNavigator extends HookConsumerWidget {
       ),
       // Bottom navigation bar that extends behind system navigation
       bottomNavigationBar: isRootRoute
-          ? NavigationBarTheme(
-              data: NavigationBarThemeData(
-                // Ensure the height is appropriate to prevent extra padding
-                height: 80,
-                indicatorColor:
-                    Theme.of(context).colorScheme.secondaryContainer,
-              ),
-              child: NavigationBar(
-                backgroundColor: Theme.of(context).colorScheme.surface,
-                selectedIndex: navigationShell.currentIndex,
-                onDestinationSelected: (int index) =>
-                    navigationShell.goBranch(index),
-                destinations: [
-                  NavigationDestination(
-                    icon: const Icon(Icons.today),
-                    label: l10n.navigation_today,
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.list),
-                    label: l10n.navigation_activities,
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.emoji_events),
-                    label: l10n.navigation_challenges,
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.person),
-                    label: l10n.navigation_profile,
-                  ),
-                ],
-              ),
+          ? NavigationBar(
+              height: 80,
+              selectedIndex: navigationShell.currentIndex,
+              onDestinationSelected: (int index) =>
+                  navigationShell.goBranch(index),
+              destinations: [
+                NavigationDestination(
+                  icon: const Icon(Icons.today),
+                  label: l10n.navigation_today,
+                ),
+                NavigationDestination(
+                  icon: const Icon(Icons.list),
+                  label: l10n.navigation_activities,
+                ),
+                NavigationDestination(
+                  icon: const Icon(Icons.emoji_events),
+                  label: l10n.navigation_challenges,
+                ),
+                NavigationDestination(
+                  icon: const Icon(Icons.person),
+                  label: l10n.navigation_profile,
+                ),
+              ],
             )
           : null,
     );
