@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -240,6 +243,31 @@ class VersionInfoTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
+    Future<void> copyVersionToClipboard() async {
+      final data = ClipboardData(text: packageInfo.version);
+      await Clipboard.setData(data);
+      if (context.mounted) {
+        // Only show snackbar if Android API Level is higher than 31
+        final deviceInfo = DeviceInfoPlugin();
+        var showSnackbar = true;
+        if (Platform.isAndroid) {
+          final androidInfo = await deviceInfo.androidInfo;
+          // Only show snackbar if Android API Level is higher than 31 meaning Android 12
+          showSnackbar = androidInfo.version.sdkInt < 32;
+        }
+        if (showSnackbar) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.common_version_copied)),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.common_version_copied),
+            ),
+          );
+        }
+      }
+    }
+
     return InkWell(
       onTap: () {
         hiddenLogAccessNotifier.incrementClickCount();
@@ -250,12 +278,7 @@ class VersionInfoTile extends StatelessWidget {
         }
       },
       onLongPress: () {
-        Clipboard.setData(
-          ClipboardData(text: packageInfo.version),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.common_version_copied)),
-        );
+        copyVersionToClipboard();
       },
       child: Container(
         width: double.infinity,
