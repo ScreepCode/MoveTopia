@@ -72,19 +72,21 @@ class BadgeIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Stack(
       alignment: Alignment.center,
       children: [
         Icon(
           Icons.emoji_events,
           size: 60,
-          color: badge.isAchieved ? Colors.amber : Colors.grey,
+          color: badge.isAchieved ? Colors.amber : colorScheme.outline,
         ),
         if (!badge.isAchieved)
-          const Icon(
+          Icon(
             Icons.lock,
             size: 30,
-            color: Colors.black54,
+            color: colorScheme.onSurfaceVariant,
           ),
       ],
     );
@@ -101,6 +103,8 @@ class BadgeDetailsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -108,14 +112,18 @@ class BadgeDetailsSection extends StatelessWidget {
           badge.name,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: badge.isAchieved ? Colors.black : Colors.grey,
+            color: badge.isAchieved
+                ? colorScheme.onSurface
+                : colorScheme.onSurfaceVariant,
           ),
         ),
         Text(
           badge.description,
           style: TextStyle(
             fontSize: 12,
-            color: badge.isAchieved ? Colors.black87 : Colors.grey,
+            color: badge.isAchieved
+                ? colorScheme.onSurfaceVariant
+                : colorScheme.outline,
           ),
         ),
       ],
@@ -145,6 +153,7 @@ class BadgeProgressSection extends StatelessWidget {
 
     final progressPercentage = currentValue / badge.threshold;
     final percentText = '${(progressPercentage * 100).toInt()}%';
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,14 +164,16 @@ class BadgeProgressSection extends StatelessWidget {
           child: LinearProgressIndicator(
             minHeight: 8,
             value: progressPercentage,
-            backgroundColor:
-                Theme.of(context).colorScheme.surfaceContainerHighest,
+            backgroundColor: colorScheme.surfaceContainerHighest,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           '$percentText (${currentValue.toInt()}/${badge.threshold.toInt()})',
-          style: const TextStyle(fontSize: 10),
+          style: TextStyle(
+            fontSize: 10,
+            color: colorScheme.onSurfaceVariant,
+          ),
         ),
       ],
     );
@@ -186,6 +197,7 @@ class BadgeAchievementDate extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final DateFormat formatter = DateFormat('dd.MM.yyyy');
     final String formattedDate = formatter.format(badge.lastAchievedDate!);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,17 +205,17 @@ class BadgeAchievementDate extends StatelessWidget {
         const SizedBox(height: 8),
         Row(
           children: [
-            const Icon(
+            Icon(
               Icons.check_circle,
-              color: Colors.green,
+              color: colorScheme.primary,
               size: 16,
             ),
             const SizedBox(width: 4),
             Text(
               l10n.badge_achieved_on(formattedDate),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                color: Colors.green,
+                color: colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -214,7 +226,10 @@ class BadgeAchievementDate extends StatelessWidget {
             padding: const EdgeInsets.only(top: 4.0),
             child: Text(
               l10n.badge_completed_x_times(badge.achievedCount),
-              style: const TextStyle(fontSize: 11, color: Colors.grey),
+              style: TextStyle(
+                fontSize: 11,
+                color: colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
       ],
