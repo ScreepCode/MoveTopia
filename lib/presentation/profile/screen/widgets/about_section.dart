@@ -246,26 +246,22 @@ class VersionInfoTile extends StatelessWidget {
     Future<void> copyVersionToClipboard() async {
       final data = ClipboardData(text: packageInfo.version);
       await Clipboard.setData(data);
-      if (context.mounted) {
-        // Only show snackbar if Android API Level is higher than 31
+      if (!context.mounted) return;
+
+      // Determine if we should show a snackbar based on platform
+      // Don't show on Android 12+ (API 32+) as it has its own clipboard notification
+      if (Platform.isAndroid) {
         final deviceInfo = DeviceInfoPlugin();
-        var showSnackbar = true;
-        if (Platform.isAndroid) {
-          final androidInfo = await deviceInfo.androidInfo;
-          // Only show snackbar if Android API Level is higher than 31 meaning Android 12
-          showSnackbar = androidInfo.version.sdkInt < 32;
-        }
-        if (showSnackbar) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.common_version_copied)),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.common_version_copied),
-            ),
-          );
+        final androidInfo = await deviceInfo.androidInfo;
+        if (androidInfo.version.sdkInt >= 32) {
+          return; // Android 12+ has native clipboard notifications
         }
       }
+
+      // Show snackbar on all other platforms and older Android versions
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.common_version_copied)),
+      );   
     }
 
     return InkWell(
