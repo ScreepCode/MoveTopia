@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
-# platform :ios, '12.0'
+platform :ios, '14.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -39,5 +39,34 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
+    
+    # Set correct iOS deployment target for all targets
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
+          '$(inherited)',
+          ## dart: [PermissionGroup.location, PermissionGroup.locationAlways, PermissionGroup.locationWhenInUse]
+          'PERMISSION_LOCATION=1',
+          'PERMISSION_LOCATION_WHENINUSE=0',
+          ## dart: PermissionGroup.notification
+          'PERMISSION_NOTIFICATIONS=1',
+          ## dart: PermissionGroup.sensors
+          'PERMISSION_SENSORS=1',
+          ## dart: PermissionGroup.activityRecognition (for iOS Motion & Fitness)
+          'PERMISSION_MOTION=1',
+        ]
+    end
   end
+  
+  # Additional setting for handling privacy files in Xcode
+  installer.generated_projects.each do |project|
+    project.build_configurations.each do |config|
+      # Don't try to link PrivacyInfo framework
+      config.build_settings["OTHER_LDFLAGS"] ||= ["$(inherited)"]
+      # Remove any potential -framework PrivacyInfo flags
+      config.build_settings["OTHER_LDFLAGS"] = config.build_settings["OTHER_LDFLAGS"].reject { |flag| flag == "-framework PrivacyInfo" }
+    end
+  end
+
+  installer.pods_project.save
 end

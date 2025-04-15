@@ -1,0 +1,13 @@
+/* Location permissions */
+"NSLocationWhenInUseUsageDescription" = "MoveTopia benötigt Zugriff auf deinen Standort, um deine Geschwindigkeit, Distanz und Tempo während deiner Aktivitäten genau zu messen.";
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "MoveTopia benötigt Zugriff auf deinen Standort, auch wenn die App im Hintergrund läuft, um deine Aktivitäten durchgehend zu verfolgen.";
+
+/* Motion permissions */
+"NSMotionUsageDescription" = "MoveTopia benötigt Zugriff auf die Bewegungserkennung, um deine Schritte zu zählen und Aktivitäten im Hintergrund zu erkennen.";
+
+/* Health permissions */
+"NSHealthShareUsageDescription" = "MoveTopia benötigt Zugriff auf deine Gesundheitsdaten, um deine Aktivitäten und Fitness zu verfolgen. Die App liest Daten zu Schritten, Körpergewicht, verbrannten Kalorien, Trainingseinheiten, Schlafanalysen und Herzfrequenz.";
+"NSHealthUpdateUsageDescription" = "MoveTopia benötigt Berechtigungen, um Gesundheitsdaten in der Health App zu aktualisieren und neue Aktivitätsdaten hinzuzufügen.";
+
+/* Notification permissions */
+"NSUserNotificationUsageDescription" = "MoveTopia benötigt die Erlaubnis, dir Benachrichtigungen über deine laufenden Trainingseinheiten und Aktivitätserinnerungen zu senden."; 
