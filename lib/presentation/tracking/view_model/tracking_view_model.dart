@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:activity_tracking/activity_tracking.dart';
 import 'package:activity_tracking/model/activity.dart';
@@ -48,10 +49,14 @@ class TrackingViewModel extends StateNotifier<TrackingState?> {
 
   _isPermissionGranted(bool writePermissionGranted, PermissionStatus location,
       PermissionStatus activityRecognition, PermissionStatus notification) {
+    final bool isPlatformAndroid = Platform.isAndroid;
+
     return writePermissionGranted &&
         location == PermissionStatus.granted &&
-        activityRecognition == PermissionStatus.granted &&
-        notification == PermissionStatus.granted;
+        notification == PermissionStatus.granted &&
+        (isPlatformAndroid
+            ? activityRecognition == PermissionStatus.granted
+            : true);
   }
 
   startTracking(ActivityType activityType) async {

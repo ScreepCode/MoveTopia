@@ -34,7 +34,7 @@ dependencies:
     git:
       url: https://github.com/Jozys/activity_tracking.git
       ref: main
-  permission_handler: ^11.4.0
+  permission_handler: ^12.0.0+1
   smooth_page_indicator: ^1.1.0
   app_settings: ^6.1.1
   url_launcher: ^6.2.5

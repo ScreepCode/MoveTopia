@@ -117,20 +117,24 @@ class PermissionScreen extends HookConsumerWidget {
             ),
             const SizedBox(height: 16),
 
-            // Activity recognition permission
-            PermissionCard(
-              icon: Icons.directions_walk,
-              title: l10n.permission_activity_title,
-              description: l10n.permission_activity_description,
-              status: permissionsState.activityPermissionStatus,
-              onRequestPermission: () => ref
-                  .read(permissionsProvider.notifier)
-                  .requestActivityPermission(),
-              onOpenSettings: () => openAppSettings(),
-              isRequired: true,
-            ),
-
-            const SizedBox(height: 16),
+            // Activity recognition permission - only for Android
+            if (Theme.of(context).platform == TargetPlatform.android)
+              Column(
+                children: [
+                  PermissionCard(
+                    icon: Icons.directions_walk,
+                    title: l10n.permission_activity_title,
+                    description: l10n.permission_activity_description,
+                    status: permissionsState.activityPermissionStatus,
+                    onRequestPermission: () => ref
+                        .read(permissionsProvider.notifier)
+                        .requestActivityPermission(),
+                    onOpenSettings: () => openAppSettings(),
+                    isRequired: true,
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
 
             // Notification permission
             PermissionCard(
