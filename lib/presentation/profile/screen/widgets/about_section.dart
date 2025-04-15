@@ -249,6 +249,14 @@ class VersionInfoTile extends StatelessWidget {
           context.go('$profilePath/$profileLoggingPath');
         }
       },
+      onLongPress: () {
+        Clipboard.setData(
+          ClipboardData(text: packageInfo.version),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.common_version_copied)),
+        );
+      },
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 8.0),

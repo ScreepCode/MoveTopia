@@ -52,6 +52,7 @@
   "common_theme_dark": "Dark Mode",
   "common_about": "About",
   "common_version": "Version",
+  "common_version_copied": "Successfully copied version",
   "common_error_version": "Error loading version",
   "common_error": "Error {error}",
   "common_unknown": "Unknown",
