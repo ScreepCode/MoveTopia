@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -240,6 +243,27 @@ class VersionInfoTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
+    Future<void> copyVersionToClipboard() async {
+      final data = ClipboardData(text: packageInfo.version);
+      await Clipboard.setData(data);
+      if (!context.mounted) return;
+
+      // Determine if we should show a snackbar based on platform
+      // Don't show on Android 12+ (API 32+) as it has its own clipboard notification
+      if (Platform.isAndroid) {
+        final deviceInfo = DeviceInfoPlugin();
+        final androidInfo = await deviceInfo.androidInfo;
+        if (androidInfo.version.sdkInt >= 32) {
+          return; // Android 12+ has native clipboard notifications
+        }
+      }
+
+      // Show snackbar on all other platforms and older Android versions
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.common_version_copied)),
+      );   
+    }
+
     return InkWell(
       onTap: () {
         hiddenLogAccessNotifier.incrementClickCount();
@@ -248,6 +272,9 @@ class VersionInfoTile extends StatelessWidget {
           HapticFeedback.mediumImpact();
           context.go('$profilePath/$profileLoggingPath');
         }
+      },
+      onLongPress: () {
+        copyVersionToClipboard();
       },
       child: Container(
         width: double.infinity,

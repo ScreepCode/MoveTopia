@@ -160,12 +160,17 @@ interface class BaseLocalHealthRepoImpl extends BaseLocalHealthRepository {
           preview.activityType == ActivityType.running) {
         return null;
       }
+      // The distance is in km, so we need to convert it to m
+      // We multiply by 100 and round it to 2 decimal places and then divide it back to kilometers
+      // This step is need as dart does not provide a way to round to decimal places
+      // After that we multiply it by 1000 to convert it to meters
+      double distance = (((preview.distance ?? 0) * 100).round() / 100) * 1000;
       success = await Health().writeWorkoutData(
           activityType: HealthWorkoutActivityType.values.firstWhere(
               (element) => element.name == preview.activityType?.name),
           start: startTime,
           end: endTime,
-          totalDistance: (preview.distance ?? 0).toInt() * 1000,
+          totalDistance: distance.toInt(),
           totalDistanceUnit: HealthDataUnit.METER);
     } catch (e) {
       log.info(e);
