@@ -50,6 +50,7 @@
   "common_theme_dark": "Dunkler Modus",
   "common_about": "Über",
   "common_version": "Version",
+  "common_version_copied": "Version in die Zwischenablage kopiert",
   "common_error_version": "Fehler beim Laden der Version",
   "common_error": "Fehler {error}",
   "common_unknown": "Unbekannt",
