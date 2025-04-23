@@ -499,5 +499,25 @@
         "type": "int"
       }
     }
-  }
+  },
+
+  "@_SURVEY": {},
+  "survey_card_title": "User Survey",
+  "survey_card_subtitle": "MoveTopia Study Project",
+  "survey_card_description": "We would like to hear your opinion about MoveTopia. Your participation helps us improve the app.",
+  "survey_card_remind_later": "Remind me later",
+  "survey_card_take_survey": "Participate",
+  "survey_dialog_title": "Open Survey",
+  "survey_dialog_content": "How would you like to open the survey?",
+  "survey_dialog_not_interested": "Not interested",
+  "survey_dialog_open_in_app": "Open in app",
+  "survey_dialog_open_externally": "Open in browser",
+  "survey_dialog_already_completed": "Already completed",
+  "survey_webview_title": "User Survey",
+  "survey_error_opening_url": "Could not open the URL",
+  "survey_completed_question": "Did you complete the survey?",
+  "survey_completed_yes": "Yes, I did",
+  "survey_completed_no": "No, later",
+  "common_back": "Back",
+  "common_refresh": "Refresh"
 }

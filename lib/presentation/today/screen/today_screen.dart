@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -12,11 +13,13 @@ import 'package:movetopia/presentation/today/widgets/achievement_preview_card.da
 import 'package:movetopia/presentation/today/widgets/exercise_minutes_card.dart';
 import 'package:movetopia/presentation/today/widgets/last_activity_card.dart';
 import 'package:movetopia/presentation/today/widgets/steps_streak_card.dart';
+import 'package:movetopia/presentation/today/widgets/survey_card.dart';
 import 'package:movetopia/presentation/today/widgets/tracking_active.dart';
 import 'package:movetopia/presentation/today/widgets/weekly_steps_chart.dart';
 import 'package:movetopia/presentation/tracking/routes.dart';
 import 'package:movetopia/presentation/tracking/view_model/tracking_state.dart';
 import 'package:movetopia/presentation/tracking/view_model/tracking_view_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/health_authorized_view_model.dart';
 import '../../challenges/routes.dart';
@@ -39,6 +42,8 @@ class TodayScreen extends HookConsumerWidget {
     // Hold loading state
     final isLoading = useState(false);
     final refreshIndicatorKey = useRef(GlobalKey<RefreshIndicatorState>());
+
+    final showSurvey = useState(true);
 
     Future<void> fetchHealthData() async {
       try {
@@ -111,6 +116,25 @@ class TodayScreen extends HookConsumerWidget {
       return null;
     }, const []);
 
+    useEffect(() {
+      SharedPreferences.getInstance().then((prefs) {
+        final isDismissed =
+            prefs.getBool(SurveyConstants.prefKeySurveyDismissed) ?? false;
+        final isCompleted =
+            prefs.getBool(SurveyConstants.prefKeySurveyCompleted) ?? false;
+
+        final now = DateTime.now();
+        final isSurveyStillActive =
+            now.isBefore(SurveyConstants.surveyEndDate) ||
+                now.isAtSameMomentAs(SurveyConstants.surveyEndDate);
+
+        if (isDismissed || isCompleted || !isSurveyStillActive) {
+          showSurvey.value = false;
+        }
+      });
+      return null;
+    }, const []);
+
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
@@ -142,7 +166,8 @@ class TodayScreen extends HookConsumerWidget {
             stopTracking,
             pauseTracking,
             navigateToBadges,
-            refreshIndicatorKey.value),
+            refreshIndicatorKey.value,
+            showSurvey),
         floatingActionButton:
             trackingState?.isRecording == false && Platform.isAndroid
                 ? FloatingActionButton(
@@ -165,6 +190,7 @@ Widget _buildBody(
   Future<void> Function() pauseTracking,
   void Function() navigateToBadges,
   GlobalKey<RefreshIndicatorState> refreshIndicatorKey,
+  ValueNotifier<bool> showSurvey,
 ) {
   final theme = Theme.of(context);
   final l10n = AppLocalizations.of(context)!;
@@ -180,6 +206,16 @@ Widget _buildBody(
         child: ListView(
           padding: const EdgeInsets.symmetric(vertical: 16.0),
           children: [
+            if (showSurvey.value)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: SurveyCard(
+                  onDismiss: () {
+                    showSurvey.value = false;
+                  },
+                ),
+              ),
+
             // Today's Section
             _buildSectionHeader(context, l10n.navigation_today, theme),
             const SizedBox(height: 12),
