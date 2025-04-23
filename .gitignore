@@ -51,3 +51,4 @@ app.*.map.json
 /android/fastlane/build/outputs/
 /android/fastlane/report.xml
 /lib/version.dart
+/.env
