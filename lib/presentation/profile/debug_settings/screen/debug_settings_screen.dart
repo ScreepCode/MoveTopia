@@ -10,6 +10,7 @@ import '../widgets/app_dates_section.dart';
 import '../widgets/badge_debug_section.dart';
 import '../widgets/cache_debug_section.dart';
 import '../widgets/streak_debug_section.dart';
+import '../widgets/survey_debug_section.dart';
 
 class DebugSettingsScreen extends HookConsumerWidget {
   const DebugSettingsScreen({super.key});
@@ -58,6 +59,9 @@ class DebugSettingsScreen extends HookConsumerWidget {
 
                 // Badge Debugging Sektion
                 BadgeDebugSection(isLoading: isLoading),
+
+                // Survey Debugging Sektion
+                SurveyDebugSection(isLoading: isLoading),
 
                 // Cache Debuggin Sektion
                 CacheDebugSection(isLoading: isLoading)

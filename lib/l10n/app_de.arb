@@ -480,5 +480,24 @@
         "type": "int"
       }
     }
-  }
+  },
+  "@_SURVEY": {},
+  "survey_card_title": "Nutzerumfrage",
+  "survey_card_subtitle": "Studienarbeit MoveTopia",
+  "survey_card_description": "Wir möchten gerne deine Meinung zu MoveTopia erfahren. Deine Teilnahme hilft uns, die App zu verbessern.",
+  "survey_card_remind_later": "Später erinnern",
+  "survey_card_take_survey": "Teilnehmen",
+  "survey_dialog_title": "Umfrage öffnen",
+  "survey_dialog_content": "Wie möchtest du die Umfrage öffnen?",
+  "survey_dialog_not_interested": "Nicht teilnehmen",
+  "survey_dialog_open_in_app": "In App öffnen",
+  "survey_dialog_open_externally": "Im Browser öffnen",
+  "survey_dialog_already_completed": "Bereits abgeschlossen",
+  "survey_webview_title": "Nutzerumfrage",
+  "survey_error_opening_url": "Konnte die URL nicht öffnen",
+  "survey_completed_question": "Hast du die Umfrage abgeschlossen?",
+  "survey_completed_yes": "Ja, habe ich",
+  "survey_completed_no": "Nein, später",
+  "common_back": "Zurück",
+  "common_refresh": "Aktualisieren"
 }
