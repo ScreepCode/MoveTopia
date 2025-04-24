@@ -9,7 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 /// Constants for the survey feature
 class SurveyConstants {
   /// The end date for the survey
-  static final DateTime surveyEndDate = DateTime(2024, 5, 19);
+  static final DateTime surveyEndDate = DateTime(2025, 5, 19);
 
   /// The survey URL
   static const String surveyUrl = 'https://forms.gle/QY8HnRF2LFnQqRJ18';
