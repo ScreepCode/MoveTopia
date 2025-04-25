@@ -36,7 +36,7 @@ Join our beta testing program to get early access to new features:
         </a>
       </td>
       <td>
-        <a target='_blank' href="https://testflight.apple.com/join/1MYANqEt" title="MoveTopia on TestFly">
+        <a target='_blank' href="https://testflight.apple.com/join/1MYANqEt" title="MoveTopia on TestFlight">
             <img width='200' src="https://beatscratch.io/assets/testflight-badge.png" alt="TestFly">
         </a>
       </td>
