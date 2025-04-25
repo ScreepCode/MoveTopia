@@ -69,7 +69,7 @@ Build debug APK with versioning
 [bundle exec] fastlane android build_release
 ```
 
-Build release APK without creating a release or tag
+Build release APK with versioning
 
 ### android assemble_release
 
