@@ -144,8 +144,7 @@ class PermissionsPage extends ConsumerWidget {
                 if (!permissionsState.healthPermissionStatus) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(
-                          'Bitte erteile zuerst die Leseberechtigung für Gesundheitsdaten'),
+                      content: Text(l10n.permission_health_read_missing),
                       backgroundColor: theme.colorScheme.error,
                       duration: const Duration(seconds: 2),
                     ),
@@ -200,8 +199,8 @@ class PermissionsPage extends ConsumerWidget {
 
             const SizedBox(height: 16),
 
-            // Historical Health Data permission - only for Android
-            if (Theme.of(context).platform == TargetPlatform.android)
+            // Historical Health Data permission - only if available
+            if (permissionsState.isHealthHistoricalAvailable)
               Column(
                 children: [
                   PermissionCard(
@@ -216,8 +215,7 @@ class PermissionsPage extends ConsumerWidget {
                       if (!permissionsState.healthPermissionStatus) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: const Text(
-                                'Bitte erteile zuerst die Leseberechtigung für Gesundheitsdaten'),
+                            content: Text(l10n.permission_health_read_missing),
                             backgroundColor: theme.colorScheme.error,
                             duration: const Duration(seconds: 2),
                           ),

@@ -19,6 +19,12 @@ class PermissionsState {
   final bool healthWritePermissionStatus;
   final bool healthHistoricalPermissionStatus;
 
+  /*
+  * Determine if historical health functionality is available
+  * Only relevant for Android, on iOS this is always false
+  * */
+  final bool isHealthHistoricalAvailable;
+
   bool get hasRequiredPermissions => healthPermissionStatus;
 
   PermissionsState({
@@ -28,6 +34,7 @@ class PermissionsState {
     this.healthPermissionStatus = false,
     this.healthWritePermissionStatus = false,
     this.healthHistoricalPermissionStatus = false,
+    this.isHealthHistoricalAvailable = false,
   });
 
   PermissionsState copyWith({
@@ -37,6 +44,7 @@ class PermissionsState {
     bool? healthPermissionStatus,
     bool? healthWritePermissionStatus,
     bool? healthHistoricalPermissionStatus,
+    bool? isHealthHistoricalAvailable,
   }) {
     return PermissionsState(
       locationPermissionStatus:
@@ -51,6 +59,8 @@ class PermissionsState {
           healthWritePermissionStatus ?? this.healthWritePermissionStatus,
       healthHistoricalPermissionStatus: healthHistoricalPermissionStatus ??
           this.healthHistoricalPermissionStatus,
+      isHealthHistoricalAvailable:
+          isHealthHistoricalAvailable ?? this.isHealthHistoricalAvailable,
     );
   }
 
@@ -284,7 +294,20 @@ class PermissionsNotifier extends StateNotifier<PermissionsState> {
       }
 
       try {
-        // Verwende die direkte API-Methode, um zu prüfen, ob historische Berechtigungen gewährt wurden
+        // Überprüfe die Verfügbarkeit historischer Berechtigungen
+        // Dies ist nur für Android relevant, auf iOS ist dies nicht verfügbar
+
+        bool isHistoricalAvailable =
+            await _health.isHealthDataHistoryAvailable();
+        state =
+            state.copyWith(isHealthHistoricalAvailable: isHistoricalAvailable);
+        if (!isHistoricalAvailable) {
+          log.warning("Historical Health feature is not available");
+          return;
+        }
+
+        // Verwende die direkte API-Methode, um zu prüfen, ob historische Berechtigungen gewährt wurde
+
         bool hasHistoricalPermissions =
             await _health.isHealthDataHistoryAuthorized();
 
