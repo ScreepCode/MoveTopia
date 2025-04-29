@@ -357,6 +357,7 @@
   "permission_health_read_description": "To read your activities and fitness data",
   "permission_health_write_title": "Health Data Write",
   "permission_health_write_description": "To save your activities to the health database",
+  "permission_health_read_missing": "Please first allow access to read your health data",
   "permission_health_historical_title": "Historical Health Data",
   "permission_health_historical_description": "To access your health data older than 30 days for long-term analysis",
   "permission_allow": "Allow",
