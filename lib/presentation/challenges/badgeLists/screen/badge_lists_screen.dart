@@ -138,6 +138,7 @@ class _BadgeTabsView extends StatelessWidget {
         children: [
           TabBar(
             isScrollable: true,
+            tabAlignment: TabAlignment.center,
             tabs: categories
                 .map((category) => Tab(text: _getCategoryName(category, l10n)))
                 .toList(),
