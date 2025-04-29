@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -141,51 +142,67 @@ Widget _buildGroupedActivities(
     return seconds ~/ 60;
   }
 
-  return ListView.builder(
-    controller: scrollController,
-    physics: const ScrollPhysics(),
-    itemCount: activities?.length ?? 0,
-    itemBuilder: (context, index) {
-      final date = activities?.keys.elementAt(index);
-      final activityList = activities?[date]! ?? [];
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (date != null && activityList.isNotEmpty)
-            Padding(
-              padding:
-                  const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      DateFormat("dd. MMMM yyyy").format(date),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      getDuration(getActivityMinutes(activityList), context),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ]),
-            ),
-          const Divider(),
-          ...activityList.map(
-            (activity) => _buildActivityItem(context, activity),
+  return LayoutBuilder(
+    builder: (context, constraints) {
+      return SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        controller: scrollController,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: constraints.maxHeight,
           ),
-          // Add a loading indicator at the end of the list,
-          if (index == activities!.length - 1 && isLoading)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0),
-              child: Center(child: CircularProgressIndicator()),
-            ) // Show loading
-          // Show no more entries text if end is reached
-          else if (index == activities.length - 1 && !isLoading)
-            const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Center(
-                  child: Text("No more entries"),
-                )),
-        ],
+          child: ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: activities?.length ?? 0,
+            itemBuilder: (context, index) {
+              final date = activities?.keys.elementAt(index);
+              final activityList = activities?[date]! ?? [];
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (date != null && activityList.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 16.0, left: 16.0, right: 16.0),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              DateFormat("dd. MMMM yyyy").format(date),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              getDuration(
+                                  getActivityMinutes(activityList), context),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ]),
+                    ),
+                  const Divider(),
+                  ...activityList.map(
+                    (activity) => _buildActivityItem(context, activity),
+                  ),
+                  // Add a loading indicator at the end of the list,
+                  if (index == activities!.length - 1 && isLoading)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                      child: Center(child: CircularProgressIndicator()),
+                    ) // Show loading
+                  // Show no more entries text if end is reached
+                  else if (index == activities.length - 1 && !isLoading)
+                    const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Center(
+                          child: Text("No more entries"),
+                        )),
+                ],
+              );
+            },
+          ),
+        ),
       );
     },
   );
