@@ -53,6 +53,7 @@ class ActivitiesViewModel extends StateNotifier<ActivitiesState> {
 
       for (int i = 0; i < workouts.length; i++) {
         ActivityPreview workout = workouts[i];
+
         state.icons ??= {};
         if (state.icons!.containsKey(workout.sourceId)) {
           workouts[i].icon = state.icons?[workout.sourceId];
@@ -63,8 +64,10 @@ class ActivitiesViewModel extends StateNotifier<ActivitiesState> {
           state.icons![workout.sourceId] = workouts[i].icon;
           state = state.copyWith(newIcons: state.icons);
         }
+        // Convert the start date to local time
+        final startDateLocal = toLocal(workout.start);
         DateTime day = DateTime(
-            workout.start.year, workout.start.month, workout.start.day);
+            startDateLocal.year, startDateLocal.month, startDateLocal.day);
         if (workoutsByDay[day] == null) {
           workoutsByDay[day] = [];
         }

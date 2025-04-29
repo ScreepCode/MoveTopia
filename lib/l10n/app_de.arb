@@ -338,6 +338,7 @@
   "permission_health_read_description": "Zum Lesen deiner Aktivitäten und Fitness-Daten",
   "permission_health_write_title": "Gesundheitsdaten Schreiben",
   "permission_health_write_description": "Zum Speichern deiner Aktivitäten in der Health-Datenbank",
+  "permission_health_read_missing": "Bitte erteile zuerst die Leseberechtigung für Gesundheitsdaten",
   "permission_health_historical_title": "Historische Gesundheitsdaten",
   "permission_health_historical_description": "Für den Zugriff auf Gesundheitsdaten, die älter als 30 Tage sind, für Langzeitanalysen",
   "permission_allow": "Erlauben",
