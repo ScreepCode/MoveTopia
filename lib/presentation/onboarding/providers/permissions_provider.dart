@@ -294,8 +294,8 @@ class PermissionsNotifier extends StateNotifier<PermissionsState> {
       }
 
       try {
-        // Überprüfe die Verfügbarkeit historischer Berechtigungen
-        // Dies ist nur für Android relevant, auf iOS ist dies nicht verfügbar
+        // Check the availability of historical permissions
+        // This is only relevant for Android, on iOS this is not available
 
         bool isHistoricalAvailable =
             await _health.isHealthDataHistoryAvailable();
