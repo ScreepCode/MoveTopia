@@ -6,6 +6,7 @@ import 'package:health/health.dart';
 import 'package:movetopia/presentation/activities/details/widget/detail_stats_card.dart';
 import 'package:movetopia/presentation/activities/details/widget/header_details.dart';
 import 'package:movetopia/presentation/common/widgets/generic_card.dart';
+import 'package:movetopia/presentation/tracking/widgets/tracking_map.dart';
 import 'package:movetopia/utils/health_utils.dart';
 import 'package:movetopia/utils/tracking_utils.dart';
 
@@ -23,7 +24,8 @@ class TrackingFinished extends StatelessWidget {
         minimum: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         child: ListView(children: [
           _buildHeaderDetails(context, activity!),
-          _buildActivityDetails(context, activity!, durationMillis)
+          _buildActivityDetails(context, activity!, durationMillis),
+          _buildMap(context, activity!),
         ]));
   }
 
@@ -98,6 +100,21 @@ class TrackingFinished extends StatelessWidget {
               displayName: l10n.activity_avg_pace,
               value: getAveragePace(activity).toString()),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMap(BuildContext context, Activity activity) {
+    if (activity.locations == null || activity.locations!.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    return GenericCard(
+      title: "Route",
+      content: SizedBox(
+        height: 200,
+        child: TrackingMap(
+          activity: activity,
+        ),
       ),
     );
   }

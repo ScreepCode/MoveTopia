@@ -327,7 +327,7 @@
   "tracking_permissions_location_description": "In order to track workout activities correctly location service needs to be enabled. Please make sure you enable them and then try again.",
   "tracking_permissions_location_settings": "Open Settings",
   "tracking_permissions_location_cancel": "Cancel",
-
+  "tracking_no_map": "No map data available",
 
   "@_ONBOARDING": {},
   "onboarding_skip": "Skip",

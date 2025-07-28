@@ -310,6 +310,7 @@
   "tracking_permissions_location_description": "Damit MoveTopia deine Aktivitäten verfolgen kann, aktiviere bitte die Standortdienste. Gehe zu den Einstellungen deines Geräts und aktiviere die Standortdienste.",
   "tracking_permissions_location_settings": "Einstellungen",
   "tracking_permissions_location_cancel": "Abbrechen",
+  "tracking_no_map": "Keine Kartendaten verfügbar",
   "@_ONBOARDING": {},
   "onboarding_skip": "Überspringen",
   "onboarding_next": "Weiter",
